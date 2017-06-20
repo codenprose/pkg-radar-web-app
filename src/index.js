@@ -24,8 +24,8 @@ networkInterface.use([{
     }
 
     // get the authentication token from local storage if it exists
-    if (localStorage.getItem('graphcoolToken')) {
-      req.options.headers.authorization = `Bearer ${localStorage.getItem('graphcoolToken')}`
+    if (localStorage.getItem('auth0IdToken')) {
+      req.options.headers.authorization = `Bearer ${localStorage.getItem('auth0IdToken')}`
     }
     next()
   },

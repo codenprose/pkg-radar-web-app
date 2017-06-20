@@ -11,17 +11,17 @@ class Header extends Component {
     searchText: ''
   }
 
-  handleSearchChange = (searchText) => {
+  _handleSearchChange = (searchText) => {
     this.setState({ searchText })
   }
 
-  handleSearchRequest = () => {
+  _handleSearchRequest = () => {
     // Route user to Package Detail Page
     console.log(this.state.searchText)
   }
 
   render() {
-    const { title } = this.props
+    const { auth, title } = this.props
 
     return (
       <header 
@@ -46,8 +46,8 @@ class Header extends Component {
                   fullWidth={true}
                   dataSource={[]}
                   value={this.state.searchText}
-                  onUpdateInput={this.handleSearchChange}
-                  onNewRequest={this.handleSearchRequest}
+                  onUpdateInput={this._handleSearchChange}
+                  onNewRequest={this._handleSearchRequest}
                 />
               </Col>
             </Row>
@@ -55,15 +55,28 @@ class Header extends Component {
           <Col xs={3}>
             <Row end="xs" middle="xs" className="h-100">
               <Col xs={12}>
-                {/* add login/logout section */}
-                <FlatButton 
-                  label="Log In"
-                  style={{ marginRight: '20px' }}
-                />
-                <RaisedButton 
-                  primary={true} 
-                  label="Sign Up" 
-                />
+                {
+                  !auth.isAuthenticated() &&
+                  <div>
+                    <FlatButton 
+                      label="Log In"
+                      style={{ marginRight: '20px' }}
+                      onClick={() => auth.login()}
+                    />
+                    <RaisedButton 
+                      primary={true} 
+                      label="Sign Up" 
+                    />
+                  </div>
+                }
+                {
+                  auth.isAuthenticated() &&
+                  <RaisedButton
+                    label="Log Out"
+                    style={{ marginRight: '20px' }}
+                    onClick={() => auth.logout()}
+                  />
+                }
               </Col>
             </Row>
           </Col>
