@@ -1,1 +1,0 @@
-export { default as Authenticate } from './_Authenticate'

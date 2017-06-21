@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import AutoComplete from 'material-ui/AutoComplete'
-import FlatButton from 'material-ui/FlatButton'
 import { Link } from 'react-router-dom'
 import { Row, Col } from 'react-flexbox-grid'
-import RaisedButton from 'material-ui/RaisedButton'
+import { withRouter } from 'react-router-dom'
+
+import { LoginAuth0 } from '../Users'
 
 
 class Header extends Component {
@@ -21,7 +22,7 @@ class Header extends Component {
   }
 
   render() {
-    const { auth, title } = this.props
+    const { title, user } = this.props
 
     return (
       <header 
@@ -55,28 +56,7 @@ class Header extends Component {
           <Col xs={3}>
             <Row end="xs" middle="xs" className="h-100">
               <Col xs={12}>
-                {
-                  !auth.isAuthenticated() &&
-                  <div>
-                    <FlatButton 
-                      label="Log In"
-                      style={{ marginRight: '20px' }}
-                      onClick={() => auth.login()}
-                    />
-                    <RaisedButton 
-                      primary={true} 
-                      label="Sign Up" 
-                    />
-                  </div>
-                }
-                {
-                  auth.isAuthenticated() &&
-                  <RaisedButton
-                    label="Log Out"
-                    style={{ marginRight: '20px' }}
-                    onClick={() => auth.logout()}
-                  />
-                }
+                <LoginAuth0 user={user} />
               </Col>
             </Row>
           </Col>
@@ -90,4 +70,4 @@ Header.defaultProps = {
   title: '<pkg> radar'
 }
 
-export default Header
+export default withRouter(Header)
