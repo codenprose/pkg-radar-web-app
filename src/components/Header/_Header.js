@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 import AutoComplete from 'material-ui/AutoComplete'
 import { Link } from 'react-router-dom'
 import { Row, Col } from 'react-flexbox-grid'
-import { withRouter } from 'react-router-dom'
-
-import { LoginAuth0 } from '../Users'
+import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 
 
 class Header extends Component {
+  static defaultProps = {
+    title: '<pkg> radar'
+  }
+
   state = {
     searchText: ''
   }
@@ -19,6 +22,16 @@ class Header extends Component {
   _handleSearchRequest = () => {
     // Route user to Package Detail Page
     console.log(this.state.searchText)
+  }
+
+   _login = () => {
+    this.props.auth.show()
+  }
+
+  _logout = () => {
+    // remove token from local storage and reload page to reset apollo client
+    window.localStorage.removeItem('auth0IdToken')
+    window.location.reload('/')
   }
 
   render() {
@@ -56,7 +69,29 @@ class Header extends Component {
           <Col xs={3}>
             <Row end="xs" middle="xs" className="h-100">
               <Col xs={12}>
-                <LoginAuth0 user={user} />
+                {
+                  !user &&
+                  <div>
+                    <FlatButton
+                      label="Log In"
+                      style={{ marginRight: '20px' }}
+                      onClick={() => this._login()}
+                    />
+                    <RaisedButton
+                      primary={true}
+                      label="Sign Up"
+                      onClick={() => this._login()}
+                    />
+                  </div>
+                }
+                {
+                  user &&
+                  <RaisedButton
+                    label="Log Out"
+                    style={{ marginRight: '20px' }}
+                    onClick={() => this._logout()}
+                  />
+                }
               </Col>
             </Row>
           </Col>
@@ -66,8 +101,4 @@ class Header extends Component {
   }
 }
 
-Header.defaultProps = {
-  title: '<pkg> radar'
-}
-
-export default withRouter(Header)
+export default Header

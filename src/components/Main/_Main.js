@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 import { PackageDetail, PackageIndex } from '../Packages'
-import { CreateUser, UserProfile, UserSettings } from '../Users'
+import { UserProfile, UserSettings } from '../Users'
 
 
 class Main extends Component {
   render() {
+    // const { auth } = this.props
+
     return (
       <main 
         className="pa3" 
@@ -17,7 +19,6 @@ class Main extends Component {
           <Route exact path="/package/:name" render={(props) => <PackageDetail {...props} />} />
           <Route exact path="/profile/:id" render={(props) => <UserProfile {...props} />} />
           <Route exact path="/profile/:id/settings" render={(props) => <UserSettings {...props} />} />
-          <Route exact path='/signup' render={(props) => <CreateUser {...props} />} />
         </Switch>
       </main>
     )
