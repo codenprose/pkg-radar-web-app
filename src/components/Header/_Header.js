@@ -3,7 +3,14 @@ import AutoComplete from 'material-ui/AutoComplete'
 import { Link } from 'react-router-dom'
 import { Row, Col } from 'react-flexbox-grid'
 import FlatButton from 'material-ui/FlatButton'
+import { graphql } from 'react-apollo'
 import RaisedButton from 'material-ui/RaisedButton'
+import Dialog from 'material-ui/Dialog'
+import IconButton from 'material-ui/IconButton'
+import TextField from 'material-ui/TextField'
+import { withRouter } from 'react-router-dom'
+
+import createPackageMutation from '../../mutations/createPackage'
 
 
 class Header extends Component {
@@ -12,7 +19,10 @@ class Header extends Component {
   }
 
   state = {
-    searchText: ''
+    searchText: '',
+    isCreatePackageModalOpen: false,
+    isCreatePackageURLValid: false,
+    createPackageURL: ''
   }
 
   _handleSearchChange = (searchText) => {
@@ -34,8 +44,54 @@ class Header extends Component {
     window.location.reload('/')
   }
 
+  _handleModalOpen = () => {
+    this.setState({ isCreatePackageModalOpen: true })
+  }
+
+  _handleModalClose = () => {
+    this.setState({ isCreatePackageModalOpen: false })
+  }
+
+  _handlePackageURLChange = (url) => {
+    this.setState({ createPackageURL: url })
+
+    if (url.includes('https://github.com')) {
+      this.setState({ isCreatePackageURLValid: true })
+    } else {
+      this.setState({ isCreatePackageURLValid: false })
+    }
+  }
+
+  _handleCreatePackage = () => {
+    const variables = {
+      repoURL: this.state.createPackageURL
+    }
+
+    this.props.data.createPacakge({ variables })
+      .then((response) => {
+        console.log(response.data.createPackage)
+      })
+      .catch((err) => {
+        console.error(err.message)
+      })
+  }
+
   render() {
     const { title, user } = this.props
+
+    const modalActions = [
+      <FlatButton
+        label="Cancel"
+        onTouchTap={this._handleModalClose}
+        style={{ marginRight: '10px' }}
+      />,
+      <RaisedButton
+        label="Submit"
+        primary={true}
+        disabled={!this.state.isCreatePackageURLValid}
+        onTouchTap={this._handleCreatePackage}
+      />
+    ]
 
     return (
       <header 
@@ -86,19 +142,45 @@ class Header extends Component {
                 }
                 {
                   user &&
-                  <RaisedButton
-                    label="Log Out"
-                    style={{ marginRight: '20px' }}
-                    onClick={() => this._logout()}
-                  />
+                  <div>
+                    <IconButton
+                      iconClassName="material-icons"
+                      tooltip="Add Package"
+                      onTouchTap={this._handleModalOpen}
+                      style={{ verticalAlign: 'middle' }}
+                    >
+                      add
+                    </IconButton>
+                    <RaisedButton
+                      label="Log Out"
+                      style={{ marginRight: '20px' }}
+                      onClick={() => this._logout()}
+                    />
+                  </div>
                 }
               </Col>
             </Row>
           </Col>
         </Row>
+        <Dialog
+          title="Add New Package"
+          actions={modalActions}
+          modal={true}
+          open={this.state.isCreatePackageModalOpen}
+        >
+          <p>Enter a valid Github url below:</p>
+          <TextField
+            fullWidth
+            hintText='e.g. https://github.com/facebook/react'
+            value={this.state.createPackageURL}
+            onChange={(e) => this._handlePackageURLChange(e.target.value)}
+          />
+        </Dialog>
       </header>
     )
   }
 }
 
-export default Header
+export default graphql(createPackageMutation, { name: 'createPackage' })(
+  withRouter(Header)
+)
