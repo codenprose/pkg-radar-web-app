@@ -1,6 +1,6 @@
-# <pkg> radar
+# pkg radar
 
-## Graph Cool 
+## Graphcool 
 - List all project ids: `graphcool projects`
 - Obtain a project file for a specific project `graphcool pull --project <project-id>`
 - Push local schema changes: `graphcool push project.graphcool`
