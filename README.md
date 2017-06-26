@@ -1,3 +1,11 @@
+# <pkg> radar
+
+## Graph Cool 
+- List all project ids: `graphcool projects`
+- Obtain a project file for a specific project `graphcool pull --project <project-id>`
+- Push local schema changes: `graphcool push project.graphcool`
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

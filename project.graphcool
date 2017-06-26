@@ -1,0 +1,37 @@
+# project: cj4de7is0kt0j01722tiovqqa
+# version: 3
+
+type File implements Node {
+  contentType: String!
+  createdAt: DateTime!
+  id: ID! @isUnique
+  name: String!
+  secret: String! @isUnique
+  size: Int!
+  updatedAt: DateTime!
+  url: String! @isUnique
+}
+
+type Package implements Node {
+  createdAt: DateTime!
+  github: Json
+  id: ID! @isUnique
+  name: String! @isUnique
+  updatedAt: DateTime!
+  userAlertsDaily: [User!]! @relation(name: "UserOnPackageDaily")
+  userAlertsWeekly: [User!]! @relation(name: "UserOnPackageWeekly")
+}
+
+type User implements Node {
+  auth0UserId: String @isUnique
+  avatar: String!
+  createdAt: DateTime!
+  email: String!
+  github: Json!
+  id: ID! @isUnique
+  name: String!
+  packageAlertsDaily: [Package!]! @relation(name: "UserOnPackageDaily")
+  packageAlertsWeekly: [Package!]! @relation(name: "UserOnPackageWeekly")
+  updatedAt: DateTime!
+  username: String! @isUnique
+}

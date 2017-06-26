@@ -248,7 +248,7 @@ module.exports = {
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': env.stringified,
-      'process.env.GRAPHQL_ENDPOINT': JSON.stringify('https://api.graph.cool/simple/v1/cj2z8w17z54wv0190hclsxkwe')
+      'process.env.GRAPHQL_ENDPOINT': JSON.stringify('https://api.graph.cool/simple/v1/cj4de7is0kt0j01722tiovqqa')
     }),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({

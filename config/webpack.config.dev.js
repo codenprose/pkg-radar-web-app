@@ -226,7 +226,7 @@ module.exports = {
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': env.stringified,
-      'process.env.GRAPHQL_ENDPOINT': JSON.stringify('https://api.graph.cool/simple/v1/cj2z8w17z54wv0190hclsxkwe')
+      'process.env.GRAPHQL_ENDPOINT': JSON.stringify('https://api.graph.cool/simple/v1/cj4de7is0kt0j01722tiovqqa')
     }),
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),
