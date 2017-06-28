@@ -2,13 +2,14 @@
 const fetch = require('isomorphic-fetch')
 
 module.exports = function (event) {
-  const responseData = event.data
-  const repoUrl = responseData.repoUrl
+  const eventData = event.data
+  const repoUrl = eventData.repoUrl
   const [owner, name] = repoUrl.replace('https://github.com/', '').split('/')
 
   const fetchRepoQuery = `
-     query fetchRepo ($owner: String!, $name: String!) {
+    query ($owner: String!, $name: String!) {
       repository(owner: $owner, name: $name) {
+        id
         url
         homepageUrl
         stargazers {
@@ -20,13 +21,13 @@ module.exports = function (event) {
         pullRequests {
           totalCount
         }
-        license
         description
+        license
         primaryLanguage {
           name
           color
         }
-        releases(last: 1) {
+        releases(first: 1) {
           edges {
             node {
               name
@@ -36,7 +37,17 @@ module.exports = function (event) {
             }
           }
         }
-        ref(qualifiedName: "master") {
+        readme: object(expression: "master:README.md") {
+          ... on Blob {
+            text
+          }
+        }
+        changelog: object(expression: "master:CHANGELOG.md") {
+          ... on Blob {
+            text
+          }
+        }
+        lastCommit: ref(qualifiedName: "master") {
           target {
             ... on Commit {
               history(first: 1) {
@@ -85,28 +96,26 @@ module.exports = function (event) {
     })
     .then((githubData) => {
       const { data: { repository } } = githubData
-      const {
-        url, homepageUrl, stargazers, issues, pullRequests,
-        license, description, primaryLanguage, ref, releases,
-      } = repository
 
-      responseData.description = description
-      responseData.homepageUrl = homepageUrl
-      responseData.issues = issues.totalCount
-      responseData.lastCommit = ref.target.history.edges[0].node
-      responseData.lastRelease = releases.edges[0].node
-      responseData.license = license
-      responseData.name = name
-      responseData.primaryLanguage = primaryLanguage
-      responseData.pullRequests = pullRequests.totalCount
-      responseData.repoUrl = url
-      responseData.stars = stargazers.totalCount
+      eventData.changelog = repository.changelog
+      eventData.description = repository.description
+      eventData.homepageUrl = repository.homepageUrl
+      eventData.issues = repository.issues.totalCount
+      eventData.lastCommit = repository.lastCommit.target.history.edges[0].node
+      eventData.lastRelease = repository.releases.edges[0].node
+      eventData.license = repository.license
+      eventData.name = repository.name
+      eventData.primaryLanguage = repository.primaryLanguage
+      eventData.pullRequests = repository.pullRequests.totalCount
+      eventData.readme = repository.readme
+      eventData.repoUrl = repository.url
+      eventData.stars = repository.stargazers.totalCount
 
-      return { data: responseData }
+      return { data: eventData }
     })
     .catch((err) => {
       console.error(err.message)
-      responseData.error = err.message
-      return { data: responseData }
+      eventData.error = err.message
+      return { data: eventData }
     })
 }
