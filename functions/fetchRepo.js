@@ -11,6 +11,7 @@ module.exports = function (event) {
       repository(owner: $owner, name: $name) {
         id
         url
+        name
         homepageUrl
         stargazers {
           totalCount
@@ -97,7 +98,7 @@ module.exports = function (event) {
     .then((githubData) => {
       const { data: { repository } } = githubData
 
-      eventData.changelog = repository.changelog
+      // eventData.changelog = repository.changelog
       eventData.description = repository.description
       eventData.homepageUrl = repository.homepageUrl
       eventData.issues = repository.issues.totalCount
