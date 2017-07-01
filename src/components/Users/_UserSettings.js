@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import IconButton from 'material-ui/IconButton'
-import RaisedButton from 'material-ui/RaisedButton'
+import { Delete } from 'material-ui-icons'
+import Button from 'material-ui/Button'
 import { 
   Table, 
   TableBody, 
@@ -9,7 +10,7 @@ import {
   TableRow, 
   TableRowColumn 
 } from 'material-ui/Table'
-import Toggle from 'material-ui/Toggle'
+import Switch from 'material-ui/Switch'
 
 
 class UserSettings extends Component {
@@ -55,23 +56,24 @@ class UserSettings extends Component {
                 </a>
               </TableRowColumn>
               <TableRowColumn>
-                <Toggle
-                  defaultToggled={true}
+                <Switch
+                  checked={true}
                   onToggle={(e, isChecked) => this.handleMonitorPackage('123', isChecked)}
                 />
               </TableRowColumn>
               <TableRowColumn>
-                <RaisedButton 
-                  primary={true} 
-                  label="View" 
-                />
+                <Button 
+                  raised
+                  color="primary"
+                >
+                  View
+                </Button>
               </TableRowColumn>
               <TableRowColumn style={{ textAlign: 'center' }}>
                 <IconButton
-                  iconClassName="material-icons"
                   onTouchTap={() => this.handleRemovePackage('123')}
                 >
-                  delete
+                  <Delete />
                 </IconButton>
               </TableRowColumn>
             </TableRow>

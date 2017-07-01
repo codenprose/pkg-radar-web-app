@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { MuiThemeProvider } from 'material-ui/styles'
 import PropTypes from 'prop-types'
 import Auth0Lock from 'auth0-lock'
 import { withRouter } from 'react-router-dom'

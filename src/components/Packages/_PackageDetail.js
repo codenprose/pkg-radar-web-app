@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
+import Grid from 'material-ui/Grid'
+import Typography from 'material-ui/Typography'
 
 import fetchPackage from '../../queries/fetchPackage'
 
@@ -13,7 +15,16 @@ class PackageDetail extends Component {
 
     return (
       <div>
-        <h2>{data.Package.name}</h2>      
+        <Grid container>
+          <Grid item>
+            <Typography
+              type="title"
+              color="inherit"
+            >
+              {data.Package.name}
+            </Typography>
+          </Grid>
+        </Grid>
       </div>
     )
   }

@@ -1,51 +1,14 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import {List, ListItem, makeSelectable} from 'material-ui/List'
-import Subheader from 'material-ui/Subheader'
-
-
-let SelectableList = makeSelectable(List)
-
-function wrapState(ComposedComponent) {
-  return class SelectableList extends Component {
-    static propTypes = {
-      children: PropTypes.node.isRequired,
-      defaultValue: PropTypes.number.isRequired,
-    }
-
-    componentWillMount() {
-      this.setState({
-        selectedIndex: this.props.defaultValue,
-      })
-    }
-
-    handleRequestChange = (event, index) => {
-      this.setState({
-        selectedIndex: index,
-      })
-    }
-
-    render() {
-      return (
-        <ComposedComponent
-          value={this.state.selectedIndex}
-          onChange={this.handleRequestChange}
-        >
-          {this.props.children}
-        </ComposedComponent>
-      )
-    }
-  }
-}
-
-SelectableList = wrapState(SelectableList)
+// import PropTypes from 'prop-types'
+import {List, ListItem, ListSubheader} from 'material-ui/List'
 
 class PackageIndexCategories extends Component {
   render() {
     return (
       <div>
-        <SelectableList defaultValue={0}>
-          <Subheader>Categories</Subheader>
+        <List 
+          subheader={<ListSubheader>Settings</ListSubheader>}
+        >
           <ListItem
             value={0}
             primaryText="All"
@@ -58,7 +21,7 @@ class PackageIndexCategories extends Component {
             value={2}
             primaryText="Python"
           />
-        </SelectableList>
+        </List>
       </div>
     )
   }

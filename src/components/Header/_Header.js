@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
-import AutoComplete from 'material-ui/AutoComplete'
-import { Link } from 'react-router-dom'
-import { Row, Col } from 'react-flexbox-grid'
-import FlatButton from 'material-ui/FlatButton'
 import { graphql } from 'react-apollo'
-import RaisedButton from 'material-ui/RaisedButton'
-import Dialog from 'material-ui/Dialog'
+import AppBar from 'material-ui/AppBar'
+import Toolbar from 'material-ui/Toolbar'
+import Button from 'material-ui/Button'
+import { Link } from 'react-router-dom'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog'
+import Typography from 'material-ui/Typography'
+import Grid from 'material-ui/Grid'
+import { Add } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
@@ -64,120 +71,121 @@ class Header extends Component {
 
   _handleCreatePackage = () => {
     const variables = {
-      repoURL: this.state.createPackageURL
+      repoURL: this.state.createPackageURL,
+      createdBy: this.props.user.id
     }
+
+    console.log('creating package', variables.repoURL)
 
     this.props.data.createPacakge({ variables })
       .then((response) => {
-        console.log(response.data.createPackage)
+        const pkg = response.data.createPackage
+        console.log('package created', pkg)
+
+        this.props.history.replace(pkg.name)
       })
       .catch((err) => {
-        console.error(err.message)
+        console.error('error creating package', err.message)
       })
   }
 
   render() {
     const { title, user } = this.props
-
-    const modalActions = [
-      <FlatButton
-        label="Cancel"
-        onTouchTap={this._handleModalClose}
-        style={{ marginRight: '10px' }}
-      />,
-      <RaisedButton
-        label="Submit"
-        primary={true}
-        disabled={!this.state.isCreatePackageURLValid}
-        onTouchTap={this._handleCreatePackage}
-      />
-    ]
-
-    return (
-      <header 
-        className="pa3"
-        style={{ height: '65px', borderBottom: '1px solid lightgray' }}
-      >
-        <Row className="h-100">
-          <Col xs={3}>
-            <Row start="xs" middle="xs" className="h-100">
-              <Col xs={12}>
-                <Link to="/" className="no-underline">
-                  <h1 className="normal black f3">{title}</h1>
-                </Link>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={6}>
-            <Row center="xs" middle="xs" className="h-100">
-              <Col xs={12}>
-                <AutoComplete
-                  hintText="Search for Packages"
-                  fullWidth={true}
-                  dataSource={[]}
-                  value={this.state.searchText}
-                  onUpdateInput={this._handleSearchChange}
-                  onNewRequest={this._handleSearchRequest}
-                />
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={3}>
-            <Row end="xs" middle="xs" className="h-100">
-              <Col xs={12}>
-                {
-                  !user &&
-                  <div>
-                    <FlatButton
-                      label="Log In"
-                      style={{ marginRight: '20px' }}
-                      onClick={() => this._login()}
-                    />
-                    <RaisedButton
-                      primary={true}
-                      label="Sign Up"
-                      onClick={() => this._login()}
-                    />
+     
+     return (
+       <div>
+          <AppBar color='inherit' position="static">
+            <Toolbar style={{ padding: '0 16px' }}>
+              <Grid container align='center' gutter={16}>
+                <Grid item md={4}>
+                  <Typography type="title">
+                    <Link to="/" className="no-underline black">
+                      {title}
+                    </Link>
+                  </Typography>
+                </Grid>
+                <Grid item xs>
+                  <TextField
+                    value={this.state.searchText}
+                    onChange={(e) => this._handleSearchChange(e.target.value)}
+                    className='w-100'
+                    InputProps={{ placeholder: 'Search for Packages' }}
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <div className='tr'>
+                   {
+                     !user &&
+                     <div>
+                       <Button
+                         className="mr3"
+                         onTouchTap={() => this._login()}
+                       >
+                         Log In
+                      </Button>
+                      <Button
+                         raised
+                         color="primary"
+                         onTouchTap={() => this._login()}
+                       >
+                         Sign Up
+                      </Button>
+                     </div>
+                   }
+                   {
+                     user &&
+                     <div>
+                       <IconButton
+                         onTouchTap={this._handleModalOpen}
+                         className='v-mid'
+                       >
+                         <Add />
+                       </IconButton>
+                       <Button
+                         raised
+                         onClick={() => this._logout()}
+                       >
+                         Logout
+                      </Button>
+                     </div>
+                   }
                   </div>
-                }
-                {
-                  user &&
-                  <div>
-                    <IconButton
-                      iconClassName="material-icons"
-                      tooltip="Add Package"
-                      onTouchTap={this._handleModalOpen}
-                      style={{ verticalAlign: 'middle' }}
-                    >
-                      add
-                    </IconButton>
-                    <RaisedButton
-                      label="Log Out"
-                      style={{ marginRight: '20px' }}
-                      onClick={() => this._logout()}
-                    />
-                  </div>
-                }
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Dialog
-          title="Add New Package"
-          actions={modalActions}
-          modal={true}
-          open={this.state.isCreatePackageModalOpen}
-        >
-          <p>Enter a valid Github url below:</p>
-          <TextField
-            fullWidth
-            hintText='e.g. https://github.com/facebook/react'
-            value={this.state.createPackageURL}
-            onChange={(e) => this._handlePackageURLChange(e.target.value)}
-          />
-        </Dialog>
-      </header>
-    )
+                </Grid>
+              </Grid>
+            </Toolbar>
+          </AppBar>
+
+          <Dialog open={this.state.isCreatePackageModalOpen}>
+           <DialogTitle>Add New Package</DialogTitle>
+           <DialogContent>
+             <DialogContentText>
+               Enter a valid Github url below:
+             </DialogContentText>
+             <TextField
+               value={this.state.createPackageURL}
+               onChange={(e) => this._handlePackageURLChange(e.target.value)}
+               InputProps={{ placeholder: 'e.g. https://github.com/facebook/react' }}
+             />
+           </DialogContent>
+           <DialogActions>
+             <Button
+               className='mr3'
+               onTouchTap={this._handleModalClose}
+             >
+               Cancel
+            </Button>
+             <Button
+               raised
+               color="primary"
+               disabled={!this.state.isCreatePackageURLValid}
+               onTouchTap={this._handleCreatePackage}
+             >
+               Submit
+            </Button>
+           </DialogActions>
+         </Dialog>
+        </div>
+     )
   }
 }
 

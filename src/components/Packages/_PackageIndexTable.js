@@ -7,7 +7,7 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table'
-import FlatButton from 'material-ui/FlatButton'
+import Button from 'material-ui/Button'
 import { Link } from 'react-router-dom'
 
 
@@ -64,7 +64,7 @@ class PackageIndexTable extends Component {
           <TableRowColumn>{item.radar.archive}%</TableRowColumn>
           <TableRowColumn>
             <Link to={`/package/${item.name.toLowerCase()}`}>
-              <FlatButton label="view" />
+              <Button>View</Button>
             </Link>
           </TableRowColumn>
         </TableRow>

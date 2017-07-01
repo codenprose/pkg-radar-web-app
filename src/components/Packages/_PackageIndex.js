@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Col } from 'react-flexbox-grid'
 
-import PackageIndexCategories from './_PackageIndexCategories'
+// import PackageIndexCategories from './_PackageIndexCategories
 import PackageIndexTable from './_PackageIndexTable'
 
 
@@ -13,7 +13,7 @@ class PackageIndex extends Component {
           <Col xs={3}>
             <Row className="h-100">
               <Col xs={12}>
-                <PackageIndexCategories />
+                {/*<PackageIndexCategories />*/}
               </Col>
             </Row>
           </Col>
