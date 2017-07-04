@@ -94,41 +94,52 @@ class Header extends Component {
      
      return (
        <div>
-          <AppBar color='inherit' position="static">
+          <AppBar
+            position="static"
+            color='primary'
+          >
             <Toolbar style={{ padding: '0 16px' }}>
               <Grid container align='center' gutter={16}>
                 <Grid item md={4}>
-                  <Typography type="title">
-                    <Link to="/" className="no-underline black">
+                  <Typography type="headline">
+                    <Link 
+                      to="/" 
+                      className='no-underline fw5 white'
+                    >
                       {title}
                     </Link>
                   </Typography>
                 </Grid>
                 <Grid item xs>
-                  <TextField
-                    value={this.state.searchText}
-                    onChange={(e) => this._handleSearchChange(e.target.value)}
-                    className='w-100'
-                    InputProps={{ placeholder: 'Search for Packages' }}
-                  />
+                  {
+                    user &&
+                    <TextField
+                      value={this.state.searchText}
+                      onChange={(e) => this._handleSearchChange(e.target.value)}
+                      className='w-100'
+                      InputProps={{ placeholder: 'Search for Packages' }}
+                    />
+                  }
                 </Grid>
                 <Grid item md={3}>
                   <div className='tr'>
                    {
                      !user &&
                      <div>
-                       <Button
+                       {/*<Button
                          className="mr3"
+                         color="default"
                          onTouchTap={() => this._login()}
                        >
                          Log In
-                      </Button>
+                      </Button>*/}
                       <Button
                          raised
-                         color="primary"
+                         color="default"
                          onTouchTap={() => this._login()}
                        >
-                         Sign Up
+                        <i className='fa fa-lg fa-github mr2' />
+                         Sign In With Github
                       </Button>
                      </div>
                    }
@@ -139,10 +150,11 @@ class Header extends Component {
                          onTouchTap={this._handleModalOpen}
                          className='v-mid'
                        >
-                         <Add />
+                         <Add style={{ color: 'white' }} />
                        </IconButton>
                        <Button
                          raised
+                         color='default'
                          onClick={() => this._logout()}
                        >
                          Logout

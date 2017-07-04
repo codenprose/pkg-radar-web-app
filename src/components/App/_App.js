@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
-import { MuiThemeProvider } from 'material-ui/styles'
+import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
 import PropTypes from 'prop-types'
 import Auth0Lock from 'auth0-lock'
 import { withRouter } from 'react-router-dom'
+import createPalette from 'material-ui/styles/palette'
+import { blueGrey } from 'material-ui/styles/colors'
 
 import { Header } from '../Header'
 import { Main } from '../Main'
@@ -11,6 +13,31 @@ import Loader from './_Loader'
 
 import createUserMutation from '../../mutations/createUser'
 import userQuery from '../../queries/user'
+
+
+const theme = createMuiTheme({
+  palette: createPalette({
+    primary: blueGrey,
+  }),
+  overrides: {
+    MuiAppBar: {
+      colorDefault: {
+        backgroundColor: 'white'
+      },
+      colorPrimary: {
+        backgroundColor: blueGrey[900]
+      },
+    },
+    MuiButton: {
+      raised: {
+        backgroundColor: 'white'
+      },
+      raisedPrimary: {
+        backgroundColor: blueGrey[900]
+      }
+    }
+  },
+});
 
 
 class App extends Component {
@@ -66,17 +93,19 @@ class App extends Component {
       .then((response) => {
         console.log('create user response', response)
         this.setState({ isLoading: false })
+
         // route user to profile
         const id = response.data.createUser.id
         this.props.history.replace(`/profile/${id}`)
       }).catch((e) => {
         console.error(e.message)
-        this.setState({ isLoading: false })
 
         // replace with refecthQueries property in mutation options object
         if (e.message.includes('User already exists')) {
           this.props.data.refetch()
         }
+
+        this.setState({ isLoading: false })
       })
   }
 
@@ -85,7 +114,7 @@ class App extends Component {
     if (data.loading || this.state.isLoading) return <Loader />
 
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
         <div>
           <Header user={data.user} auth={this.auth} />
           <Main user={data.user} auth={this.auth} />
