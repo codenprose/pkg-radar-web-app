@@ -6,6 +6,8 @@ export default gql`
       id
       name
       slug
+      description
+      license
       repoUrl
       issues
       stars

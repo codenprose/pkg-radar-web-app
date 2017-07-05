@@ -101,7 +101,7 @@ class Header extends Component {
             <Toolbar style={{ padding: '0 16px' }}>
               <Grid container align='center' gutter={16}>
                 <Grid item md={4}>
-                  <Typography type="headline">
+                  <Typography type="headline" component='h1'>
                     <Link 
                       to="/" 
                       className='no-underline fw5 white'
