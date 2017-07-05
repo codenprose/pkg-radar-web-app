@@ -7,6 +7,7 @@ export default gql`
       name
       slug
       description
+      homepageUrl
       license
       repoUrl
       issues

@@ -39,7 +39,7 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    // console.log(data)
+    console.log(data)
 
     const readmeHtml = markdownConverter.makeHtml(JSON.parse(data.Package.readme).text)
 
@@ -51,7 +51,7 @@ class PackageDetail extends Component {
             {/* Package Title */}
             <Card
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px'
               }}
             >
@@ -66,17 +66,25 @@ class PackageDetail extends Component {
                 title={Humanize.capitalizeAll(data.Package.name)}
                 subheader={data.Package.primaryLanguage.name}
               />
-              <CardContent>
+              <CardContent style={{ padding: '0 16px' }}>
                 <Typography type="body1">
                   {data.Package.description}
                 </Typography>
               </CardContent>
+              { 
+                data.Package.homepageUrl &&
+                <CardActions>
+                  <Link to={data.Package.homepageUrl} target='_blank' className='no-underline'>
+                    <Button dense>View Website</Button>
+                  </Link>
+                </CardActions>
+              }
             </Card>
 
             {/* Package Stars */}
             <Card 
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -93,7 +101,7 @@ class PackageDetail extends Component {
             {/* Package Issues */}
             <Card 
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -110,7 +118,7 @@ class PackageDetail extends Component {
             {/* Package Star-to-Issue ratio */}
             <Card
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -127,7 +135,7 @@ class PackageDetail extends Component {
             {/* Last Commit */}
             <Card
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -147,7 +155,7 @@ class PackageDetail extends Component {
             {/* Pull Requests */}
             <Card
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -167,7 +175,7 @@ class PackageDetail extends Component {
             {/* Contributors */}
             <Card 
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -187,7 +195,7 @@ class PackageDetail extends Component {
             {/* License */}
             <Card
               style={{ 
-                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                border: `2px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px' 
               }}
             >
@@ -213,17 +221,16 @@ class PackageDetail extends Component {
               indicatorColor="primary"
               textColor="primary"
             >
-              <Tab label="README" />
-              <Tab label="LATEST RELEASE" />
-              <Tab label="ANALYTICS" />
-              <Tab label="RECOMMENDATIONS" />
+              <Tab label="Readme" />
+              <Tab label="Latest Release" />
+              <Tab label="Recommendations" />
+              <Tab label="Analytics" />
             </Tabs>
             <SwipeableViews index={this.state.index} onChangeIndex={this.handleMainContentChangeIndex}>
               <TabContainer>
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
               </TabContainer>
               <TabContainer>{'Latest Release'}</TabContainer>
-              <TabContainer>{'Analytics'}</TabContainer>
               <TabContainer>
                 <Grid item md={4}>
                   <Card style={{ marginBottom: '15px' }}>
@@ -251,6 +258,7 @@ class PackageDetail extends Component {
                   </Card>
                 </Grid>
               </TabContainer>
+              <TabContainer>{'Analytics'}</TabContainer>
             </SwipeableViews>
           </Grid>
           
