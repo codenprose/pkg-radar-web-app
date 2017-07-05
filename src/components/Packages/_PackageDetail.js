@@ -39,7 +39,7 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    console.log(data)
+    // console.log(data)
 
     const readmeHtml = markdownConverter.makeHtml(JSON.parse(data.Package.readme).text)
 
@@ -51,17 +51,22 @@ class PackageDetail extends Component {
             {/* Package Title */}
             <Card
               style={{ 
-                border: `2px solid ${data.Package.primaryLanguage.color}`,
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
                 marginBottom: '15px'
               }}
             >
+              <CardHeader
+                avatar={
+                  <img 
+                    alt={`${data.Package.name}-logo`}
+                    style={{ height: '40px' }} 
+                    src='https://s3-us-west-2.amazonaws.com/mauzyio/aboutpage/React.png' 
+                  />
+                }
+                title={Humanize.capitalizeAll(data.Package.name)}
+                subheader={data.Package.primaryLanguage.name}
+              />
               <CardContent>
-                <Typography type="title" component="h2" style={{ marginBottom: '10px' }}>
-                  {Humanize.capitalizeAll(data.Package.name)}
-                </Typography>
-                <Typography type="body1" style={{ marginBottom: '10px' }}>
-                  Primary Language: {data.Package.primaryLanguage.name}
-                </Typography>
                 <Typography type="body1">
                   {data.Package.description}
                 </Typography>
@@ -69,7 +74,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Stars */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card 
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Stars
@@ -81,7 +91,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Issues */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card 
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Issues
@@ -93,7 +108,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Star-to-Issue ratio */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Issue-to-Star Ratio
@@ -105,7 +125,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Last Commit */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Last Commit
@@ -120,7 +145,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Pull Requests */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Pull Requests
@@ -135,7 +165,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Contributors */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card 
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   Contributors
@@ -150,7 +185,12 @@ class PackageDetail extends Component {
             </Card>
 
             {/* License */}
-            <Card style={{ marginBottom: '15px' }}>
+            <Card
+              style={{ 
+                border: `1px solid ${data.Package.primaryLanguage.color}`,
+                marginBottom: '15px' 
+              }}
+            >
               <CardContent>
                 <Typography type="title" component="h2">
                   License
@@ -182,14 +222,18 @@ class PackageDetail extends Component {
               <TabContainer>
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
               </TabContainer>
-              <TabContainer>{'Item Two'}</TabContainer>
-              <TabContainer>{'Item Three'}</TabContainer>
+              <TabContainer>{'Latest Release'}</TabContainer>
+              <TabContainer>{'Analytics'}</TabContainer>
               <TabContainer>
                 <Grid item md={4}>
                   <Card style={{ marginBottom: '15px' }}>
                     <CardHeader
                       avatar={
-                        <img alt='redux logo' style={{ width: '40px', height: '40px' }} src='https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.png' />
+                        <img 
+                          alt='redux logo' 
+                          style={{ height: '40px' }} 
+                          src='https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.png' 
+                        />
                       }
                       title="Redux"
                       subheader="Stars: 32,197"
