@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
 import Grid from 'material-ui/Grid'
 import Typography from 'material-ui/Typography'
-import Card, { CardContent, CardActions } from 'material-ui/Card'
+import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card'
+import { Link } from 'react-router-dom'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import Button from 'material-ui/Button'
 import SwipeableViews from 'react-swipeable-views'
@@ -175,6 +176,7 @@ class PackageDetail extends Component {
               <Tab label="README" />
               <Tab label="LATEST RELEASE" />
               <Tab label="ANALYTICS" />
+              <Tab label="RECOMMENDATIONS" />
             </Tabs>
             <SwipeableViews index={this.state.index} onChangeIndex={this.handleMainContentChangeIndex}>
               <TabContainer>
@@ -182,6 +184,29 @@ class PackageDetail extends Component {
               </TabContainer>
               <TabContainer>{'Item Two'}</TabContainer>
               <TabContainer>{'Item Three'}</TabContainer>
+              <TabContainer>
+                <Grid item md={4}>
+                  <Card style={{ marginBottom: '15px' }}>
+                    <CardHeader
+                      avatar={
+                        <img alt='redux logo' style={{ width: '40px', height: '40px' }} src='https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.png' />
+                      }
+                      title="Redux"
+                      subheader="Stars: 32,197"
+                    />
+                    <CardContent style={{ padding: '0 16px' }}>
+                      <Typography type="body1" component="p">
+                        Redux is a predictable state container for JavaScript apps.
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Link to={`/package/redux`} className='no-underline'>
+                        <Button dense>View Package</Button>
+                      </Link>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              </TabContainer>
             </SwipeableViews>
           </Grid>
           
