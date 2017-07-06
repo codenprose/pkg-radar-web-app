@@ -11,6 +11,9 @@ module.exports = function (event) {
       repository(owner: $owner, name: $name) {
         id
         url
+        owner {
+          avatarUrl
+        }
         name
         homepageUrl
         stargazers {
@@ -99,6 +102,7 @@ module.exports = function (event) {
       const { data: { repository } } = githubData
 
       // eventData.changelog = repository.changelog
+      eventData.avatar = repository.owner.avatarUrl
       eventData.description = repository.description
       eventData.homepageUrl = repository.homepageUrl
       eventData.issues = repository.issues.totalCount

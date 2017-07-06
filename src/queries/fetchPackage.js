@@ -5,6 +5,7 @@ export default gql`
     Package(name: $name) {
       id
       name
+      avatar
       slug
       description
       homepageUrl

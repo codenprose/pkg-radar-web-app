@@ -61,7 +61,7 @@ class PackageDetail extends Component {
                   <img 
                     alt={`${data.Package.name}-logo`}
                     style={{ height: '40px' }} 
-                    src='https://s3-us-west-2.amazonaws.com/mauzyio/aboutpage/React.png' 
+                    src={data.Package.avatar} 
                   />
                 }
                 title={Humanize.capitalizeAll(data.Package.name)}
@@ -219,17 +219,26 @@ class PackageDetail extends Component {
           </Grid>
 
           <Grid item md={9}>
-            <Tabs
-              index={this.state.index}
-              onChange={this.handleMainContentTabChange}
-              indicatorColor="primary"
-              textColor="primary"
-            >
-              <Tab label="Readme" />
-              <Tab label="Latest Release" />
-              <Tab label="Recommendations" />
-              <Tab label="Analytics" />
-            </Tabs>
+            <Grid container>
+              <Grid item md={9}>
+                <Tabs
+                  index={this.state.index}
+                  onChange={this.handleMainContentTabChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  fullWidth
+                >
+                  <Tab label="Readme" />
+                  <Tab label="Latest Release" />
+                  <Tab label="Recommendations" />
+                  <Tab label="Analytics" />
+                </Tabs>
+              </Grid>
+              <Grid item md={3}>
+                <Button raised style={{ marginRight: '10px' }}>Push</Button>
+                <Button raised>Monitor</Button>
+              </Grid>
+            </Grid>
             <SwipeableViews index={this.state.index} onChangeIndex={this.handleMainContentChangeIndex}>
               <TabContainer>
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
@@ -243,6 +252,8 @@ class PackageDetail extends Component {
                 </Typography>
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: lastReleaseHtml}} />
               </TabContainer>
+              
+              {/* Recommendations */}
               <TabContainer>
                 <Grid item md={4}>
                   <Card style={{ marginBottom: '15px' }}>
