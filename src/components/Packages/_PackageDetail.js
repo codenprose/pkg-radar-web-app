@@ -42,6 +42,7 @@ class PackageDetail extends Component {
     console.log(data)
 
     const readmeHtml = markdownConverter.makeHtml(JSON.parse(data.Package.readme).text)
+    const lastReleaseHtml = markdownConverter.makeHtml(data.Package.lastRelease.description)
 
     return (
       <div>
@@ -76,6 +77,9 @@ class PackageDetail extends Component {
                 <CardActions>
                   <Link to={data.Package.homepageUrl} target='_blank' className='no-underline'>
                     <Button dense>View Website</Button>
+                  </Link>
+                  <Link to={data.Package.repoUrl} target='_blank' className='no-underline'>
+                    <Button dense>View Repo</Button>
                   </Link>
                 </CardActions>
               }
@@ -230,7 +234,15 @@ class PackageDetail extends Component {
               <TabContainer>
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
               </TabContainer>
-              <TabContainer>{'Latest Release'}</TabContainer>
+              <TabContainer>
+                <Typography style={{ marginBottom: '10px' }} type="headline" component="h2">
+                  {data.Package.lastRelease.name} 
+                </Typography>
+                <Typography style={{ marginBottom: '10px' }} type="body1" component="p">
+                  Published: {data.Package.lastRelease.publishedAt}
+                </Typography>
+                <div className='markdown-body' dangerouslySetInnerHTML={{__html: lastReleaseHtml}} />
+              </TabContainer>
               <TabContainer>
                 <Grid item md={4}>
                   <Card style={{ marginBottom: '15px' }}>
