@@ -16,6 +16,8 @@ import { Add } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
+import Avatar from 'material-ui/Avatar'
+import Menu, { MenuItem } from 'material-ui/Menu'
 
 import createPackageMutation from '../../mutations/createPackage'
 
@@ -29,7 +31,19 @@ class Header extends Component {
     searchText: '',
     isCreatePackageModalOpen: false,
     isCreatePackageURLValid: false,
-    createPackageURL: ''
+    createPackageURL: '',
+    isUserMenuOpen: false,
+  }
+
+  _handleUserMenuClick = (event) => {
+    this.setState({ 
+      isUserMenuOpen: true, 
+      userMenuAnchorEl: event.currentTarget 
+    })
+  };
+
+  _handleUserMenuClose = () => {
+    this.setState({ isUserMenuOpen: false });
   }
 
   _handleSearchChange = (searchText) => {
@@ -152,13 +166,46 @@ class Header extends Component {
                        >
                          <Add style={{ color: 'white' }} />
                        </IconButton>
-                       <Button
-                         raised
-                         color='default'
-                         onClick={() => this._logout()}
+                       <Avatar
+                         src={user.avatar}
+                         alt="User Image"
+                         style={{
+                           display: 'inline-block',
+                           verticalAlign: 'middle',
+                           border: '1px solid white',
+                           cursor: 'pointer'
+                         }}
+                         onClick={this._handleUserMenuClick}
+                       />
+                       <Menu
+                         id="simple-menu"
+                         anchorEl={this.state.userMenuAnchorEl}
+                         open={this.state.isUserMenuOpen}
+                         onRequestClose={this._handleUserMenuClose}
+                         style={{ marginTop: '40px', width: '150px' }}
                        >
-                         Logout
-                      </Button>
+                         <MenuItem
+                           onClick={this._handleUserMenuClose}
+                         >
+                           <Link
+                             to={`/profile/${user.username}`}
+                             className='no-underline fw4'
+                             style={{ color: 'rgba(0, 0, 0, 0.87)' }}
+                           >
+                             Profile
+                          </Link>
+                         </MenuItem>
+                         <MenuItem onClick={this._handleUserMenuClose}>
+                           <Link
+                             to={`/settings`}
+                             className='no-underline fw4'
+                             style={{ color: 'rgba(0, 0, 0, 0.87)' }}
+                           >
+                             Settings
+                          </Link>
+                         </MenuItem>
+                         <MenuItem onClick={() => this._logout()}>Logout</MenuItem>
+                       </Menu>
                      </div>
                    }
                   </div>
