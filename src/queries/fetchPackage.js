@@ -19,6 +19,7 @@ export default gql`
       readme
       pullRequests
       readme
+      recommendations
       lastRelease
     }
   }

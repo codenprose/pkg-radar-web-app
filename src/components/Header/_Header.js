@@ -18,9 +18,17 @@ import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
+import SearchIcon from 'material-ui-icons/Search'
+import { withStyles, createStyleSheet } from 'material-ui/styles'
 
 import createPackageMutation from '../../mutations/createPackage'
 
+
+const styleSheet = createStyleSheet('TextFieldOverrides', {
+  placeholder: {
+    opacity: 1
+  }
+})
 
 class Header extends Component {
   static defaultProps = {
@@ -112,30 +120,51 @@ class Header extends Component {
             position="static"
             color='primary'
           >
-            <Toolbar style={{ padding: '0 16px' }}>
+            <Toolbar style={{ padding: '0 16px', height: '56px' }}>
               <Grid container align='center' gutter={16}>
-                <Grid item md={4}>
-                  <Typography type="headline" component='h1'>
+                <Grid item md={3}>
+                  <Typography type="title" component='h1'>
                     <Link 
                       to="/" 
-                      className='no-underline fw5 white'
+                      className='no-underline white'
                     >
                       {title}
                     </Link>
                   </Typography>
                 </Grid>
-                <Grid item xs>
+                <Grid 
+                  item 
+                  xs
+                  style={{
+                    borderRadius: '2px',
+                    height: '36px',
+                    backgroundColor: 'rgba(255,255,255,.15)',
+                    color: '#fff'
+                  }}
+                >
                   {
-                    user &&
-                    <TextField
-                      value={this.state.searchText}
-                      onChange={(e) => this._handleSearchChange(e.target.value)}
-                      className='w-100'
-                      InputProps={{ placeholder: 'Search for Packages' }}
-                    />
+                    user && 
+                    <div>
+                      <SearchIcon 
+                        style={{ verticalAlign: 'middle', margin: '0 25px 0 15px' }} 
+                      />
+                      <input 
+                        id='pr-search-input'
+                        type='text' 
+                        autoFocus
+                        placeholder='Search'
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'white',
+                          outline: 'none',
+                          width: '80%'
+                        }}
+                      /> 
+                    </div>
                   }
                 </Grid>
-                <Grid item md={3}>
+                <Grid item md={2}>
                   <div className='tr'>
                    {
                      !user &&
@@ -153,7 +182,7 @@ class Header extends Component {
                          onTouchTap={() => this._login()}
                        >
                         <i className='fa fa-lg fa-github mr2' />
-                         Sign In With Github
+                         Sign In
                       </Button>
                      </div>
                    }
@@ -173,7 +202,8 @@ class Header extends Component {
                            display: 'inline-block',
                            verticalAlign: 'middle',
                            border: '1px solid white',
-                           cursor: 'pointer'
+                           cursor: 'pointer',
+                           borderRadius: 0
                          }}
                          onClick={this._handleUserMenuClick}
                        />
@@ -248,6 +278,8 @@ class Header extends Component {
   }
 }
 
+const HeaderWithStyles = withStyles(styleSheet)(Header)
+
 export default graphql(createPackageMutation, { name: 'createPackage' })(
-  withRouter(Header)
+  withRouter(HeaderWithStyles)
 )
