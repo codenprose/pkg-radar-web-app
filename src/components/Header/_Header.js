@@ -117,12 +117,21 @@ class Header extends Component {
      return (
        <div>
           <AppBar
+            id="Header"
             position="static"
             color='primary'
           >
-            <Toolbar style={{ padding: '0 16px', height: '56px' }}>
+            <Toolbar 
+              style={{ 
+                padding: '0 16px', 
+                height: '56px', 
+                width: '100%', 
+                maxWidth: '1600px', 
+                margin: '0 auto' 
+              }}
+            >
               <Grid container align='center' gutter={16}>
-                <Grid item md={3}>
+                <Grid item xs={3}>
                   <Typography type="title" component='h1'>
                     <Link 
                       to="/" 
@@ -158,13 +167,13 @@ class Header extends Component {
                           border: 'none',
                           color: 'white',
                           outline: 'none',
-                          width: '80%'
+                          width: '90%'
                         }}
                       /> 
                     </div>
                   }
                 </Grid>
-                <Grid item md={2}>
+                <Grid item xs={2}>
                   <div className='tr'>
                    {
                      !user &&
@@ -244,16 +253,21 @@ class Header extends Component {
             </Toolbar>
           </AppBar>
 
-          <Dialog open={this.state.isCreatePackageModalOpen}>
+          <Dialog 
+            open={this.state.isCreatePackageModalOpen}
+            onRequestClose={this._handleModalClose}
+          >
            <DialogTitle>Add New Package</DialogTitle>
-           <DialogContent>
-             <DialogContentText>
-               Enter a valid Github url below:
+           <DialogContent style={{ width: '500px' }}>
+             <DialogContentText style={{ marginBottom: '10px' }}>
+               Enter a valid Github Repo url below:
              </DialogContentText>
              <TextField
+               autoFocus
                value={this.state.createPackageURL}
+               style={{ width: '100%' }}
                onChange={(e) => this._handlePackageURLChange(e.target.value)}
-               InputProps={{ placeholder: 'e.g. https://github.com/facebook/react' }}
+               InputProps={{ placeholder: 'https://github.com/facebook/react' }}
              />
            </DialogContent>
            <DialogActions>

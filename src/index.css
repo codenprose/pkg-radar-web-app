@@ -1,4 +1,5 @@
 body {
+  min-width: 1200px;
   height: 100vh;
   font-family: 'roboto';
   background-color: white;
@@ -16,4 +17,8 @@ body {
   min-width: 200px;
   max-width: 980px;
   margin: 0 auto;
+}
+
+#Header input::placeholder {
+  color: white;
 }

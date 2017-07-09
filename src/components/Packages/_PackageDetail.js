@@ -84,7 +84,7 @@ class PackageDetail extends Component {
     const { Package } = this.props.data
     return Package.recommendations.map(({ name, avatar, stars, description }) => {
       return (
-          <Grid item md={4} key={name}>
+          <Grid item xs={4} key={name}>
             <Card style={{ marginBottom: '15px' }}>
               <CardHeader
                 avatar={
@@ -126,7 +126,7 @@ class PackageDetail extends Component {
       <div>
         <Grid container>
 
-          <Grid item md={3}>
+          <Grid item xs={3}>
             {/* Package Title */}
             <Card
               style={{ 
@@ -304,9 +304,9 @@ class PackageDetail extends Component {
           </Grid>
 
           {/* Tabs */}
-          <Grid item md={9}>
+          <Grid item xs={9}>
             <Grid container>
-              <Grid item md={9}>
+              <Grid item xs={9}>
                 <Tabs
                   index={this.state.index}
                   onChange={this.handleMainContentTabChange}
@@ -320,7 +320,7 @@ class PackageDetail extends Component {
                   <Tab label="Analytics" />
                 </Tabs>
               </Grid>
-              <Grid item md={3}>
+              <Grid item xs={3}>
                 <Button raised style={{ marginRight: '10px' }}>Push</Button>
                 <Button raised>Monitor</Button>
               </Grid>
@@ -330,12 +330,12 @@ class PackageDetail extends Component {
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
               </TabContainer>
               <TabContainer>
-                <Typography style={{ marginBottom: '10px' }} type="headline" component="h2">
+                {/*<Typography style={{ marginBottom: '10px' }} type="headline" component="h2">
                   {data.Package.lastRelease.name} 
                 </Typography>
                 <Typography style={{ marginBottom: '10px' }} type="body1" component="p">
                   Published: {data.Package.lastRelease.publishedAt}
-                </Typography>
+                </Typography>*/}
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: lastReleaseHtml}} />
               </TabContainer>
               
@@ -348,7 +348,7 @@ class PackageDetail extends Component {
                   }
                   
                   {/* Add Recommendation */}
-                  <Grid item md={4}>
+                  <Grid item xs={4}>
                     <Grid 
                       container 
                       align='center' 
