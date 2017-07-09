@@ -4,6 +4,7 @@ export default gql`
   query fetchPackage($name: String!) {
     Package(name: $name) {
       id
+      owner
       name
       avatar
       slug
@@ -19,6 +20,9 @@ export default gql`
       readme
       pullRequests
       readme
+      tags {
+        name
+      }
       recommendations
       lastRelease
     }

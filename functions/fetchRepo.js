@@ -31,7 +31,7 @@ module.exports = function (event) {
           name
           color
         }
-        releases(first: 1) {
+        releases(last: 1) {
           edges {
             node {
               name
@@ -102,6 +102,7 @@ module.exports = function (event) {
       const { data: { repository } } = githubData
 
       // eventData.changelog = repository.changelog
+      eventData.owner = owner
       eventData.avatar = repository.owner.avatarUrl
       eventData.description = repository.description
       eventData.homepageUrl = repository.homepageUrl
@@ -112,7 +113,7 @@ module.exports = function (event) {
       eventData.name = repository.name
       eventData.primaryLanguage = repository.primaryLanguage
       eventData.pullRequests = repository.pullRequests.totalCount
-      eventData.readme = repository.readme
+      eventData.readme = repository.readme.text
       eventData.repoUrl = repository.url
       eventData.stars = repository.stargazers.totalCount
 

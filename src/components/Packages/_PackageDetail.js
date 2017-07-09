@@ -9,12 +9,14 @@ import Button from 'material-ui/Button'
 import SwipeableViews from 'react-swipeable-views'
 import Humanize from 'humanize-plus'
 import showdown from 'showdown'
+import Chip from 'material-ui/Chip'
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle,
 } from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField'
+import moment from 'moment'
 
 import 'github-markdown-css/github-markdown.css'
 
@@ -115,9 +117,9 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    // console.log(this.props)
+    // console.log(this.props.data)
 
-    const readmeHtml = markdownConverter.makeHtml(JSON.parse(data.Package.readme).text)
+    const readmeHtml = markdownConverter.makeHtml(data.Package.readme)
     const lastReleaseHtml = markdownConverter.makeHtml(data.Package.lastRelease.description)
 
     return (
@@ -139,25 +141,59 @@ class PackageDetail extends Component {
                     src={data.Package.avatar} 
                   />
                 }
-                title={Humanize.capitalizeAll(data.Package.name)}
+                title={`${data.Package.owner}/${data.Package.name}`}
                 subheader={data.Package.primaryLanguage.name}
               />
               <CardContent style={{ padding: '0 16px' }}>
-                <Typography type="body1">
-                  {data.Package.description}
-                </Typography>
+                {
+                  data.Package.tags.map(({name}) => {
+                    return (
+                      <Link to={`/search?=${name}`} key={name}>
+                        <Chip 
+                          label={name} 
+                          style={{
+                            display: 'inline-block', 
+                            margin: '0 10px 10px 0',
+                            cursor: 'pointer'
+                          }} 
+                        />
+                      </Link>
+                    )
+                  })
+                }
               </CardContent>
-              { 
-                data.Package.homepageUrl &&
-                <CardActions>
+              <CardActions>
+                {
+                  data.Package.homepageUrl &&
                   <Link to={data.Package.homepageUrl} target='_blank' className='no-underline'>
                     <Button dense>View Website</Button>
                   </Link>
-                  <Link to={data.Package.repoUrl} target='_blank' className='no-underline'>
-                    <Button dense>View Repo</Button>
-                  </Link>
-                </CardActions>
-              }
+                }
+                <Link to={data.Package.repoUrl} target='_blank' className='no-underline'>
+                  <Button dense>View Repo</Button>
+                </Link>
+              </CardActions>
+            </Card>
+
+            {/* Last Commit */}
+            <Card
+              style={{ 
+                marginBottom: '15px' 
+              }}
+            >
+              <CardContent>
+                <Typography type="title" component="h2">
+                  Last Commit
+                </Typography>
+                <Typography type="body1">
+                  {moment(data.Package.lastCommit.author.date).format("MMMM Do, YYYY")}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Link to={data.Package.lastCommit.commitUrl} target='_blank' className='no-underline'>
+                  <Button dense>View Commit</Button>
+                </Link>
+              </CardActions>
             </Card>
 
             {/* Package Stars */}
@@ -206,25 +242,6 @@ class PackageDetail extends Component {
                   {Humanize.formatNumber(data.Package.issues / data.Package.stars * 100)}%
                 </Typography>
               </CardContent>
-            </Card>
-
-            {/* Last Commit */}
-            <Card
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Last Commit
-                </Typography>
-                <Typography type="body1">
-                  {data.Package.lastCommit.author.date}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button dense>View Commit</Button>
-              </CardActions>
             </Card>
 
             {/* Pull Requests */}
@@ -325,7 +342,10 @@ class PackageDetail extends Component {
               {/* Recommendations */}
               <TabContainer>
                 <Grid container>
-                  {this._renderRecommendations()}
+                  {
+                    data.Package.recommendations &&
+                    this._renderRecommendations()
+                  }
                   
                   {/* Add Recommendation */}
                   <Grid item md={4}>
@@ -360,10 +380,11 @@ class PackageDetail extends Component {
            <DialogTitle>Add New Package</DialogTitle>
            <DialogContent style={{ width: '500px' }}>
              <TextField
+               autoFocus
                style={{ width: '100%' }}
                value={this.state.recommendationSearch}
                placeholder='Search for Package'
-               onChange={(e) => this._handleRecommendataionSearch(e.target.value)}
+               onChange={(e) => this._handleRecommendationSearch(e.target.value)}
              />
            </DialogContent>
            <DialogActions>
