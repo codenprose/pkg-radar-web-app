@@ -166,12 +166,13 @@ class PackageDetail extends Component {
                 {
                   data.Package.homepageUrl &&
                   <Link to={data.Package.homepageUrl} target='_blank' className='no-underline'>
-                    <Button dense>View Website</Button>
+                    <Button dense>Website</Button>
                   </Link>
                 }
                 <Link to={data.Package.repoUrl} target='_blank' className='no-underline'>
-                  <Button dense>View Repo</Button>
+                  <Button dense>Repo</Button>
                 </Link>
+                <Button dense>Update Tags</Button>
               </CardActions>
             </Card>
 

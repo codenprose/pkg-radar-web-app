@@ -21,4 +21,5 @@ body {
 
 #Header input::placeholder {
   color: white;
+  font-weight: 300;
 }

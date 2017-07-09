@@ -135,7 +135,7 @@ class Header extends Component {
                   <Typography type="title" component='h1'>
                     <Link 
                       to="/" 
-                      className='no-underline white'
+                      className='no-underline white fw4'
                     >
                       {title}
                     </Link>
