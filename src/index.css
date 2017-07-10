@@ -47,7 +47,7 @@ body {
 
 .bootstrap-typeahead-menu.dropdown-menu {
   position: relative;
-  /*z-index: -1;*/
+  z-index: 1;
   margin-top: 17px;
   padding: 10px 0;
   color: black;

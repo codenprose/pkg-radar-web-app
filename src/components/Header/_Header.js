@@ -30,7 +30,6 @@ class Header extends Component {
   }
 
   state = {
-    searchText: '',
     isCreatePackageModalOpen: false,
     isCreatePackageURLValid: false,
     createPackageURL: '',
@@ -46,15 +45,6 @@ class Header extends Component {
 
   _handleUserMenuClose = () => {
     this.setState({ isUserMenuOpen: false });
-  }
-
-  _handleSearchChange = (searchText) => {
-    this.setState({ searchText })
-  }
-
-  _handleSearchRequest = () => {
-    // Route user to Package Detail Page
-    console.log(this.state.searchText)
   }
 
    _login = () => {
@@ -106,7 +96,7 @@ class Header extends Component {
   }
 
   render() {
-    const { title, user } = this.props
+    const { history, title, user } = this.props
      
      return (
        <div>
@@ -149,23 +139,8 @@ class Header extends Component {
                   {
                     user && 
                     <div>
-                      <SearchIcon 
-                        style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} 
-                      />
-                      <Search />
-                      {/*<input 
-                        id='pr-search-input'
-                        type='text' 
-                        autoFocus
-                        placeholder='Search'
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'white',
-                          outline: 'none',
-                          width: '90%'
-                        }}
-                      /> */}
+                      <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
+                      <Search history={history}/>
                     </div>
                   }
                 </Grid>
@@ -174,13 +149,6 @@ class Header extends Component {
                    {
                      !user &&
                      <div>
-                       {/*<Button
-                         className="mr3"
-                         color="default"
-                         onTouchTap={() => this._login()}
-                       >
-                         Log In
-                      </Button>*/}
                       <Button
                          raised
                          color="default"
