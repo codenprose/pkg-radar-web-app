@@ -154,7 +154,8 @@ class PackageDetail extends Component {
                           style={{
                             display: 'inline-block', 
                             margin: '0 10px 10px 0',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            borderRadius: 0
                           }} 
                         />
                       </Link>

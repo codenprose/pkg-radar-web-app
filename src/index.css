@@ -19,7 +19,80 @@ body {
   margin: 0 auto;
 }
 
+/* Header Component */
 #Header input::placeholder {
   color: white;
   font-weight: 300;
+}
+
+/* React Bootstrap Typeahead */
+.bootstrap-tokenizer-input,
+.bootstrap-typeahead-input {
+  margin: 10px 0 0 55px;
+}
+
+.bootstrap-typeahead-input-main { 
+  width: 100%;
+  background-color: inherit;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+.bootstrap-typeahead-input-hint {
+  background-color: inherit;
+  border: none;
+  outline: none;
+}
+
+.bootstrap-typeahead-menu.dropdown-menu {
+  position: relative;
+  /*z-index: -1;*/
+  margin-top: 17px;
+  padding: 10px 0;
+  color: black;
+  background-color: white;
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.24);
+}
+
+.bootstrap-typeahead-menu.dropdown-menu li {
+  list-style: none;
+  padding: 5px 0 5px 15px;
+  cursor: pointer;
+}
+
+.token-removeable:first-of-type {
+  margin-left: 55px;
+}
+
+.token-removeable {
+  display: inline-block;
+  margin-right: 10px;
+  background: white;
+  min-width: 60px;
+  color: black;
+  padding: 5px 7px;
+  border-radius: 2px;
+}
+
+.token-removeable .close-button {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.bootstrap-typeahead-clear-button {
+  position: absolute;
+  top: -3px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu>li:focus,
+.dropdown-menu>li:hover {
+  text-decoration: none;
+  background-color: lightgray;
+}
+
+.dropdown-menu>li.active {
+  background-color: lightgray;
 }

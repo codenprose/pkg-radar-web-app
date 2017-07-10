@@ -19,16 +19,10 @@ import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import SearchIcon from 'material-ui-icons/Search'
-import { withStyles, createStyleSheet } from 'material-ui/styles'
 
+import Search from './_Search'
 import createPackageMutation from '../../mutations/createPackage'
 
-
-const styleSheet = createStyleSheet('TextFieldOverrides', {
-  placeholder: {
-    opacity: 1
-  }
-})
 
 class Header extends Component {
   static defaultProps = {
@@ -135,7 +129,7 @@ class Header extends Component {
                   <Typography type="title" component='h1'>
                     <Link 
                       to="/" 
-                      className='no-underline white fw4'
+                      className='no-underline white'
                     >
                       {title}
                     </Link>
@@ -148,16 +142,18 @@ class Header extends Component {
                     borderRadius: '2px',
                     height: '36px',
                     backgroundColor: 'rgba(255,255,255,.15)',
-                    color: '#fff'
+                    color: '#fff',
+                    padding: '0'
                   }}
                 >
                   {
                     user && 
                     <div>
                       <SearchIcon 
-                        style={{ verticalAlign: 'middle', margin: '0 25px 0 15px' }} 
+                        style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} 
                       />
-                      <input 
+                      <Search />
+                      {/*<input 
                         id='pr-search-input'
                         type='text' 
                         autoFocus
@@ -169,7 +165,7 @@ class Header extends Component {
                           outline: 'none',
                           width: '90%'
                         }}
-                      /> 
+                      /> */}
                     </div>
                   }
                 </Grid>
@@ -292,8 +288,6 @@ class Header extends Component {
   }
 }
 
-const HeaderWithStyles = withStyles(styleSheet)(Header)
-
 export default graphql(createPackageMutation, { name: 'createPackage' })(
-  withRouter(HeaderWithStyles)
+  withRouter(Header)
 )

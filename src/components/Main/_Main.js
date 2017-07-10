@@ -7,8 +7,6 @@ import { UserProfile, UserSettings } from '../Users'
 
 class Main extends Component {
   render() {
-    // const { auth } = this.props
-
     return (
       <main 
         className="pa3" 
@@ -24,6 +22,5 @@ class Main extends Component {
     )
   }
 }
-
 
 export default Main
