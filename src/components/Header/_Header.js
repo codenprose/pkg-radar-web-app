@@ -37,9 +37,9 @@ class Header extends Component {
   }
 
   _handleUserMenuClick = (event) => {
-    this.setState({ 
-      isUserMenuOpen: true, 
-      userMenuAnchorEl: event.currentTarget 
+    this.setState({
+      isUserMenuOpen: true,
+      userMenuAnchorEl: event.currentTarget
     })
   };
 
@@ -97,7 +97,7 @@ class Header extends Component {
 
   render() {
     const { history, title, user } = this.props
-     
+
      return (
        <div>
           <AppBar
@@ -105,29 +105,29 @@ class Header extends Component {
             position="static"
             color='primary'
           >
-            <Toolbar 
-              style={{ 
-                padding: '0 16px', 
-                height: '56px', 
-                width: '100%', 
-                maxWidth: '1600px', 
-                margin: '0 auto' 
+            <Toolbar
+              style={{
+                padding: '0 16px',
+                height: '56px',
+                width: '100%',
+                maxWidth: '1600px',
+                margin: '0 auto'
               }}
             >
               <Grid container align='center' gutter={16}>
                 <Grid item xs={3}>
                   <Typography type="title" component='h1'>
-                    <Link 
-                      to="/" 
+                    <Link
+                      to="/"
                       className='no-underline white'
                     >
                       {title}
                     </Link>
                   </Typography>
                 </Grid>
-                <Grid 
-                  item 
-                  xs
+                <Grid
+                  item
+                  xs={7}
                   style={{
                     borderRadius: '2px',
                     height: '36px',
@@ -137,7 +137,7 @@ class Header extends Component {
                   }}
                 >
                   {
-                    user && 
+                    user &&
                     <div>
                       <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
                       <Search history={history}/>
@@ -217,7 +217,7 @@ class Header extends Component {
             </Toolbar>
           </AppBar>
 
-          <Dialog 
+          <Dialog
             open={this.state.isCreatePackageModalOpen}
             onRequestClose={this._handleModalClose}
           >
