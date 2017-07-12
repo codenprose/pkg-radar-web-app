@@ -8,7 +8,7 @@ import Tabs, { Tab } from 'material-ui/Tabs'
 import Button from 'material-ui/Button'
 import SwipeableViews from 'react-swipeable-views'
 import Humanize from 'humanize-plus'
-import showdown from 'showdown'
+import marked from 'marked'
 import Chip from 'material-ui/Chip'
 import Dialog, {
   DialogActions,
@@ -23,8 +23,6 @@ import 'github-markdown-css/github-markdown.css'
 import fetchPackage from '../../queries/fetchPackage'
 import updatePackageRecommendations from '../../mutations/updatePackageRecommendations'
 
-
-const markdownConverter = new showdown.Converter()
 
 const TabContainer = props =>
   <div style={{ padding: '24px' }}>
@@ -117,15 +115,15 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    const readmeHtml = markdownConverter.makeHtml(data.Package.readme)
+    const readmeHtml = marked(data.Package.readme)
     let changelogHtml = '<div>No Data Available</div>'
     
     if (data.Package.lastRelease) {
-      changelogHtml = markdownConverter.makeHtml(data.Package.lastRelease.description)
+      changelogHtml = marked(data.Package.lastRelease.description)
     }
 
     if (data.Package.changelog) {
-      changelogHtml = markdownConverter.makeHtml(data.Package.changelog)
+      changelogHtml = marked(data.Package.changelog)
     }
 
     return (

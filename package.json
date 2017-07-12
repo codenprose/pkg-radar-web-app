@@ -10,6 +10,7 @@
     "github-markdown-css": "^2.8.0",
     "graphql-tag": "^2.4.0",
     "humanize-plus": "^1.8.2",
+    "marked": "^0.3.6",
     "material-ui": "^1.0.0-alpha.20",
     "material-ui-icons": "^1.0.0-alpha.19",
     "moment": "^2.18.1",
@@ -21,7 +22,6 @@
     "react-router-dom": "^4.1.1",
     "react-swipeable-views": "^0.12.3",
     "react-tap-event-plugin": "^2.0.1",
-    "showdown": "^1.7.1",
     "styled-components": "^2.1.1"
   },
   "devDependencies": {
