@@ -48,6 +48,7 @@ class KanbanBoardContainer extends Component {
   }
 
   render() {
+    // console.log(this.state.cards)
     return (
       <KanbanBoard
         cards={this.state.cards}

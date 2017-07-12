@@ -7,6 +7,8 @@ import { UserProfile, UserSettings } from '../Users'
 
 class Main extends Component {
   render() {
+    const { user } = this.props
+
     return (
       <main 
         className="pa3" 
@@ -15,8 +17,8 @@ class Main extends Component {
         <Switch>
           <Route exact path="/" render={(props) => <PackageIndex {...props} />} />
           <Route exact path="/package/:name" render={(props) => <PackageDetail {...props} />} />
-          <Route exact path="/profile/:username" render={(props) => <UserProfile {...props} />} />
-          <Route exact path="/settings" render={(props) => <UserSettings {...props} />} />
+          <Route exact path="/profile/:username" render={(props) => <UserProfile {...props} user={user} />} />
+          <Route exact path="/settings" render={(props) => <UserSettings {...props} user={user} />} />
         </Switch>
       </main>
     )

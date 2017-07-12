@@ -5,6 +5,7 @@ import Button from "material-ui/Button";
 import { DragSource, DropTarget } from 'react-dnd';
 import constants from '../../constants';
 import styled from 'styled-components'
+import Humanize from 'humanize-plus'
 
 const cardDragSpec = {
   beginDrag(props) {
@@ -63,7 +64,7 @@ class KanbanCard extends Component {
           <Card>
             <CardHeader
               title={name}
-              subheader={`stars: ${stars}`}
+              subheader={`stars: ${Humanize.formatNumber(stars)}`}
               avatar={
                 <img alt={`${name}-logo`} style={{ height: "40px" }} src={avatar} />
               }

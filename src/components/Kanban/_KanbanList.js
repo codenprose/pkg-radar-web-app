@@ -38,12 +38,8 @@ class KanbanList extends Component {
       return (
         <KanbanCard
           key={card.id}
-          id={card.id}
-          name={card.name}
-          description={card.description}
-          avatar={card.avatar}
-          stars={card.stars}
           cardCallbacks={cardCallbacks}
+          {...card}
         />
       );
     });
