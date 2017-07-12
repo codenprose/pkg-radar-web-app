@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { KanbanBoard } from '../Kanban'
+import { KanbanBoardContainer } from '../Kanban'
 
 class UserProfile extends Component {
   static defaultProps = {
@@ -34,7 +34,7 @@ class UserProfile extends Component {
     return (
       <div>
         <h2>User Profile</h2>
-        <KanbanBoard cards={data.packages} />
+        <KanbanBoardContainer cards={data.packages} />
       </div>
     );
   }

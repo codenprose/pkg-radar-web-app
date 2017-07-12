@@ -1,1 +1,1 @@
-export { default as KanbanBoard } from './_KanbanBoard'
+export { default as KanbanBoardContainer } from './_KanbanBoardContainer'

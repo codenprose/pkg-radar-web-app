@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import Grid from "material-ui/Grid";
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import KanbanList from "./_KanbanList";
 
 class KanbanBoard extends Component {
   render() {
-    const { cards } = this.props;
+    const { cards, cardCallbacks } = this.props;
 
     return (
       <Grid container>
@@ -14,6 +16,7 @@ class KanbanBoard extends Component {
             id="backlog"
             title="Backlog"
             cards={cards.filter(card => card.status === "backlog")}
+            cardCallbacks={cardCallbacks}
           />
         </Grid>
         <Grid item xs={3}>
@@ -21,6 +24,7 @@ class KanbanBoard extends Component {
             id="staging"
             title="Staging"
             cards={cards.filter(card => card.status === "staging")}
+            cardCallbacks={cardCallbacks}
           />
         </Grid>
         <Grid item xs={3}>
@@ -28,6 +32,7 @@ class KanbanBoard extends Component {
             id="production"
             title="Production"
             cards={cards.filter(card => card.status === "production")}
+            cardCallbacks={cardCallbacks}
           />
         </Grid>
         <Grid item xs={3}>
@@ -35,10 +40,12 @@ class KanbanBoard extends Component {
             id="archive"
             title="Archive"
             cards={cards.filter(card => card.status === "archive")}
+            cardCallbacks={cardCallbacks}
           />
         </Grid>
       </Grid>
     );
   }
 }
-export default KanbanBoard;
+
+export default DragDropContext(HTML5Backend)(KanbanBoard);
