@@ -117,10 +117,16 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    // console.log(this.props.data)
-
     const readmeHtml = markdownConverter.makeHtml(data.Package.readme)
-    const lastReleaseHtml = markdownConverter.makeHtml(data.Package.lastRelease.description)
+    let changelogHtml = '<div>No Data Available</div>'
+    
+    if (data.Package.lastRelease) {
+      changelogHtml = markdownConverter.makeHtml(data.Package.lastRelease.description)
+    }
+
+    if (data.Package.changelog) {
+      changelogHtml = markdownConverter.makeHtml(data.Package.changelog)
+    }
 
     return (
       <div>
@@ -332,13 +338,18 @@ class PackageDetail extends Component {
                 <div className='markdown-body' dangerouslySetInnerHTML={{__html: readmeHtml}} />
               </TabContainer>
               <TabContainer>
-                {/*<Typography style={{ marginBottom: '10px' }} type="headline" component="h2">
-                  {data.Package.lastRelease.name} 
-                </Typography>
-                <Typography style={{ marginBottom: '10px' }} type="body1" component="p">
-                  Published: {data.Package.lastRelease.publishedAt}
-                </Typography>*/}
-                <div className='markdown-body' dangerouslySetInnerHTML={{__html: lastReleaseHtml}} />
+                {
+                  data.Package.lastRelease &&
+                  <div>
+                    <Typography style={{ marginBottom: '10px' }} type="display1" component="h2">
+                      {data.Package.lastRelease.name} 
+                    </Typography>
+                    <Typography style={{ marginBottom: '20px' }} type="body1" component="p">
+                      Published: {moment(data.Package.lastRelease.publishedAt).format("MMMM Do, YYYY")}
+                    </Typography>
+                  </div>
+                }
+                <div className='markdown-body' dangerouslySetInnerHTML={{__html: changelogHtml}} />
               </TabContainer>
               
               {/* Recommendations */}
@@ -409,7 +420,6 @@ class PackageDetail extends Component {
     )
   }
 }
-
 
 const fetchPackageOptions = {
   options: (props) => { return { 

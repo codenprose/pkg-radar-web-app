@@ -25,6 +25,7 @@ export default gql`
       }
       recommendations
       lastRelease
+      changelog
     }
   }
 `

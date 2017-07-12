@@ -21,7 +21,8 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import SearchIcon from 'material-ui-icons/Search'
 
 import Search from './_Search'
-import createPackageMutation from '../../mutations/createPackage'
+
+import CREATE_PACKAGE_MUTATION from '../../mutations/createPackage'
 
 
 class Header extends Component {
@@ -34,6 +35,7 @@ class Header extends Component {
     isCreatePackageURLValid: false,
     createPackageURL: '',
     isUserMenuOpen: false,
+    isCreatePackageLoading: false
   }
 
   _handleUserMenuClick = (event) => {
@@ -75,24 +77,38 @@ class Header extends Component {
     }
   }
 
-  _handleCreatePackage = () => {
-    const variables = {
-      repoURL: this.state.createPackageURL,
-      createdBy: this.props.user.id
+  _handleCreatePackage = async () => {
+    console.log('creating package', this.state.createPackageURL)
+    this.setState({ isCreatePackageLoading: true })
+
+    try {
+      const pkg = await this.props.createPackage({ 
+        variables: {
+          repoUrl: this.state.createPackageURL,
+          createdBy: this.props.user.id
+        }
+      })
+
+      this.setState({ 
+        isCreatePackageModalOpen: false, 
+        isCreatePackageLoading: false 
+      })
+
+      const name = pkg.data.createPackage.name
+
+      if (name) {
+        console.info('pkg created', name)
+        this.props.history.replace(`/package/${name}`)
+      } else {
+        console.error('pkg name is undefined')
+      }
+    } catch(e) {
+      this.setState({ 
+        isCreatePackageModalOpen: false,
+        isCreatePackageLoading: false 
+      })
+      console.error(e)
     }
-
-    console.log('creating package', variables.repoURL)
-
-    this.props.data.createPacakge({ variables })
-      .then((response) => {
-        const pkg = response.data.createPackage
-        console.log('package created', pkg)
-
-        this.props.history.replace(pkg.name)
-      })
-      .catch((err) => {
-        console.error('error creating package', err.message)
-      })
   }
 
   render() {
@@ -256,6 +272,6 @@ class Header extends Component {
   }
 }
 
-export default graphql(createPackageMutation, { name: 'createPackage' })(
+export default graphql(CREATE_PACKAGE_MUTATION, { name: 'createPackage' })(
   withRouter(Header)
 )

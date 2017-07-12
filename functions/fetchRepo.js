@@ -4,7 +4,9 @@ const fetch = require('isomorphic-fetch')
 module.exports = function (event) {
   const eventData = event.data
   const repoUrl = eventData.repoUrl
-  const [owner, name] = repoUrl.replace('https://github.com/', '').split('/')
+  const arr = repoUrl.replace('https://github.com/', '').split('/')
+  const owner = arr[0]
+  const name = arr[1]
 
   const fetchRepoQuery = `
     query ($owner: String!, $name: String!) {
@@ -101,22 +103,29 @@ module.exports = function (event) {
     .then((githubData) => {
       const { data: { repository } } = githubData
 
-      // eventData.changelog = repository.changelog
       eventData.owner = owner
       eventData.avatar = repository.owner.avatarUrl
       eventData.description = repository.description
       eventData.homepageUrl = repository.homepageUrl
       eventData.issues = repository.issues.totalCount
       eventData.lastCommit = repository.lastCommit.target.history.edges[0].node
-      eventData.lastRelease = repository.releases.edges[0].node
       eventData.license = repository.license
-      eventData.name = repository.name
+      eventData.name = name
       eventData.primaryLanguage = repository.primaryLanguage
       eventData.pullRequests = repository.pullRequests.totalCount
       eventData.readme = repository.readme.text
       eventData.repoUrl = repository.url
       eventData.stars = repository.stargazers.totalCount
 
+      if (repository.releases.edges.length) {
+        eventData.lastRelease =  repository.releases.edges[0].node
+      } 
+
+      if (repository.changelog) {
+        eventData.changelog = repository.changelog.text
+      }
+
+      // console.log(githubData)
       return { data: eventData }
     })
     .catch((err) => {
