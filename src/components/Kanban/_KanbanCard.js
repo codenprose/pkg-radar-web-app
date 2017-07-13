@@ -111,7 +111,7 @@ class KanbanCard extends Component {
               </Collapse>
               <CardActions>
                 <Link to={`/package/${name}`} className='no-underline'>
-                  <Button dense>View</Button>
+                  <Button dense>View Package</Button>
                 </Link>
                 <Button dense onClick={() => removeCard(id)}>Remove</Button>
                 <div className={classes.flexGrow} />

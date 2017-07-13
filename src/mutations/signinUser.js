@@ -2,10 +2,14 @@ import gql from 'graphql-tag'
 
 
 export default gql`
-  mutation signinUser ($idToken: String!) {
+  mutation signInUser ($idToken: String!) {
     signinUser(auth0: { idToken: $idToken }) {
       user {
-        id
+        id,
+        avatar,
+        username,
+        email,
+        packages
       }
     }
   }

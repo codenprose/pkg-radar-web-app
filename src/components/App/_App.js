@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
 import PropTypes from 'prop-types'
 import Auth0Lock from 'auth0-lock'
@@ -11,9 +11,9 @@ import { Header } from '../Header'
 import { Main } from '../Main'
 import Loader from './_Loader'
 
-import createUserMutation from '../../mutations/createUser'
-import userQuery from '../../queries/user'
-
+import CreateUserMutation from '../../mutations/createUser'
+import SignInMutation from '../../mutations/signInUser'
+import UserQuery from '../../queries/user'
 
 const theme = createMuiTheme({
   palette: createPalette({
@@ -61,52 +61,79 @@ class App extends Component {
       console.log('authenticated')
       this.setState({ isLoading: true })
 
-      window.localStorage.setItem('accessToken', authResult.accessToken)
-      window.localStorage.setItem('auth0IdToken', authResult.idToken)
+      const accessToken = window.localStorage.getItem('accessToken');
+      if (accessToken) {
+        window.localStorage.setItem('auth0IdToken', authResult.idToken)
+        this._siginInUser(authResult.idToken)
+      } else {
+        window.localStorage.setItem('accessToken', authResult.accessToken)
+        window.localStorage.setItem('auth0IdToken', authResult.idToken)
 
-      this.auth.getUserInfo(authResult.accessToken, (error, profile) => {
-        if (error) {
-          // Handle error
-          console.error(error)
-          return;
-        }
+        this.auth.getUserInfo(authResult.accessToken, (error, profile) => {
+          if (error) {
+            // Handle error
+            console.error(error)
+            return;
+          }
 
-        console.log(profile)
-        this.createUser(authResult.idToken, profile)
-      })
+          console.log(profile)
+          this._createUser(authResult.idToken, profile)
+        })
+      }
+
     })
   }
 
-  createUser = (idToken, profile) => {
+  _siginInUser = async (idToken) => {
+    try {
+      await this.props.signinUser({
+        variables: { idToken },
+        update: (store, { data: { signinUser } }) => {
+          let data = {}
+          data.user = signinUser.user
+          // Triggers component re-render
+          store.writeQuery({ 
+            query: UserQuery,
+            data
+          })
+        }
+      });
+      this.setState({ isLoading: false })
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  _createUser = (idToken, profile) => {
     console.log('create user')
 
-    const variables = {
-      idToken: idToken,
-      name: profile.name,
-      username: profile.nickname,
-      email: profile.email,
-      avatar: profile.picture,
-      github: profile
-    }
+    this.props.createUser({ 
+      variables: {
+        idToken: idToken,
+        name: profile.name,
+        username: profile.nickname,
+        email: profile.email,
+        avatar: profile.picture,
+        github: profile
+      }
+    })
+    .then((response) => {
+      console.log('create user response', response)
+      this.setState({ isLoading: false })
 
-    this.props.createUser({ variables })
-      .then((response) => {
-        console.log('create user response', response)
-        this.setState({ isLoading: false })
+      // route user to profile
+      const username = response.data.createUser.username
+      this.props.history.replace(`/profile/${username}`)
+    }).catch((e) => {
+      console.error(e.message)
 
-        // route user to profile
-        const id = response.data.createUser.id
-        this.props.history.replace(`/profile/${id}`)
-      }).catch((e) => {
-        console.error(e.message)
+      // replace with refecthQueries property in mutation options object
+      if (e.message.includes('User already exists')) {
+        this.props.data.refetch()
+      }
 
-        // replace with refecthQueries property in mutation options object
-        if (e.message.includes('User already exists')) {
-          this.props.data.refetch()
-        }
-
-        this.setState({ isLoading: false })
-      })
+      this.setState({ isLoading: false })
+    })
   }
 
   render() {
@@ -124,7 +151,8 @@ class App extends Component {
   }
 }
 
-
-export default graphql(createUserMutation, {name: 'createUser'} )(
-  graphql(userQuery, { options: {fetchPolicy: 'network-only'}})(withRouter(App))
-)
+export default compose(
+  graphql(UserQuery, { options: {fetchPolicy: 'network-only'}}),
+  graphql(CreateUserMutation, {name: 'createUser'} ),
+  graphql(SignInMutation, {name: 'signinUser'} )
+)(withRouter(App))
