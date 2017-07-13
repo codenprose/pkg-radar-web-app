@@ -78,10 +78,10 @@ class KanbanBoardContainer extends Component {
       });
       console.log("user packages updated");
       console.table(response.data.updateUser.packages);
-      this._handlePackageModal()
+      this._handlePackageModalClose()
     } catch (e) {
       console.error(e);
-      this._handlePackageModal()
+      this._handlePackageModalClose()
     }
   };
 
@@ -97,9 +97,20 @@ class KanbanBoardContainer extends Component {
     this.setState({ cards: nextState });
   };
 
-  _handlePackageModal = () => {
-    this.setState({ isAddPackageModalOpen: !this.state.isAddPackageModalOpen });
+  _removeCard = (id) => {
+    // Filter out selected card
+    let nextState = [...this.state.cards].filter(card => card.id !== id)
+
+    this.setState({ cards: nextState }, this.updateUserPackages)
+  }
+
+  _handlePackageModalOpen = () => {
+    this.setState({ isAddPackageModalOpen: true });
   };
+
+  _handlePackageModalClose = () => {
+     this.setState({ isAddPackageModalOpen: false });
+  }
 
   _handlePackageStatus = (e) => {
     this.setState({ packageStatus: e.target.value });
@@ -114,8 +125,7 @@ class KanbanBoardContainer extends Component {
     if (!packageStatus) {
       alert('Please select a list')
     } else {
-      this.setState({ selectedPackage })
-      this._addCard(selectedPackage)
+      this.setState({ selectedPackage }, this._addCard(selectedPackage))
     }
   }
 
@@ -128,14 +138,15 @@ class KanbanBoardContainer extends Component {
           cardCallbacks={{
             updateStatus: throttle(this.updateCardStatus),
             updatePosition: throttle(this.updateCardPosition, 500),
-            persistCardDrag: this.updateUserPackages
+            persistCardDrag: this.updateUserPackages,
+            removeCard: this._removeCard
           }}
         />
         <Button
           fab
           color="primary"
           style={{ position: "fixed", bottom: "20px", right: "20px" }}
-          onClick={this._handlePackageModal}
+          onClick={this._handlePackageModalOpen}
         >
           <AddIcon />
         </Button>
@@ -180,7 +191,7 @@ class KanbanBoardContainer extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className="mr3" onTouchTap={this._handlePackageModal}>
+            <Button className="mr3" onTouchTap={this._handlePackageModalClose}>
               Cancel
             </Button>
             <Button

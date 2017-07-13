@@ -70,6 +70,7 @@ class KanbanCard extends Component {
 
   render() {
     const {
+      id,
       name,
       stars,
       description,
@@ -78,6 +79,8 @@ class KanbanCard extends Component {
       connectDropTarget,
       classes
     } = this.props;
+
+    const { removeCard } = this.props.cardCallbacks;
 
     return connectDropTarget(
       connectDragSource(
@@ -108,8 +111,9 @@ class KanbanCard extends Component {
               </Collapse>
               <CardActions>
                 <Link to={`/package/${name}`} className='no-underline'>
-                  <Button dense>View Package</Button>
+                  <Button dense>View</Button>
                 </Link>
+                <Button dense onClick={() => removeCard(id)}>Remove</Button>
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {
