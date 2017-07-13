@@ -8,18 +8,21 @@ import Dialog, {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
+  DialogTitle
+} from "material-ui/Dialog";
+import { LabelRadio } from "material-ui/Radio";
 
 import KanbanBoard from "./_KanbanBoard";
+import SearchPackages from "./_SearchPackages";
 import UPDATE_USER_PACKAGES_MUTATION from "../../mutations/updateUserPackages";
 
 class KanbanBoardContainer extends Component {
   state = {
     cards: this.props.cards,
     isAddPackageModalOpen: false,
-    packageSearchText: ''
+    packageSearchText: "",
+    packageStatus: "",
+    selectedPackage: {}
   };
 
   updateCardStatus = (cardId, listId) => {
@@ -75,20 +78,49 @@ class KanbanBoardContainer extends Component {
       });
       console.log("user packages updated");
       console.table(response.data.updateUser.packages);
+      this._handlePackageModal()
     } catch (e) {
       console.error(e);
+      this._handlePackageModal()
     }
   };
 
-  _handleAddPackageModal = () => {
-    this.setState({ isAddPackageModalOpen: !this.state.isAddPackageModalOpen })
-  }
+  _addCard = (card) => {
+    // Keep a reference to the original state prior to the mutations
+    // in case we need to revert the optimistic changes in the UI
+    // let prevState = this.state;
 
-  _handlePackageSearchChange = (text) => {
-    this.setState({ packageSearchText: text })
+    // Create a new object and push the new card to the array of cards
+    let nextState = update(this.state.cards, { $push: [card] });
+
+    // set the component state to the mutated object
+    this.setState({ cards: nextState });
+  };
+
+  _handlePackageModal = () => {
+    this.setState({ isAddPackageModalOpen: !this.state.isAddPackageModalOpen });
+  };
+
+  _handlePackageStatus = (e) => {
+    this.setState({ packageStatus: e.target.value });
+  };
+
+  _handlePackageSelect = (pkg) => {
+    const { id, name, avatar, description, stars } = pkg
+    const { packageStatus } = this.state
+
+    const selectedPackage = { id, name, avatar, description, stars, status: packageStatus }
+
+    if (!packageStatus) {
+      alert('Please select a list')
+    } else {
+      this.setState({ selectedPackage })
+      this._addCard(selectedPackage)
+    }
   }
 
   render() {
+    // console.log(this.state.cards)
     return (
       <div>
         <KanbanBoard
@@ -99,48 +131,65 @@ class KanbanBoardContainer extends Component {
             persistCardDrag: this.updateUserPackages
           }}
         />
-        <Button 
-          fab 
-          color="primary" 
-          style={{ position: 'fixed', bottom: '20px', right: '20px' }}
-          onClick={this._handleAddPackageModal}
+        <Button
+          fab
+          color="primary"
+          style={{ position: "fixed", bottom: "20px", right: "20px" }}
+          onClick={this._handlePackageModal}
         >
           <AddIcon />
         </Button>
         <Dialog
-            open={this.state.isAddPackageModalOpen}
-            onRequestClose={this._handleAddPackageModal}
-          >
-           <DialogTitle>Add Package</DialogTitle>
-           <DialogContent style={{ width: '500px' }}>
-             <DialogContentText style={{ marginBottom: '10px' }}>
-               Enter a Package Name below:
-             </DialogContentText>
-             <TextField
-               autoFocus
-               value={this.state.packageSearchText}
-               style={{ width: '100%' }}
-               onChange={(e) => this._handlePackageSearchChange(e.target.value)}
-               InputProps={{ placeholder: 'e.g. react, apollo-client, boto' }}
-             />
-           </DialogContent>
-           <DialogActions>
-             <Button
-               className='mr3'
-               onTouchTap={this._handleAddPackageModal}
-             >
-               Cancel
+          open={this.state.isAddPackageModalOpen}
+          onRequestClose={this._handlePackageModal}
+        >
+          <DialogTitle>Add Package</DialogTitle>
+          <DialogContent style={{ width: "500px", marginBottom: '20px' }}>
+            <DialogContentText style={{ marginBottom: "10px" }}>
+              Select List and Enter a Package Name below:
+            </DialogContentText>
+            <div className="mb3">
+              <LabelRadio 
+                label="Backlog" 
+                value="backlog"
+                checked={this.state.packageStatus === 'backlog'}
+                onChange={this._handlePackageStatus}
+              />
+              <LabelRadio 
+                label="Staging" 
+                value="staging"
+                checked={this.state.packageStatus === 'staging'}
+                onChange={this._handlePackageStatus}
+              />
+              <LabelRadio 
+                label="Production" 
+                value="production"
+                checked={this.state.packageStatus === 'production'}
+                onChange={this._handlePackageStatus}
+              />
+              <LabelRadio 
+                label="Archive" 
+                value="archive"
+                checked={this.state.packageStatus === 'archive'}
+                onChange={this._handlePackageStatus}
+              />
+            </div>
+            <SearchPackages _handlePackageSelect={this._handlePackageSelect} />
+          </DialogContent>
+          <DialogActions>
+            <Button className="mr3" onTouchTap={this._handlePackageModal}>
+              Cancel
             </Button>
-             <Button
-               raised
-               color="primary"
-               disabled={!this.state.packageSearchText}
-               onTouchTap={this.updateUserPackages}
-             >
-               Submit
+            <Button
+              raised
+              color="primary"
+              disabled={!this.state.selectedPackage.id}
+              onTouchTap={this.updateUserPackages}
+            >
+              Submit
             </Button>
-           </DialogActions>
-         </Dialog>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

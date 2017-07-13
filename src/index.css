@@ -26,17 +26,26 @@ body {
 }
 
 /* React Bootstrap Typeahead */
-.bootstrap-tokenizer-input,
-.bootstrap-typeahead-input {
+#Header .bootstrap-tokenizer-input,
+#Header .bootstrap-typeahead-input {
   margin: 10px 0 0 55px;
 }
 
 .bootstrap-typeahead-input-main { 
   width: 100%;
   background-color: inherit;
-  color: white;
   border: none;
   outline: none;
+}
+
+#Header .bootstrap-typeahead-input-main {
+  color: white;
+}
+
+.bootstrap-typeahead.open {
+  position: fixed !important;
+  width: 452px;
+  z-index: 1;
 }
 
 .bootstrap-typeahead-input-hint {
