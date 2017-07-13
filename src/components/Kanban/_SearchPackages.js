@@ -46,13 +46,14 @@ class Search extends Component {
     return (
       <div id="SearchPackages">
         <AsyncTypeahead
-          autoFocus
+          disabled={!this.props.packageStatus}
           labelKey="name"
           onSearch={this._handleSearch}
           onChange={(selected) => this._handleSelection(selected)}
-          placeholder="Search by Package Name e.g. react, apollo client"
+          placeholder={`Search by Package Name e.g. react, apollo client`}
           renderMenuItemChildren={this._renderMenuItemChildren}
           options={this.state.options}
+          style={{ borderBottom: '2px solid #263238'}}
         />
       </div>
     )

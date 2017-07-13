@@ -42,6 +42,14 @@ body {
   color: white;
 }
 
+#SearchPackages .bootstrap-typeahead-input-main {
+  border-bottom: 2px solid #263238;
+}
+
+#SearchPackages .bootstrap-typeahead-input-main:disabled {
+  border-bottom: 1px dashed lightgray;
+}
+
 .bootstrap-typeahead.open {
   position: fixed !important;
   width: 452px;

@@ -174,7 +174,10 @@ class KanbanBoardContainer extends Component {
                 onChange={this._handlePackageStatus}
               />
             </div>
-            <SearchPackages _handlePackageSelect={this._handlePackageSelect} />
+            <SearchPackages 
+              _handlePackageSelect={this._handlePackageSelect}
+              packageStatus={this.state.packageStatus}
+            />
           </DialogContent>
           <DialogActions>
             <Button className="mr3" onTouchTap={this._handlePackageModal}>

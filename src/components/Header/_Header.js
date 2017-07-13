@@ -56,7 +56,7 @@ class Header extends Component {
   _logout = () => {
     // remove token from local storage and reload page to reset apollo client
     window.localStorage.removeItem('auth0IdToken')
-    window.location.reload('/')
+    window.location.replace('/')
   }
 
   _handleModalOpen = () => {
