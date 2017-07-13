@@ -9,7 +9,10 @@ class UserProfile extends Component {
     return (
       <div>
         <h2>User Profile</h2>
-        <KanbanBoardContainer cards={!user.packages ? [] : user.packages} />
+        <KanbanBoardContainer 
+          cards={!user.packages ? [] : user.packages}
+          user={user}
+        />
       </div>
     );
   }

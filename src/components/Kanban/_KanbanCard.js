@@ -15,8 +15,7 @@ const cardDragSpec = {
     };
   },
   endDrag(props) {
-    console.log('end drag', props)
-    // props.cardCallbacks.persistCardDrag(props.id, props.status);
+    props.cardCallbacks.persistCardDrag();
   }
 }
 
