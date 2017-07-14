@@ -101,6 +101,7 @@ class App extends Component {
       this.setState({ isLoading: false })
     } catch (e) {
       console.error(e);
+      this.setState({ isLoading: false })
     }
   }
 
@@ -127,7 +128,6 @@ class App extends Component {
     }).catch((e) => {
       console.error(e.message)
 
-      // replace with refecthQueries property in mutation options object
       if (e.message.includes('User already exists')) {
         this.props.data.refetch()
       }

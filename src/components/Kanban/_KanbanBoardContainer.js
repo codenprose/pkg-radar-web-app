@@ -145,7 +145,7 @@ class KanbanBoardContainer extends Component {
         <Button
           fab
           color="primary"
-          style={{ position: "fixed", bottom: "20px", right: "20px" }}
+          style={{ position: "sticky", bottom: "20px", left: '100%' }}
           onClick={this._handlePackageModalOpen}
         >
           <AddIcon />

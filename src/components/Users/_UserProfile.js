@@ -1,15 +1,124 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
+import Grid from "material-ui/Grid";
+import styled from "styled-components";
+import Typography from "material-ui/Typography";
+import { Link } from "react-router-dom";
 
-import { KanbanBoardContainer } from '../Kanban'
+import { KanbanBoardContainer } from "../Kanban";
+
+const ProfileHeader = styled.div`
+  position: relative;
+  z-index: -1;
+  height: 275px;
+  width: 100%;
+  margin-bottom: 20px;
+  background: url("https://images.unsplash.com/photo-1473813585561-ec87eac91e39")
+    no-repeat center;
+  background-size: cover;
+
+  &:after {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .3));
+  }
+`;
+
+const ProfileImage = styled.img`
+  height: 140px;
+  width: 140px;
+  border-radius: 50%;
+  vertical-align: middle;
+`;
+
+const UserInfoContainer = styled.div`
+  display: inline-block;
+  margin-left: 40px;
+  vertical-align: middle;
+`;
+
+const Name = styled.h3`
+  color: white;
+  font-size: 24px;
+  margin: 0 0 5px;
+`;
+
+const UserName = styled.h4`
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: normal;
+  color: white;
+`;
+
+const Bio = styled.p`
+  margin-bottom: 5px;
+  color: white;
+  font-size: 14px;
+  font-weight: 300;
+`;
+
+const Packages = styled.h5`
+  display: inline-block;
+  margin-right: 20px;
+  color: white;
+  font-size: 18px;
+  font-weight: normal;
+`
+
+const Subscriptions = Packages
 
 class UserProfile extends Component {
   render() {
-    const { user } = this.props
+    const { user } = this.props;
 
     return (
       <div>
-        <h2>User Profile</h2>
-        <KanbanBoardContainer 
+        <ProfileHeader>
+          <Grid
+            container
+            direction="row"
+            align="center"
+            style={{ height: "100%", padding: "0 40px" }}
+          >
+            <Grid item xs={6}>
+              <ProfileImage src={user.avatar} />
+              <UserInfoContainer>
+                <Name>
+                  {user.name}
+                </Name>
+                <UserName>
+                  @{user.username}
+                </UserName>
+                <Bio>developer, designer, entrepreneur</Bio>
+                <Link
+                  className="white no-underline fw3"
+                  to={`danielkhunter.com`}
+                >
+                  danielkhunter.com
+                </Link>
+              </UserInfoContainer>
+            </Grid>
+             <Grid item xs={6}>
+               <Grid direction='row' container justify='flex-end'>
+                 <Grid item className='tc'>
+                  <Packages>
+                    <div>3</div>
+                    <div>Packages</div>
+                  </Packages>
+                  <Subscriptions>
+                    <div>5</div>
+                    <div>Subscriptions</div>
+                  </Subscriptions>
+                </Grid>
+              </Grid>
+            </Grid> 
+          </Grid>
+        </ProfileHeader>
+
+        <KanbanBoardContainer
           cards={!user.packages ? [] : user.packages}
           user={user}
         />
@@ -18,4 +127,4 @@ class UserProfile extends Component {
   }
 }
 
-export default UserProfile
+export default UserProfile;

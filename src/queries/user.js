@@ -6,6 +6,7 @@ export default gql`
       id,
       avatar,
       username,
+      name,
       email,
       packages
     }
