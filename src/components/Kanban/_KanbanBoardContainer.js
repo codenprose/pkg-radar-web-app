@@ -11,6 +11,8 @@ import Dialog, {
   DialogTitle
 } from "material-ui/Dialog";
 import { LabelRadio } from "material-ui/Radio";
+import Grid from "material-ui/Grid";
+import Tabs, { Tab } from 'material-ui/Tabs';
 
 import KanbanBoard from "./_KanbanBoard";
 import SearchPackages from "./_SearchPackages";
@@ -22,7 +24,8 @@ class KanbanBoardContainer extends Component {
     isAddPackageModalOpen: false,
     packageSearchText: "",
     packageStatus: "",
-    selectedPackage: {}
+    selectedPackage: {},
+    tabIndex: 0
   };
 
   updateCardStatus = (cardId, listId) => {
@@ -129,10 +132,39 @@ class KanbanBoardContainer extends Component {
     }
   }
 
+  _handleTabChange = (event, tabIndex) => {
+    this.setState({ tabIndex });
+  };
+
   render() {
     // console.log(this.state.cards)
     return (
       <div>
+        <Grid container>
+          <Grid item xs={9} style={{ paddingTop: 0 }}>
+            <Tabs 
+              index={this.state.tabIndex} 
+              onChange={this._handleTabChange}
+              indicatorColor="primary"
+              textColor="primary"
+              fullWidth
+              style={{ marginBottom: '20px' }}
+            >
+              <Tab label="All" />
+              <Tab label="Front End" />
+              <Tab label="Node" />
+              <Tab label="Python" />
+            </Tabs>
+          </Grid>
+          <Grid item xs={3}>
+            <Grid direction="row" container justify='flex-end'>
+              <Grid item>
+                <Button raised style={{ marginRight: '10px' }}>Subscribe</Button>
+                <Button raised>Add Board</Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
         <KanbanBoard
           cards={this.state.cards}
           cardCallbacks={{

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import Grid from "material-ui/Grid";
 import styled from "styled-components";
-import Typography from "material-ui/Typography";
 import { Link } from "react-router-dom";
 
 import { KanbanBoardContainer } from "../Kanban";
+import userBgImg from "../../images/user_profile_bg.jpg"
 
 const ProfileHeader = styled.div`
   position: relative;
@@ -12,7 +12,7 @@ const ProfileHeader = styled.div`
   height: 275px;
   width: 100%;
   margin-bottom: 20px;
-  background: url("https://images.unsplash.com/photo-1473813585561-ec87eac91e39")
+  background: url("${userBgImg}")
     no-repeat center;
   background-size: cover;
 
@@ -101,11 +101,13 @@ class UserProfile extends Component {
                 </Link>
               </UserInfoContainer>
             </Grid>
-             <Grid item xs={6}>
-               <Grid direction='row' container justify='flex-end'>
-                 <Grid item className='tc'>
+            <Grid item xs={6}>
+              <Grid direction="row" container justify="flex-end">
+                <Grid item className="tc">
                   <Packages>
-                    <div>3</div>
+                    <div>
+                      {user.packages.length}
+                    </div>
                     <div>Packages</div>
                   </Packages>
                   <Subscriptions>
@@ -114,7 +116,7 @@ class UserProfile extends Component {
                   </Subscriptions>
                 </Grid>
               </Grid>
-            </Grid> 
+            </Grid>
           </Grid>
         </ProfileHeader>
 
