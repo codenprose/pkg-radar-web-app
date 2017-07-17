@@ -12,8 +12,7 @@ const ProfileHeader = styled.div`
   height: 275px;
   width: 100%;
   margin-bottom: 20px;
-  background: url("${userBgImg}")
-    no-repeat center;
+  background: url("${userBgImg}") no-repeat center;
   background-size: cover;
 
   &:after {

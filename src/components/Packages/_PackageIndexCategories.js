@@ -1,30 +1,35 @@
-import React, { Component } from 'react'
-// import PropTypes from 'prop-types'
-import {List, ListItem, ListSubheader} from 'material-ui/List'
+import React, { Component } from 'react';
+import List, {
+  ListItem,
+  ListItemIcon,
+  ListSubheader,
+  ListItemText,
+} from 'material-ui/List';
+import InboxIcon from 'material-ui-icons/Inbox';
 
 class PackageIndexCategories extends Component {
+  static defaultProps = {
+    categories: []
+  }
   render() {
     return (
       <div>
-        <List 
-          subheader={<ListSubheader>Settings</ListSubheader>}
-        >
-          <ListItem
-            value={0}
-            primaryText="All"
-          />
-          <ListItem
-            value={1}
-            primaryText="JavaScript"
-          />
-          <ListItem
-            value={2}
-            primaryText="Python"
-          />
+        <List>
+          <ListSubheader style={{ paddingLeft: 0 }}>
+            Categories
+          </ListSubheader>
+          <ListItem button style={{ backgroundColor: 'rgba(0, 0, 0, 0.12)'}}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="All"
+            />
+          </ListItem>
         </List>
       </div>
     )
   }
 }
 
-export default PackageIndexCategories
+export default PackageIndexCategories;

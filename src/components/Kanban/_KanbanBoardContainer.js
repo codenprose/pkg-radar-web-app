@@ -137,7 +137,9 @@ class KanbanBoardContainer extends Component {
   };
 
   render() {
+    // const { user } = this.props;
     // console.log(this.state.cards)
+
     return (
       <div>
         <Grid container>
@@ -159,7 +161,10 @@ class KanbanBoardContainer extends Component {
           <Grid item xs={3}>
             <Grid direction="row" container justify='flex-end'>
               <Grid item>
-                <Button raised style={{ marginRight: '10px' }}>Subscribe</Button>
+                {
+                  false &&
+                  <Button raised style={{ marginRight: '10px' }}>Subscribe</Button>
+                }
                 <Button raised>Add Board</Button>
               </Grid>
             </Grid>

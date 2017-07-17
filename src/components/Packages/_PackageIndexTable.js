@@ -1,98 +1,46 @@
-import React, { Component } from 'react'
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table'
-import Button from 'material-ui/Button'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
-
-class PackageIndexTable extends Component {
-
-  static defaultProps = {
-    data: {
-      packages: [
-        {
-          id: '232gad4',
-          name: 'React',
-          github: {
-            stars: 65323,
-            issues: 323
-          },
-          radar: {
-            assess: 0,
-            pilot: 0,
-            production: 100,
-            archive: 0
-          }
-        },
-        {
-          id: 'dfjkl231',
-          name: 'GraphQL',
-          github: {
-            stars: 45323,
-            issues: 223
-          },
-          radar: {
-            assess: 0,
-            pilot: 0,
-            production: 100,
-            archive: 0
-          }
-        }
-      ]
-    }
-  }
-  
-  _renderPackages() {
-    const { data } = this.props
-    if (data.loading) return <div>Loading...</div>
-
-    return data.packages.map(item => {
-      return (
-        <TableRow key={item.id}>
-          <TableRowColumn>{item.name}</TableRowColumn>
-          <TableRowColumn>{item.github.stars}</TableRowColumn>
-          <TableRowColumn>{item.github.issues}</TableRowColumn>
-          <TableRowColumn>{item.radar.assess}%</TableRowColumn>
-          <TableRowColumn>{item.radar.pilot}%</TableRowColumn>
-          <TableRowColumn>{item.radar.production}%</TableRowColumn>
-          <TableRowColumn>{item.radar.archive}%</TableRowColumn>
-          <TableRowColumn>
-            <Link to={`/package/${item.name.toLowerCase()}`}>
-              <Button>View</Button>
-            </Link>
-          </TableRowColumn>
+function PackageIndexTable(props) {
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Avatar</TableCell>
+          <TableCell>Name</TableCell>
+          <TableCell numeric>Stars</TableCell>
+          <TableCell numeric>Issues</TableCell>
+          {/* <TableCell numeric>Backlog</TableCell>
+          <TableCell numeric>Staging</TableCell>
+          <TableCell numeric>Production</TableCell>
+          <TableCell numeric>Archive</TableCell> */}
         </TableRow>
-      )
-    })
-  }
-
-  render() {
-    return (
-      <Table selectable={false}>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow selectable={false}>
-            <TableHeaderColumn>Name</TableHeaderColumn>
-            <TableHeaderColumn>Stars</TableHeaderColumn>
-            <TableHeaderColumn>Issues</TableHeaderColumn>
-            <TableHeaderColumn>Assess</TableHeaderColumn>
-            <TableHeaderColumn>Pilot</TableHeaderColumn>
-            <TableHeaderColumn>Production</TableHeaderColumn>
-            <TableHeaderColumn>Archive</TableHeaderColumn>
-            <TableHeaderColumn></TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {this._renderPackages()}
-        </TableBody>
-      </Table>
-    )
-  }
+      </TableHead>
+      <TableBody>
+        {props.packages.map(n => {
+          return (
+            <TableRow key={n.id}>
+              <TableCell style={{ padding: '10px 56px 10px 24px' }}>
+                <img 
+                  alt={`${n.name}-logo`}
+                  style={{ height: '40px' }} 
+                  src={n.avatar} 
+                />
+              </TableCell>
+              <TableCell>{n.name}</TableCell>
+              <TableCell numeric>{n.stars}</TableCell>
+              <TableCell numeric>{n.issues}</TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
 }
 
-export default PackageIndexTable
+PackageIndexTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default PackageIndexTable;
