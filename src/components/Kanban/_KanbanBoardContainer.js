@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import update from "immutability-helper";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
 import Button from "material-ui/Button";
 import AddIcon from "material-ui-icons/Add";
 import throttle from "lodash/throttle";
@@ -13,19 +13,25 @@ import Dialog, {
 import { LabelRadio } from "material-ui/Radio";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
 
 import KanbanBoard from "./_KanbanBoard";
 import SearchPackages from "./_SearchPackages";
 import UPDATE_USER_PACKAGES_MUTATION from "../../mutations/updateUserPackages";
+import UPDATE_USER_BOARDS_MUTATION from "../../mutations/updateUserBoards";
+import UserQuery from '../../queries/user';
 
 class KanbanBoardContainer extends Component {
   state = {
     cards: this.props.cards,
     isAddPackageModalOpen: false,
+    isAddBoardModalOpen: false,
+    addBoardName: '',
     packageSearchText: "",
     packageStatus: "",
     selectedPackage: {},
-    tabIndex: 0
+    tabIndex: 0,
+    currentBoard: "All"
   };
 
   updateCardStatus = (cardId, listId) => {
@@ -133,12 +139,98 @@ class KanbanBoardContainer extends Component {
   }
 
   _handleTabChange = (event, tabIndex) => {
-    this.setState({ tabIndex });
+    const currentBoard = this.props.user.boards[tabIndex]
+    this.setState({ tabIndex, currentBoard });
   };
 
+  _handleAddBoardModalOpen = () => {
+    this.setState({ isAddBoardModalOpen: true });
+  };
+
+  _handleAddBoardModalClose = () => {
+     this.setState({ isAddBoardModalOpen: false });
+  }
+
+  _handleAddBoardNameChange = (e) => {
+    this.setState({ addBoardName: e.target.value })
+  }
+
+  addBoard = async () => {
+    console.log(`adding ${this.state.addBoardName} to user boards`);
+
+    try {
+      const response = await this.props.updateUserBoards({
+        variables: {
+          id: this.props.user.id,
+          boards: [...this.props.user.boards, this.state.addBoardName]
+        },
+        update: (store, { data: { updateUser } }) => {
+          let data = {}
+          data.user = updateUser
+          // Triggers component re-render
+          store.writeQuery({ 
+            query: UserQuery,
+            data
+          })
+        }
+      });
+      console.log("user boards updated");
+      console.log(response.data.updateUser);
+
+      this._handleAddBoardModalClose()
+
+      const boards = response.data.updateUser.boards
+      const tabIndex = boards.length - 1
+      const currentBoard = boards[tabIndex]
+      this.setState({ addBoardName: "", tabIndex, currentBoard })
+    } catch (e) {
+      console.error(e);
+
+      this._handleAddBoardModalClose()
+      this.setState({ addBoardName: "" })
+    }
+  };
+
+  _handleRemoveBoard = async () => {
+    const currentBoard = this.state.currentBoard
+    if (currentBoard === "All") {
+      alert('Not allowed to remove All')
+      return
+    }
+
+    console.log(`removing ${currentBoard} from user boards`);
+
+    try {
+      const response = await this.props.updateUserBoards({
+        variables: {
+          id: this.props.user.id,
+          boards: [...this.props.user.boards].filter((board) => {
+            return board !== currentBoard
+          })
+        },
+        update: (store, { data: { updateUser } }) => {
+          let data = {}
+          data.user = updateUser
+          // Triggers component re-render
+          store.writeQuery({ 
+            query: UserQuery,
+            data
+          })
+        }
+      });
+      console.log("user boards updated");
+      console.log(response.data.updateUser);
+      this.setState({ tabIndex: 0 })
+    } catch (e) {
+      console.error(e);
+      this.setState({ tabIndex: 0 })
+    }
+  }
+
   render() {
-    // const { user } = this.props;
+    const { user } = this.props;
     // console.log(this.state.cards)
+    console.log(this.state.currentBoard)
 
     return (
       <div>
@@ -152,10 +244,13 @@ class KanbanBoardContainer extends Component {
               fullWidth
               style={{ marginBottom: '20px' }}
             >
-              <Tab label="All" />
-              <Tab label="Front End" />
-              <Tab label="Node" />
-              <Tab label="Python" />
+              {
+                user.boards.map((board) => {
+                  return (
+                    <Tab key={board} label={board} />
+                  )
+                })
+              }
             </Tabs>
           </Grid>
           <Grid item xs={3}>
@@ -165,7 +260,22 @@ class KanbanBoardContainer extends Component {
                   false &&
                   <Button raised style={{ marginRight: '10px' }}>Subscribe</Button>
                 }
-                <Button raised>Add Board</Button>
+                <Button 
+                  raised 
+                  onClick={this._handleAddBoardModalOpen}
+                >
+                  Add Board
+                </Button>
+                {
+                  this.state.currentBoard !== "All" &&
+                  <Button 
+                    raised 
+                    onClick={this._handleRemoveBoard}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    Remove Board
+                  </Button>
+                }
               </Grid>
             </Grid>
           </Grid>
@@ -187,6 +297,41 @@ class KanbanBoardContainer extends Component {
         >
           <AddIcon />
         </Button>
+
+        {/* Add Board */}
+        <Dialog
+          open={this.state.isAddBoardModalOpen}
+          onRequestClose={this._handleAddBoardModalClose}
+        >
+          <DialogTitle>Add Board</DialogTitle>
+          <DialogContent style={{ width: "500px", marginBottom: '20px' }}>
+            <TextField
+              autoFocus
+              type="text"
+              InputProps={{ placeholder: 'Add Board Name' }}
+              style={{ width: '100%' }}
+              marginForm
+              onChange={(e) => this._handleAddBoardNameChange(e)}
+              value={this.state.addBoardName}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button className="mr3" onTouchTap={this._handleAddBoardModalClose}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              raised
+              color="primary"
+              disabled={!this.state.addBoardName}
+              onTouchTap={this.addBoard}
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+        
+        {/* Add Package */}
         <Dialog
           open={this.state.isAddPackageModalOpen}
           onRequestClose={this._handlePackageModal}
@@ -246,6 +391,7 @@ class KanbanBoardContainer extends Component {
   }
 }
 
-export default graphql(UPDATE_USER_PACKAGES_MUTATION, {
-  name: "updateUserPackages"
-})(KanbanBoardContainer);
+export default compose(
+  graphql(UPDATE_USER_PACKAGES_MUTATION, { name: "updateUserPackages" }),
+  graphql(UPDATE_USER_BOARDS_MUTATION, { name: "updateUserBoards" })
+)(KanbanBoardContainer)

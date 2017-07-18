@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  query currentUser {
-    user {
+  mutation updateUserBoards($id: ID!, $boards: [String!]!) {
+    updateUser(id: $id, boards: $boards) {
       id,
       avatar,
       username,
@@ -12,4 +12,4 @@ export default gql`
       boards
     }
   }
-`
+`;
