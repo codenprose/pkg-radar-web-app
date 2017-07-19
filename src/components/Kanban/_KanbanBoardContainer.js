@@ -32,7 +32,6 @@ class KanbanBoardContainer extends Component {
     addBoardName: "",
     packageSearchText: "",
     packageStatus: "",
-    selectedPackage: {},
     selectedBoard: "",
     tabIndex: 0,
     currentBoard: "All"
@@ -133,7 +132,7 @@ class KanbanBoardContainer extends Component {
     const { id, name, avatar, description, stars } = pkg
     const { packageStatus, selectedBoard } = this.state
 
-    const selectedPackage = { 
+    const data = { 
       id, 
       name, 
       avatar, 
@@ -143,17 +142,12 @@ class KanbanBoardContainer extends Component {
       board: selectedBoard
     }
 
-    if (!packageStatus || !selectedBoard) {
-      alert('Please select a Board and List')
-    } else {
-      this.setState({ selectedPackage }, this._addCard(selectedPackage))
-    }
+    this._addCard(data)
   }
 
   _handleTabChange = (event, tabIndex) => {
     const currentBoard = this.props.user.boards[tabIndex]
     let cards = this.props.user.packages
-    console.log(currentBoard)
 
     if (currentBoard !== "All") {
       cards = [...cards].filter((card) => {
@@ -420,7 +414,7 @@ class KanbanBoardContainer extends Component {
             <Button
               raised
               color="primary"
-              disabled={!this.state.selectedPackage.id}
+              disabled={!this.state.packageStatus || !this.state.selectedBoard}
               onTouchTap={this.updateUserPackages}
             >
               Submit

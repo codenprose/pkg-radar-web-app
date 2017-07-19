@@ -43,7 +43,12 @@ module.exports = function (event) {
             }
           }
         }
-        readme: object(expression: "master:README.md") {
+        README: object(expression: "master:README.md") {
+          ... on Blob {
+            text
+          }
+        }
+    		Readme: object(expression: "master:Readme.md") {
           ... on Blob {
             text
           }
@@ -107,15 +112,20 @@ module.exports = function (event) {
       eventData.avatar = repository.owner.avatarUrl
       eventData.description = repository.description
       eventData.homepageUrl = repository.homepageUrl
-      eventData.issues = repository.issues.totalCount
+      eventData.issues = repository.issues ? repository.issues.totalCount : 0
       eventData.lastCommit = repository.lastCommit.target.history.edges[0].node
       eventData.license = repository.license
       eventData.name = name
       eventData.primaryLanguage = repository.primaryLanguage
-      eventData.pullRequests = repository.pullRequests.totalCount
-      eventData.readme = repository.readme.text
+      eventData.pullRequests = repository.pullRequests ? repository.pullRequests.totalCount : 0
       eventData.repoUrl = repository.url
-      eventData.stars = repository.stargazers.totalCount
+      eventData.stars = repository.stargazers ? repository.stargazers.totalCount : 0
+
+      if (repository.README) {
+        eventData.readme = repository.README.text
+      } else if (repository.Readme) {
+        eventData.readme = repository.Readme.text
+      }
 
       if (repository.releases.edges.length) {
         eventData.lastRelease =  repository.releases.edges[0].node
