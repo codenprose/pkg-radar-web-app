@@ -7,29 +7,33 @@ import throttle from "lodash/throttle";
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle
 } from "material-ui/Dialog";
 import { LabelRadio } from "material-ui/Radio";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
+import Select from 'react-select';
 
 import KanbanBoard from "./_KanbanBoard";
 import SearchPackages from "./_SearchPackages";
+
 import UPDATE_USER_PACKAGES_MUTATION from "../../mutations/updateUserPackages";
 import UPDATE_USER_BOARDS_MUTATION from "../../mutations/updateUserBoards";
-import UserQuery from '../../queries/user';
+import USER_QUERY from '../../queries/user';
+
+import 'react-select/dist/react-select.css';
 
 class KanbanBoardContainer extends Component {
   state = {
     cards: this.props.cards,
     isAddPackageModalOpen: false,
     isAddBoardModalOpen: false,
-    addBoardName: '',
+    addBoardName: "",
     packageSearchText: "",
     packageStatus: "",
     selectedPackage: {},
+    selectedBoard: "",
     tabIndex: 0,
     currentBoard: "All"
   };
@@ -127,12 +131,20 @@ class KanbanBoardContainer extends Component {
 
   _handlePackageSelect = (pkg) => {
     const { id, name, avatar, description, stars } = pkg
-    const { packageStatus } = this.state
+    const { packageStatus, selectedBoard } = this.state
 
-    const selectedPackage = { id, name, avatar, description, stars, status: packageStatus }
+    const selectedPackage = { 
+      id, 
+      name, 
+      avatar, 
+      description, 
+      stars,
+      status: packageStatus,
+      board: selectedBoard
+    }
 
-    if (!packageStatus) {
-      alert('Please select a list')
+    if (!packageStatus || !selectedBoard) {
+      alert('Please select a Board and List')
     } else {
       this.setState({ selectedPackage }, this._addCard(selectedPackage))
     }
@@ -140,7 +152,15 @@ class KanbanBoardContainer extends Component {
 
   _handleTabChange = (event, tabIndex) => {
     const currentBoard = this.props.user.boards[tabIndex]
-    this.setState({ tabIndex, currentBoard });
+    let cards = this.props.user.packages
+    console.log(currentBoard)
+
+    if (currentBoard !== "All") {
+      cards = [...cards].filter((card) => {
+        return card.board === currentBoard
+      })
+    }
+    this.setState({ tabIndex, currentBoard, cards });
   };
 
   _handleAddBoardModalOpen = () => {
@@ -169,7 +189,7 @@ class KanbanBoardContainer extends Component {
           data.user = updateUser
           // Triggers component re-render
           store.writeQuery({ 
-            query: UserQuery,
+            query: USER_QUERY,
             data
           })
         }
@@ -213,7 +233,7 @@ class KanbanBoardContainer extends Component {
           data.user = updateUser
           // Triggers component re-render
           store.writeQuery({ 
-            query: UserQuery,
+            query: USER_QUERY,
             data
           })
         }
@@ -227,10 +247,26 @@ class KanbanBoardContainer extends Component {
     }
   }
 
+  _formatBoardSelectItems = () => {
+    const { boards } = this.props.user
+    const arr = []
+
+    for (let item in boards) {
+      const board = boards[item]
+      arr.push({ label: board, value: board })
+    }
+    return arr;
+  }
+
+  _handleBoardSelection = (option) => {
+    this.setState({ selectedBoard: option.value })
+  }
+
   render() {
     const { user } = this.props;
-    // console.log(this.state.cards)
-    console.log(this.state.currentBoard)
+    const boardSelectOptions = this._formatBoardSelectItems()
+    console.log(this.state.cards)
+    // console.log(this.state.currentBoard)
 
     return (
       <div>
@@ -260,22 +296,22 @@ class KanbanBoardContainer extends Component {
                   false &&
                   <Button raised style={{ marginRight: '10px' }}>Subscribe</Button>
                 }
+                {
+                  this.state.currentBoard !== "All" &&
+                  <Button 
+                    raised 
+                    onClick={this._handleRemoveBoard}
+                    style={{ marginRight: '10px' }}
+                  >
+                    Remove Board
+                  </Button>
+                }
                 <Button 
                   raised 
                   onClick={this._handleAddBoardModalOpen}
                 >
                   Add Board
                 </Button>
-                {
-                  this.state.currentBoard !== "All" &&
-                  <Button 
-                    raised 
-                    onClick={this._handleRemoveBoard}
-                    style={{ marginLeft: '10px' }}
-                  >
-                    Remove Board
-                  </Button>
-                }
               </Grid>
             </Grid>
           </Grid>
@@ -337,11 +373,16 @@ class KanbanBoardContainer extends Component {
           onRequestClose={this._handlePackageModal}
         >
           <DialogTitle>Add Package</DialogTitle>
-          <DialogContent style={{ width: "500px", marginBottom: '20px' }}>
-            <DialogContentText style={{ marginBottom: "10px" }}>
-              Select List and Enter a Package Name below:
-            </DialogContentText>
-            <div className="mb3">
+          <DialogContent style={{ width: "500px", marginBottom: '30px' }}>
+            <Select
+              options={boardSelectOptions}
+              placeholder="Select Board"
+              value={this.state.selectedBoard}
+              onChange={this._handleBoardSelection}
+              autofocus
+              style={{ marginBottom: "20px" }}
+            />
+            <div style={{ marginBottom: "20px" }}>
               <LabelRadio 
                 label="Backlog" 
                 value="backlog"

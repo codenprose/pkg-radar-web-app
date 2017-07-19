@@ -24,6 +24,7 @@
     "react-dnd-html5-backend": "^2.4.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.1.1",
+    "react-select": "^1.0.0-rc.5",
     "react-swipeable-views": "^0.12.3",
     "react-tap-event-plugin": "^2.0.1",
     "styled-components": "^2.1.1"

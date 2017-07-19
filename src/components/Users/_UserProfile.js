@@ -105,12 +105,12 @@ class UserProfile extends Component {
                 <Grid item className="tc">
                   <Packages>
                     <div>
-                      {user.packages.length}
+                      {user.packages ? user.packages.length : 0}
                     </div>
                     <div>Packages</div>
                   </Packages>
                   <Subscriptions>
-                    <div>5</div>
+                    <div>{user.subscriptions ? user.subscriptions.length : 0}</div>
                     <div>Subscriptions</div>
                   </Subscriptions>
                 </Grid>

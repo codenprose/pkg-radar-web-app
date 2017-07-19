@@ -9,7 +9,8 @@ export default gql`
       name,
       email,
       packages,
-      boards
+      boards,
+      subscriptions
     }
   }
 `

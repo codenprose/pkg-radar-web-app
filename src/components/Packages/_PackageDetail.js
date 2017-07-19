@@ -115,7 +115,7 @@ class PackageDetail extends Component {
     const { data } = this.props
     if (data.loading) return <div></div>
 
-    const readmeHtml = marked(data.Package.readme)
+    let readmeHtml = '<div>No Data Available</div>'
     let changelogHtml = '<div>No Data Available</div>'
     
     if (data.Package.lastRelease) {
@@ -124,6 +124,10 @@ class PackageDetail extends Component {
 
     if (data.Package.changelog) {
       changelogHtml = marked(data.Package.changelog)
+    }
+
+    if (data.Package.readme) {
+      readmeHtml = marked(data.Package.readme)
     }
 
     return (

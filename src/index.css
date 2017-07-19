@@ -113,3 +113,6 @@ body {
 .dropdown-menu>li.active {
   background-color: lightgray;
 }
+
+/* React Select */
+.Select-menu-outer { z-index: 10; }

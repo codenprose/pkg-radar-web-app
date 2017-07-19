@@ -7,6 +7,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import registerServiceWorker from './utils/registerServiceWorker'
 
 import { App } from './components/App'
+
 import './index.css'
 
 // Needed for onTouchTap mobile event
