@@ -148,7 +148,7 @@ class PackageDetail extends Component {
                 avatar={
                   <img 
                     alt={`${data.Package.name}-logo`}
-                    style={{ height: '40px' }} 
+                    style={{ height: '42px' }} 
                     src={data.Package.avatar} 
                   />
                 }

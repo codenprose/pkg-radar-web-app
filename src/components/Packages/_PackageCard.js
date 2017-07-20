@@ -28,7 +28,20 @@ class PackageCard extends Component {
         <CardHeader 
           title={name}
           subheader={
-            <span>{primaryLanguage.name}</span>
+            <div>
+              <div 
+                style={{ 
+                  display: 'inline-block',
+                  width: '15px',
+                  height: '15px',
+                  marginRight: '5px',
+                  borderRadius: '50%',
+                  verticalAlign: 'sub',
+                  backgroundColor: `${primaryLanguage.color}` 
+                }} 
+              />
+              <span>{primaryLanguage.name}</span>
+            </div>
           }
         />
         <img
