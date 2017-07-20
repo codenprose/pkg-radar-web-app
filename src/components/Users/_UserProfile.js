@@ -70,8 +70,46 @@ const Packages = styled.h5`
 const Subscriptions = Packages
 
 class UserProfile extends Component {
+  _formatCards = (packages) => {
+    const { kanbanLayouts } = this.props.user
+    const cards = []
+
+    if (!packages || !packages.length) {
+      return cards
+    }
+
+    for (let i in packages) {
+      let pkg = packages[i]
+      let layout = {}
+
+      for (let j in kanbanLayouts) {
+        if (kanbanLayouts[j].name === pkg.name) {
+          layout = kanbanLayouts[j]
+        }
+      }
+
+      pkg.status = layout.status
+      pkg.board = layout.board
+      cards.push(pkg)
+    }
+
+    return cards
+  }
+
   render() {
     const { user } = this.props;
+
+    const packagesInBacklog = this._formatCards(user.packagesBacklog)
+    const packagesInStaging = this._formatCards(user.packagesStaging)
+    const packagesInProduction = this._formatCards(user.packagesProduction)
+    const packagesInArchive = this._formatCards(user.packagesArchive)
+
+    const packages = [
+      ...packagesInBacklog,
+      ...packagesInStaging,
+      ...packagesInProduction,
+      ...packagesInArchive
+    ]
 
     return (
       <div>
@@ -105,7 +143,7 @@ class UserProfile extends Component {
                 <Grid item className="tc">
                   <Packages>
                     <div>
-                      {user.packages ? user.packages.length : 0}
+                      {packages ? packages.length : 0}
                     </div>
                     <div>Packages</div>
                   </Packages>
@@ -120,7 +158,7 @@ class UserProfile extends Component {
         </ProfileHeader>
 
         <KanbanBoardContainer
-          cards={!user.packages ? [] : user.packages}
+          cards={packages}
           user={user}
         />
       </div>

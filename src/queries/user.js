@@ -1,16 +1,12 @@
-import gql from 'graphql-tag'
+import { gql } from "react-apollo";
+
+import { UserFragment } from "../fragments";
 
 export default gql`
   query currentUser {
     user {
-      id,
-      avatar,
-      username,
-      name,
-      email,
-      packages,
-      boards,
-      subscriptions
+      ...UserFragment
     }
   }
-`
+  ${UserFragment}
+`;

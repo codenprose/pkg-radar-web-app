@@ -5,7 +5,9 @@ export default gql`
     updateUser(id: $id, packages: $packages) {
       id
       username
-      packages
+      kanbanBoards,
+      kanbanLayouts,
+      kanbanPackages
     }
   }
 `;

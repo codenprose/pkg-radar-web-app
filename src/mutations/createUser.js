@@ -12,6 +12,7 @@ export default gql`
       github: $github
     ) {
         id
+        name
       }
   }
 `

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import StarsIcon from 'material-ui-icons/Stars';
 import ErrorOutlineIcon from 'material-ui-icons/ErrorOutline';
 import Humanize from "humanize-plus";
-import Chip from 'material-ui/Chip';
 
 class PackageCard extends Component {
   render() {

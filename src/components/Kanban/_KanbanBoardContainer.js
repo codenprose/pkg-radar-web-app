@@ -146,8 +146,8 @@ class KanbanBoardContainer extends Component {
   }
 
   _handleTabChange = (event, tabIndex) => {
-    const currentBoard = this.props.user.boards[tabIndex]
-    let cards = this.props.user.packages
+    const currentBoard = this.props.user.kanbanBoards[tabIndex]
+    let cards = this.props.cards
 
     if (currentBoard !== "All") {
       cards = [...cards].filter((card) => {
@@ -169,33 +169,35 @@ class KanbanBoardContainer extends Component {
     this.setState({ addBoardName: e.target.value })
   }
 
-  addBoard = async () => {
+  _handleAddBoard = async () => {
+    const { user } = this.props
     console.log(`adding ${this.state.addBoardName} to user boards`);
 
     try {
       const response = await this.props.updateUserBoards({
         variables: {
-          id: this.props.user.id,
-          boards: [...this.props.user.boards, this.state.addBoardName]
+          id: user.id,
+          kanbanBoards: [...user.kanbanBoards, this.state.addBoardName]
         },
         update: (store, { data: { updateUser } }) => {
-          let data = {}
-          data.user = updateUser
+          const kanbanBoards = updateUser.kanbanBoards
           // Triggers component re-render
           store.writeQuery({ 
             query: USER_QUERY,
-            data
+            data: { ...user, kanbanBoards }
           })
         }
       });
+
       console.log("user boards updated");
       console.log(response.data.updateUser);
 
       this._handleAddBoardModalClose()
 
-      const boards = response.data.updateUser.boards
+      const boards = response.data.updateUser.kanbanBoards
       const tabIndex = boards.length - 1
       const currentBoard = boards[tabIndex]
+      
       this.setState({ addBoardName: "", tabIndex, currentBoard })
     } catch (e) {
       console.error(e);
@@ -223,15 +225,15 @@ class KanbanBoardContainer extends Component {
           })
         },
         update: (store, { data: { updateUser } }) => {
-          let data = {}
-          data.user = updateUser
+          const kanbanBoards = updateUser.kanbanBoards
           // Triggers component re-render
           store.writeQuery({ 
             query: USER_QUERY,
-            data
+            data: { ...this.props.user, kanbanBoards }
           })
         }
       });
+
       console.log("user boards updated");
       console.log(response.data.updateUser);
       this.setState({ tabIndex: 0 })
@@ -242,11 +244,11 @@ class KanbanBoardContainer extends Component {
   }
 
   _formatBoardSelectItems = () => {
-    const { boards } = this.props.user
+    const { kanbanBoards } = this.props.user
     const arr = []
 
-    for (let item in boards) {
-      const board = boards[item]
+    for (let item in kanbanBoards) {
+      const board = kanbanBoards[item]
       arr.push({ label: board, value: board })
     }
     return arr;
@@ -259,8 +261,6 @@ class KanbanBoardContainer extends Component {
   render() {
     const { user } = this.props;
     const boardSelectOptions = this._formatBoardSelectItems()
-    console.log(this.state.cards)
-    // console.log(this.state.currentBoard)
 
     return (
       <div>
@@ -275,7 +275,7 @@ class KanbanBoardContainer extends Component {
               style={{ marginBottom: '20px' }}
             >
               {
-                user.boards.map((board) => {
+                user.kanbanBoards.map((board) => {
                   return (
                     <Tab key={board} label={board} />
                   )
@@ -354,7 +354,7 @@ class KanbanBoardContainer extends Component {
               raised
               color="primary"
               disabled={!this.state.addBoardName}
-              onTouchTap={this.addBoard}
+              onTouchTap={this.handleAddBoard}
             >
               Submit
             </Button>
