@@ -11,11 +11,14 @@ class PackageIndexCategories extends Component {
   static defaultProps = {
     categories: []
   }
+  
   render() {
     return (
-      <div>
+      <div style={{  marginTop: '-28px' }}>
         <List>
-          <ListSubheader style={{ paddingLeft: 0 }}>
+          <ListSubheader 
+            style={{ paddingLeft: 0 }}
+          >
             Categories
           </ListSubheader>
           <ListItem button style={{ backgroundColor: 'rgba(0, 0, 0, 0.12)'}}>

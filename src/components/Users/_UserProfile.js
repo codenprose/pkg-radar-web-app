@@ -80,7 +80,7 @@ class UserProfile extends Component {
             container
             direction="row"
             align="center"
-            style={{ height: "100%", padding: "0 40px" }}
+            style={{ height: "100%", padding: "0 40px", margin: 0 }}
           >
             <Grid item xs={6}>
               <ProfileImage src={user.avatar} />

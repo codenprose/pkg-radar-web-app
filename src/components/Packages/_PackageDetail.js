@@ -130,17 +130,20 @@ class PackageDetail extends Component {
       readmeHtml = marked(data.Package.readme)
     }
 
+    const styles = {
+      card: {
+        marginBottom: '15px',
+        boxShadow: '5px 5px 25px 0px rgba(46,61,73,0.2)'
+      },
+    }
+
     return (
       <div>
         <Grid container>
 
           <Grid item xs={3}>
             {/* Package Title */}
-            <Card
-              style={{ 
-                marginBottom: '15px'
-              }}
-            >
+            <Card style={styles.card}>
               <CardHeader
                 avatar={
                   <img 
@@ -186,11 +189,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Last Commit */}
-            <Card
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Last Commit
@@ -207,11 +206,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Stars */}
-            <Card 
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Stars
@@ -223,11 +218,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Issues */}
-            <Card 
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Issues
@@ -239,11 +230,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Star-to-Issue ratio */}
-            <Card
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Issue-to-Star Ratio
@@ -255,11 +242,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Pull Requests */}
-            <Card
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Pull Requests
@@ -274,11 +257,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Contributors */}
-            <Card 
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Contributors
@@ -293,11 +272,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* License */}
-            <Card
-              style={{ 
-                marginBottom: '15px' 
-              }}
-            >
+            <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   License

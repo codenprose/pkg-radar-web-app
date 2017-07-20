@@ -3,7 +3,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 
 function PackageIndexTable(props) {
   return (
-    <Table>
+    <Table style={{ marginTop: '-20px' }}>
       <TableHead>
         <TableRow>
           <TableCell>Avatar</TableCell>

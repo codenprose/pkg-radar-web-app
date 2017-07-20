@@ -11,8 +11,11 @@ class Main extends Component {
 
     return (
       <main 
-        className="pa3" 
-        style={{ maxWidth: '1600px', margin: '10px auto' }}
+        style={{ 
+          maxWidth: '1600px', 
+          margin: '0 auto',
+          padding: '20px'
+        }}
       >
         <Switch>
           <Route exact path="/" render={(props) => <PackageIndex {...props} />} />

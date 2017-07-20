@@ -82,11 +82,17 @@ class KanbanCard extends Component {
 
     const { removeCard } = this.props.cardCallbacks;
 
+    const styles = {
+      card: {
+        boxShadow: '5px 5px 25px 0px rgba(46,61,73,0.2)'
+      }
+    }
+
     return connectDropTarget(
       connectDragSource(
         <div>
           <KanbanCardContainer>
-            <Card>
+            <Card style={styles.card}>
               <CardHeader
                 title={name}
                 subheader={`stars: ${Humanize.formatNumber(stars)}`}
