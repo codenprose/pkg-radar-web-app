@@ -89,12 +89,12 @@ class App extends Component {
       await this.props.signinUser({
         variables: { idToken },
         update: (store, { data: { signinUser } }) => {
-          let data = {}
-          data.user = signinUser.user
           // Triggers component re-render
           store.writeQuery({ 
             query: UserQuery,
-            data
+            data: {
+              user: signinUser.user
+            }
           })
         }
       });

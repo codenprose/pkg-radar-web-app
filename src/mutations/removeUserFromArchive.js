@@ -11,7 +11,6 @@ export default gql`
           ...KanbanPackage
         }
       }
-    }
   }
   ${KanbanPackage}
 `

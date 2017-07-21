@@ -1,17 +1,16 @@
-import gql from 'graphql-tag'
-import { KanbanPackage } from '../fragments'
+import gql from "graphql-tag";
+import { KanbanPackage } from "../fragments";
 
 export default gql`
-  mutation addPackageToBacklog($userId: ID!, $packageId: ID!) {
+  mutation addUserToBacklog($userId: ID!, $packageId: ID!) {
     addToPackageOnUserBacklog(
       usersBacklogUserId: $userId,
-      packagesBacklogPackageId: $packageId,
+      packagesBacklogPackageId: $packageId
     ) {
         packagesBacklogPackage {
           ...KanbanPackage
         }
       }
     }
-  }
   ${KanbanPackage}
-`
+`;

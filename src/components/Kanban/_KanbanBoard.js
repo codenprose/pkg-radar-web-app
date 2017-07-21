@@ -15,7 +15,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="backlog"
             title="Backlog"
-            cards={cards.filter(card => card.status === "backlog")}
+            cards={cards.filter(card => card.list === "backlog")}
             cardCallbacks={cardCallbacks}
           />
         </Grid>
@@ -23,7 +23,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="staging"
             title="Staging"
-            cards={cards.filter(card => card.status === "staging")}
+            cards={cards.filter(card => card.list === "staging")}
             cardCallbacks={cardCallbacks}
           />
         </Grid>
@@ -31,7 +31,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="production"
             title="Production"
-            cards={cards.filter(card => card.status === "production")}
+            cards={cards.filter(card => card.list === "production")}
             cardCallbacks={cardCallbacks}
           />
         </Grid>
@@ -39,7 +39,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="archive"
             title="Archive"
-            cards={cards.filter(card => card.status === "archive")}
+            cards={cards.filter(card => card.list === "archive")}
             cardCallbacks={cardCallbacks}
           />
         </Grid>

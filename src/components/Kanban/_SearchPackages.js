@@ -46,7 +46,7 @@ class Search extends Component {
     return (
       <div id="SearchPackages">
         <AsyncTypeahead
-          disabled={!this.props.packageList}
+          disabled={!this.props.selectedBoard || !this.props.selectedList}
           labelKey="name"
           onSearch={this._handleSearch}
           onChange={(selected) => this._handleSelection(selected)}
