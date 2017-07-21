@@ -39,14 +39,14 @@ class Search extends Component {
 
   _handleSelection = (selection) => {
     const pkg = selection[0]
-    this.props._handlePackageSelect(pkg)
+    this.props._handlePackageSelection(pkg)
   }
 
   render() {
     return (
       <div id="SearchPackages">
         <AsyncTypeahead
-          disabled={!this.props.packageStatus}
+          disabled={!this.props.packageList}
           labelKey="name"
           onSearch={this._handleSearch}
           onChange={(selected) => this._handleSelection(selected)}

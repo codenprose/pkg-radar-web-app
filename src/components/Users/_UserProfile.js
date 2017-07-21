@@ -88,8 +88,8 @@ class UserProfile extends Component {
         }
       }
 
-      pkg.status = layout.status
       pkg.board = layout.board
+      pkg.list = layout.list
       cards.push(pkg)
     }
 
@@ -158,7 +158,11 @@ class UserProfile extends Component {
         </ProfileHeader>
 
         <KanbanBoardContainer
-          cards={packages}
+          packages={packages}
+          packagesInBacklog={packagesInBacklog}
+          packagesInStaging={packagesInStaging}
+          packagesInProduction={packagesInProduction}
+          packagesInArchive={packagesInArchive}
           user={user}
         />
       </div>

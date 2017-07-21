@@ -34,7 +34,7 @@ const cardDragSpec = {
     };
   },
   endDrag(props) {
-    props.cardCallbacks.persistCardDrag();
+    props.cardCallbacks.persistCardDrag(props.id);
   }
 };
 
@@ -71,6 +71,7 @@ class KanbanCard extends Component {
   render() {
     const {
       id,
+      title,
       name,
       stars,
       description,

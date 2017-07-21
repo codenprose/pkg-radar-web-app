@@ -2,12 +2,12 @@ import gql from 'graphql-tag'
 import { KanbanPackage } from '../fragments'
 
 export default gql`
-  mutation updateUserPackagesArchive($packageId: ID!, $userId: ID!) {
+  mutation addUserToArchive($userId: ID!, $packageId: ID!) {
     addToPackageOnUserArchive(
-      packagesArchivePackageId: $packageId, 
-      usersArchiveUserId: $userId
+      usersArchiveUserId: $userId,
+      packagesArchivePackageId: $packageId
     ) {
-        packagesArchive {
+        packagesArchivePackage {
           ...KanbanPackage
         }
       }
