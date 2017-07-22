@@ -82,9 +82,11 @@ class UserProfile extends Component {
       const pkgIndex = findIndex(packages, (o) => o.name === layout.name );
       let pkg = packages[pkgIndex]
 
-      pkg.board = layout.board
-      pkg.list = layout.list
-      cards.push(pkg)
+      if (pkg) {
+        pkg.board = layout.board
+        pkg.list = layout.list
+        cards.push(pkg)
+      }
     }
     return cards
   }

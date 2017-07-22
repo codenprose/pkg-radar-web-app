@@ -98,7 +98,6 @@ class KanbanBoardContainer extends Component {
           userId: user.id,
           packageId: selectedPackage.id,
         },
-        refetchQueries: [{ query: FETCH_CURRENT_USER }]
       });
       console.log(`Added package to ${selectedPackage.board} board`)
       this._updateUserKanbanLayouts()
@@ -119,14 +118,12 @@ class KanbanBoardContainer extends Component {
           userId: this.props.user.id,
           packageId: pkgId
         },
-        refetchQueries: [{ query: FETCH_CURRENT_USER }]
       });
 
       console.log(`Removed ${pkgName} package from ${pkgBoard} board`);
       this.setState({ 
         cards: [...this.state.cards].filter(card => card.id !== pkgId),
-      })
-      this._updateUserKanbanLayouts()
+      }, this._updateUserKanbanLayouts)
     } catch (e) {
       console.error(e.message);
     }
@@ -134,6 +131,7 @@ class KanbanBoardContainer extends Component {
 
   _formatKanbanLayouts = () => {
     const { cards } = this.state;
+    console.log('format cards', cards)
     let kanbanLayouts = [];
 
     if (!cards.length) return kanbanLayouts
