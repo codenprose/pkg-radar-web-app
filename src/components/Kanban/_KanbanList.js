@@ -32,13 +32,14 @@ function collect(connect, monitor) {
 
 class KanbanList extends Component {
   _renderCards() {
-    const { cards, cardCallbacks } = this.props
+    const { cards, cardCallbacks, currentBoard } = this.props
 
     return cards.map(card => {
       return (
         <KanbanCard
           key={card.id}
           cardCallbacks={cardCallbacks}
+          currentBoard={currentBoard}
           {...card}
         />
       );

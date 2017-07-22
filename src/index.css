@@ -55,6 +55,10 @@ body {
   z-index: 1;
 }
 
+#SearchPackages .bootstrap-typeahead-menu.dropdown-menu {
+  margin-top: initial;
+}
+
 .bootstrap-typeahead-input-hint {
   background-color: inherit;
   border: none;

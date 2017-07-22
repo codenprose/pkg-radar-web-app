@@ -7,7 +7,7 @@ import KanbanList from "./_KanbanList";
 
 class KanbanBoard extends Component {
   render() {
-    const { cards, cardCallbacks } = this.props;
+    const { cards, cardCallbacks, currentBoard } = this.props;
 
     return (
       <Grid container>
@@ -17,6 +17,7 @@ class KanbanBoard extends Component {
             title="Backlog"
             cards={cards.filter(card => card.list === "backlog")}
             cardCallbacks={cardCallbacks}
+            currentBoard={currentBoard}
           />
         </Grid>
         <Grid item xs={3}>
@@ -25,6 +26,7 @@ class KanbanBoard extends Component {
             title="Staging"
             cards={cards.filter(card => card.list === "staging")}
             cardCallbacks={cardCallbacks}
+            currentBoard={currentBoard}
           />
         </Grid>
         <Grid item xs={3}>
@@ -33,6 +35,7 @@ class KanbanBoard extends Component {
             title="Production"
             cards={cards.filter(card => card.list === "production")}
             cardCallbacks={cardCallbacks}
+            currentBoard={currentBoard}
           />
         </Grid>
         <Grid item xs={3}>
@@ -41,6 +44,7 @@ class KanbanBoard extends Component {
             title="Archive"
             cards={cards.filter(card => card.list === "archive")}
             cardCallbacks={cardCallbacks}
+            currentBoard={currentBoard}
           />
         </Grid>
       </Grid>

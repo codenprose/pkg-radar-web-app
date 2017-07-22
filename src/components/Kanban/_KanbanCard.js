@@ -72,12 +72,14 @@ class KanbanCard extends Component {
     const {
       id,
       name,
+      list,
       stars,
       description,
       avatar,
       connectDragSource,
       connectDropTarget,
-      classes
+      classes,
+      currentBoard
     } = this.props;
 
     const { removeCard } = this.props.cardCallbacks;
@@ -119,7 +121,7 @@ class KanbanCard extends Component {
                 <Link to={`/package/${name}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
-                <Button dense onClick={() => removeCard(id)}>Remove</Button>
+                <Button dense onClick={() => removeCard(id, name, currentBoard, list)}>Remove</Button>
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {

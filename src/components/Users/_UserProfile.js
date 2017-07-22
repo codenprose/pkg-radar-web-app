@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Grid from "material-ui/Grid";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import findIndex from 'lodash/findIndex'
 
 import { KanbanBoardContainer } from "../Kanban";
 import userBgImg from "../../images/user_profile_bg.jpg"
@@ -74,25 +75,17 @@ class UserProfile extends Component {
     const { kanbanLayouts } = this.props.user
     const cards = []
 
-    if (!packages || !packages.length) {
-      return cards
-    }
+    if (!packages || !packages.length) return cards
 
-    for (let i in packages) {
-      let pkg = packages[i]
-      let layout = {}
-
-      for (let j in kanbanLayouts) {
-        if (kanbanLayouts[j].name === pkg.name) {
-          layout = kanbanLayouts[j]
-        }
-      }
+    for (let i in kanbanLayouts) {
+      const layout = kanbanLayouts[i]
+      const pkgIndex = findIndex(packages, (o) => o.name === layout.name );
+      let pkg = packages[pkgIndex]
 
       pkg.board = layout.board
       pkg.list = layout.list
       cards.push(pkg)
     }
-
     return cards
   }
 
@@ -158,11 +151,7 @@ class UserProfile extends Component {
         </ProfileHeader>
 
         <KanbanBoardContainer
-          packages={packages}
-          packagesInBacklog={packagesInBacklog}
-          packagesInStaging={packagesInStaging}
-          packagesInProduction={packagesInProduction}
-          packagesInArchive={packagesInArchive}
+          cards={packages}
           user={user}
         />
       </div>
