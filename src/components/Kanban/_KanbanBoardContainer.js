@@ -4,6 +4,7 @@ import { graphql, compose } from "react-apollo";
 import Button from "material-ui/Button";
 import AddIcon from "material-ui-icons/Add";
 import throttle from "lodash/throttle";
+import find from "lodash/find"
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -14,23 +15,14 @@ import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import Select from 'react-select';
-import Humanize from "humanize-plus";
 
 import KanbanBoard from "./_KanbanBoard";
 import SearchPackages from "./_SearchPackages";
 
-import ADD_USER_TO_BACKLOG from "../../mutations/addUserToBacklog";
-import ADD_USER_TO_STAGING from "../../mutations/addUserToStaging";
-import ADD_USER_TO_PRODUCTION from "../../mutations/addUserToProduction";
-import ADD_USER_TO_ARCHIVE from "../../mutations/addUserToArchive";
-
-import REMOVE_USER_FROM_BACKLOG from "../../mutations/removeUserFromBacklog";
-import REMOVE_USER_FROM_STAGING from "../../mutations/removeUserFromStaging";
-import REMOVE_USER_FROM_PRODUCTION from "../../mutations/removeUserFromProduction";
-import REMOVE_USER_FROM_ARCHIVE from "../../mutations/removeUserFromArchive";
-
+import ADD_USER_TO_PACKAGE from "../../mutations/addUserToPackage";
+import REMOVE_USER_FROM_PACKAGE from "../../mutations/removeUserFromPackage";
 import UPDATE_USER_KANBAN_LAYOUTS from '../../mutations/updateUserKanbanLayouts';
-import UPDATE_USER_BOARDS from "../../mutations/updateUserBoards";
+import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
 import FETCH_CURRENT_USER from '../../queries/user';
 
 import 'react-select/dist/react-select.css';
@@ -67,74 +59,52 @@ class KanbanBoardContainer extends Component {
   };
 
   _handlePackageSelection = (pkg) => {
-    pkg.board = this.state.selectedBoard
-    pkg.list = this.state.selectedList
-
-    const layout = {
-      name: pkg.name,
-      board: pkg.board,
-      list: pkg.list
-    }
-
-    this.setState({ 
-      selectedPackage: pkg,
-      cards: [...this.state.cards, pkg],
-      kanbanLayouts: [...this.state.kanbanLayouts, layout],
-    });
+    this.setState({ selectedPackage: pkg });
   };
 
   _handleAddPackage = async () => {
-    const { user } = this.props
-    const { selectedList, selectedPackage } = this.state
-
-    console.log(`Adding package to ${selectedPackage.board} board`)
-
-    const list = Humanize.capitalize(selectedList);
-    const mutation = `addUserTo${list}`;
+    let { cards, selectedList, selectedBoard } = this.state
+    let pkg = this.state.selectedPackage
 
     try {
-      await this.props[mutation]({
+      await this.props.addUserToPackage({
         variables: {
-          userId: user.id,
-          packageId: selectedPackage.id,
+          userId: this.props.user.id,
+          packageId: pkg.id,
         },
       });
-      console.log(`Added package to ${selectedPackage.board} board`)
-      this._updateUserKanbanLayouts()
+
+      pkg.board = selectedBoard
+      pkg.list = selectedList
+
+      cards = [...cards, pkg]
+      this.setState({ cards }, this._updateUserKanbanLayouts)
     } catch (e) {
       console.error(e.message);
     }
   };
 
-  _handleRemovePackage = async (pkgId, pkgName, pkgBoard, pkgList) => {
-    console.log(`Removing ${pkgName} package from ${pkgBoard} board`)
-
-    pkgList = Humanize.capitalize(pkgList);
-    const mutation = `removeUserFrom${pkgList}`;
+  _handleRemovePackage = async (pkgId, pkgName, pkgBoard) => {
+    let { cards } = this.state
 
     try {
-      await this.props[mutation]({
+      await this.props.removeUserFromPackage({
         variables: {
           userId: this.props.user.id,
           packageId: pkgId
         },
       });
 
-      console.log(`Removed ${pkgName} package from ${pkgBoard} board`);
-      this.setState({ 
-        cards: [...this.state.cards].filter(card => card.id !== pkgId),
-      }, this._updateUserKanbanLayouts)
+      cards = [...cards].filter(card => card.id !== pkgId)
+      this.setState({ cards }, this._updateUserKanbanLayouts)
     } catch (e) {
       console.error(e.message);
     }
   };
 
-  _formatKanbanLayouts = () => {
+  _formatKanbanLayouts = (useState) => {
     const { cards } = this.state;
-    console.log('format cards', cards)
     let kanbanLayouts = [];
-
-    if (!cards.length) return kanbanLayouts
 
     for (let index in cards) {
       const { name, board, list } = cards[index];
@@ -143,9 +113,8 @@ class KanbanBoardContainer extends Component {
     return kanbanLayouts;
   };
 
-  _updateUserKanbanLayouts = async (packageUpdate) => {
+  _updateUserKanbanLayouts = async () => {
     console.log('updating kanban board layouts')
-
     try {
       await this.props.updateUserKanbanLayouts({
         variables: { 
@@ -154,7 +123,6 @@ class KanbanBoardContainer extends Component {
         },
         refetchQueries: [{ query: FETCH_CURRENT_USER }]
       });
-
       console.log('updated kanban board layouts')
       this._closePackageModal()
     } catch (e) {
@@ -204,13 +172,8 @@ class KanbanBoardContainer extends Component {
 
   _handleTabChange = (event, tabIndex) => {
     const currentBoard = this.props.user.kanbanBoards[tabIndex];
-    let cards = this.props.cards;
+    const cards = this.props.cards;
 
-    if (currentBoard !== "All") {
-      cards = [...cards].filter(card => {
-        return card.board === currentBoard;
-      });
-    }
     this.setState({ tabIndex, currentBoard, cards });
   };
 
@@ -238,7 +201,6 @@ class KanbanBoardContainer extends Component {
         },
         update: (store, { data: { updateUser } }) => {
           const kanbanBoards = updateUser.kanbanBoards;
-          // Triggers component re-render
           store.writeQuery({
             query: FETCH_CURRENT_USER,
             data: { 
@@ -249,34 +211,27 @@ class KanbanBoardContainer extends Component {
           });
         }
       });
-
-      console.log("user boards updated");
       
       const boards = response.data.updateUser.kanbanBoards;
       const tabIndex = boards.length - 1;
       const currentBoard = boards[tabIndex];
 
-      const cards = [...this.state.cards].filter(card => {
-        return card.board === currentBoard;
-      });
-
       this.setState({ 
-        cards,
-        addBoardName: "", 
         tabIndex, 
         currentBoard, 
+        addBoardName: "", 
         isAddBoardModalOpen: false 
       });
     } catch (e) {
       console.error(e.message);
-
       this.setState({ addBoardName: "", isAddBoardModalOpen: false });
     }
   };
 
   _handleRemoveBoard = async () => {
     const currentBoard = this.state.currentBoard;
-    console.log(`removing ${currentBoard} from user kanban boards`);
+    const boardNotEmpty = find(this.state.cards, { board: currentBoard })
+    if (boardNotEmpty) return  alert('Remove packages from board')
 
     try {
       await this.props.updateUserKanbanBoards({
@@ -288,7 +243,6 @@ class KanbanBoardContainer extends Component {
         },
         update: (store, { data: { updateUser } }) => {
           const kanbanBoards = updateUser.kanbanBoards;
-          // Triggers component re-render
           store.writeQuery({
             query: FETCH_CURRENT_USER,
             data: { 
@@ -299,12 +253,10 @@ class KanbanBoardContainer extends Component {
           });
         }
       });
-
-      console.log("user boards updated");
-      this.setState({ tabIndex: 0, currentBoard: 'All' });
+      this.setState({ tabIndex: 0, currentBoard: "All" });
     } catch (e) {
       console.error(e.message);
-      this.setState({ tabIndex: 0, currentBoard: 'All' });
+      this.setState({ tabIndex: 0, currentBoard: "All" });
     }
   };
 
@@ -320,11 +272,8 @@ class KanbanBoardContainer extends Component {
   };
 
   render() {
-    const { cards, user } = this.props;
+    const { user } = this.props;
     const boardSelectOptions = this._formatBoardSelectItems();
-    console.log('cards', cards)
-    console.log('kanban layouts', this.state.kanbanLayouts)
-    // console.log(this.state.currentBoard)
 
     return (
       <div>
@@ -489,14 +438,8 @@ class KanbanBoardContainer extends Component {
 }
 
 export default compose(
-  graphql(ADD_USER_TO_BACKLOG, { name: "addUserToBacklog" }),
-  graphql(ADD_USER_TO_STAGING, { name: "addUserToStaging" }),
-  graphql(ADD_USER_TO_PRODUCTION, { name: "addUserToProduction" }),
-  graphql(ADD_USER_TO_ARCHIVE, { name: "addUserToArchive" }),
-  graphql(REMOVE_USER_FROM_BACKLOG, { name: "removeUserFromBacklog" }),
-  graphql(REMOVE_USER_FROM_STAGING, { name: "removeUserFromStaging" }),
-  graphql(REMOVE_USER_FROM_PRODUCTION, { name: "removeUserFromProduction" }),
-  graphql(REMOVE_USER_FROM_ARCHIVE, { name: "removeUserFromArchive" }),
+  graphql(ADD_USER_TO_PACKAGE, { name: "addUserToPackage" }),
+  graphql(REMOVE_USER_FROM_PACKAGE, { name: "removeUserFromPackage" }),
   graphql(UPDATE_USER_KANBAN_LAYOUTS, { name: "updateUserKanbanLayouts" }),
-  graphql(UPDATE_USER_BOARDS, { name: "updateUserKanbanBoards" })
+  graphql(UPDATE_USER_KANBAN_BOARDS, { name: "updateUserKanbanBoards" })
 )(KanbanBoardContainer)

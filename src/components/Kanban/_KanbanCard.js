@@ -14,6 +14,11 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import { Link } from 'react-router-dom'
 
 const styleSheet = createStyleSheet('KanbanCard', theme => ({
+  MuiCardContent: {
+    root: {
+      paddingBottom: 0
+    }
+  },
   expand: {
     transform: 'rotate(0deg)',
     transition: theme.transitions.create('transform', {
@@ -86,7 +91,7 @@ class KanbanCard extends Component {
 
     const styles = {
       card: {
-        boxShadow: '5px 5px 25px 0px rgba(46,61,73,0.2)'
+        boxShadow: '5px 5px 25px 0px rgba(46,61,73,0.2)',
       }
     }
 
@@ -97,6 +102,7 @@ class KanbanCard extends Component {
             <Card style={styles.card}>
               <CardHeader
                 title={name}
+                style={{ paddingBottom: 0 }}
                 subheader={`stars: ${Humanize.formatNumber(stars)}`}
                 avatar={
                   <img

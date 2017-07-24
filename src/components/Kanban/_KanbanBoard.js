@@ -7,7 +7,14 @@ import KanbanList from "./_KanbanList";
 
 class KanbanBoard extends Component {
   render() {
-    const { cards, cardCallbacks, currentBoard } = this.props;
+    const { cardCallbacks, currentBoard } = this.props;
+    let { cards } = this.props;
+
+    if (currentBoard !== "All") {
+      cards = [...cards].filter(card => {
+        return card.board === currentBoard;
+      });
+    }
 
     return (
       <Grid container>

@@ -19,16 +19,7 @@ const UserFragment = gql`
     email
     kanbanBoards
     kanbanLayouts
-    packagesBacklog {
-      ...PackageFragment
-    }
-    packagesStaging {
-      ...PackageFragment
-    }
-    packagesProduction {
-      ...PackageFragment
-    }
-    packagesArchive {
+    packages {
       ...PackageFragment
     }
     subscriptions

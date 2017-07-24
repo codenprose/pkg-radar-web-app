@@ -68,7 +68,13 @@ const Packages = styled.h5`
   font-weight: normal;
 `
 
-const Subscriptions = Packages
+const Subscriptions = styled.h5`
+  display: inline-block;  
+  margin-right: 20px;
+  color: white;
+  font-size: 18px;
+  font-weight: normal;
+`
 
 class UserProfile extends Component {
   _formatCards = (packages) => {
@@ -93,18 +99,7 @@ class UserProfile extends Component {
 
   render() {
     const { user } = this.props;
-
-    const packagesInBacklog = this._formatCards(user.packagesBacklog)
-    const packagesInStaging = this._formatCards(user.packagesStaging)
-    const packagesInProduction = this._formatCards(user.packagesProduction)
-    const packagesInArchive = this._formatCards(user.packagesArchive)
-
-    const packages = [
-      ...packagesInBacklog,
-      ...packagesInStaging,
-      ...packagesInProduction,
-      ...packagesInArchive
-    ]
+    const packages = this._formatCards(user.packages)
 
     return (
       <div>
