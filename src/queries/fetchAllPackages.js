@@ -6,6 +6,7 @@ export default gql`
       id
       avatar
       name
+      owner
       stars
       issues
       primaryLanguage

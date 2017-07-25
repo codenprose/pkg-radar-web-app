@@ -143,7 +143,7 @@ class PackageDetail extends Component {
 
           <Grid item xs={3}>
             {/* Package Title */}
-            <Card style={styles.card}>
+            {/* <Card style={styles.card}>
               <CardHeader
                 avatar={
                   <img 
@@ -155,25 +155,6 @@ class PackageDetail extends Component {
                 title={`${data.Package.owner}/${data.Package.name}`}
                 subheader={data.Package.primaryLanguage.name}
               />
-              <CardContent style={{ padding: '0 16px' }}>
-                {
-                  data.Package.tags.map(({name}) => {
-                    return (
-                      <Link to={`/search?=${name}`} key={name}>
-                        <Chip 
-                          label={name} 
-                          style={{
-                            display: 'inline-block', 
-                            margin: '0 10px 10px 0',
-                            cursor: 'pointer',
-                            borderRadius: 0
-                          }} 
-                        />
-                      </Link>
-                    )
-                  })
-                }
-              </CardContent>
               <CardActions>
                 {
                   data.Package.homepageUrl &&
@@ -184,9 +165,8 @@ class PackageDetail extends Component {
                 <Link to={data.Package.repoUrl} target='_blank' className='no-underline'>
                   <Button dense>Repo</Button>
                 </Link>
-                <Button dense>Update Tags</Button>
               </CardActions>
-            </Card>
+            </Card> */}
 
             {/* Last Commit */}
             <Card style={styles.card}>
@@ -230,7 +210,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Package Star-to-Issue ratio */}
-            <Card style={styles.card}>
+            {/* <Card style={styles.card}>
               <CardContent>
                 <Typography type="title" component="h2">
                   Issue-to-Star Ratio
@@ -239,7 +219,7 @@ class PackageDetail extends Component {
                   {Humanize.formatNumber(data.Package.issues / data.Package.stars * 100)}%
                 </Typography>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Pull Requests */}
             <Card style={styles.card}>
@@ -291,7 +271,38 @@ class PackageDetail extends Component {
           {/* Tabs */}
           <Grid item xs={9}>
             <Grid container>
-              <Grid item xs={9}>
+              <Grid item xs={12}>
+                <div style={{ marginBottom: '5px' }}>
+                  <Typography 
+                    style={{ display: 'inline-block', color: 'rgb(1%, 40%, 84%)' }} 
+                    type="headline"
+                  >
+                    {data.Package.owner} / {data.Package.name}
+                  </Typography>
+                </div>
+                <Typography style={{ marginBottom: '15px' }} type="subheading">
+                  {data.Package.description}
+                </Typography>
+                {
+                  data.Package.tags.map(({name}) => {
+                    return (
+                      <Link to={`/search?=${name}`} key={name}>
+                        <Chip 
+                          label={name} 
+                          style={{
+                            display: 'inline-block', 
+                            margin: '0 10px 10px 0',
+                            cursor: 'pointer',
+                            borderRadius: 0
+                          }} 
+                        />
+                      </Link>
+                    )
+                  })
+                }
+                <Button dense raised>Update Tags</Button>
+              </Grid>
+              <Grid style={{ paddingTop: 0 }} item xs={9}>
                 <Tabs
                   index={this.state.index}
                   onChange={this.handleMainContentTabChange}
@@ -306,8 +317,8 @@ class PackageDetail extends Component {
                 </Tabs>
               </Grid>
               <Grid item xs={3}>
-                <Button raised style={{ marginRight: '10px' }}>Push</Button>
-                <Button raised>Monitor</Button>
+                <Button raised style={{ marginRight: '10px' }}>Save To Board</Button>
+                {/* <Button raised>Monitor</Button> */}
               </Grid>
             </Grid>
             <SwipeableViews index={this.state.index} onChangeIndex={this.handleMainContentChangeIndex}>
