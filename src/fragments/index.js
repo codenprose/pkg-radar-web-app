@@ -6,7 +6,11 @@ const PackageFragment = gql`
     name
     avatar,
     description,
-    stars
+    stars,
+    tags {
+      id
+      name
+    }
   }
 `
 
@@ -39,5 +43,6 @@ const KanbanPackage = gql`
 
 export { 
   UserFragment, 
-  KanbanPackage 
+  KanbanPackage,
+  PackageFragment
 }

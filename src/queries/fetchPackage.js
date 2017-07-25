@@ -21,6 +21,7 @@ export default gql`
       pullRequests
       readme
       tags {
+        id
         name
       }
       recommendations

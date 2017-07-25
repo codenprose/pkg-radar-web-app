@@ -23,12 +23,10 @@ import 'github-markdown-css/github-markdown.css'
 import fetchPackage from '../../queries/fetchPackage'
 import updatePackageRecommendations from '../../mutations/updatePackageRecommendations'
 
-
 const TabContainer = props =>
   <div style={{ padding: '24px' }}>
     {props.children}
   </div>
-
 
 class PackageDetail extends Component {
   state = {

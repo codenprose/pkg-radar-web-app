@@ -26,6 +26,7 @@
     "react-router-dom": "^4.1.1",
     "react-select": "^1.0.0-rc.5",
     "react-swipeable-views": "^0.12.3",
+    "react-tag-input": "^4.7.2",
     "react-tap-event-plugin": "^2.0.1",
     "styled-components": "^2.1.1"
   },
