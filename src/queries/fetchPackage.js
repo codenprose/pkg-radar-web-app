@@ -22,7 +22,7 @@ export default gql`
       readme
       tags {
         id
-        name
+        text
       }
       recommendations
       lastRelease

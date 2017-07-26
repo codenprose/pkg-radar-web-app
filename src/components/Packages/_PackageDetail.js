@@ -282,11 +282,11 @@ class PackageDetail extends Component {
                   {data.Package.description}
                 </Typography>
                 {
-                  data.Package.tags.map(({name}) => {
+                  data.Package.tags.map(({text}) => {
                     return (
-                      <Link to={`/search?=${name}`} key={name}>
+                      <Link to={`/search?=${text}`} key={text}>
                         <Chip 
-                          label={name} 
+                          label={text} 
                           style={{
                             display: 'inline-block', 
                             margin: '0 10px 10px 0',

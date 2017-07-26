@@ -9,7 +9,7 @@ const PackageFragment = gql`
     stars,
     tags {
       id
-      name
+      text
     }
   }
 `
