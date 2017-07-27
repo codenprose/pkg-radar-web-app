@@ -123,6 +123,7 @@ body {
 /* Example Styles for React Tags*/
 div.ReactTags__tags {
     position: relative;
+    margin: 0 5px 10px;
 }
 
 /* Styles for the input */
@@ -139,6 +140,7 @@ div.ReactTags__tagInput input.ReactTags__tagInputField:focus {
     width: 100%;
     border: 1px solid #eee;
     padding-left: 10px;
+    outline: none;
 }
 
 /* Styles for selected tags */
@@ -148,7 +150,7 @@ div.ReactTags__selected span.ReactTags__tag {
     font-size: 12px;
     display: inline-block;
     padding: 5px;
-    margin: 0 5px;
+    margin: 0 5px 10px;
     cursor: move;
     border-radius: 2px;
 }
@@ -160,7 +162,7 @@ div.ReactTags__selected a.ReactTags__remove {
 
 /* Styles for suggestions */
 div.ReactTags__suggestions {
-    position: absolute;
+    position: fixed;
 }
 div.ReactTags__suggestions ul {
     list-style-type: none;
@@ -168,6 +170,7 @@ div.ReactTags__suggestions ul {
     background: white;
     width: 200px;
     padding-left: 0;
+    margin-top: 0;
 }
 div.ReactTags__suggestions li {
     border-bottom: 1px solid #ddd;

@@ -152,7 +152,7 @@ class App extends Component {
 }
 
 export default compose(
-  graphql(UserQuery, { options: {fetchPolicy: 'network-only'}}),
+  graphql(UserQuery, { options: {fetchPolicy: 'network-only'}} ),
   graphql(CreateUserMutation, {name: 'createUser'} ),
   graphql(SignInMutation, {name: 'signinUser'} )
 )(withRouter(App))

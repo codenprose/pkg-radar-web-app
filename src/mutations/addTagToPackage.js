@@ -4,7 +4,7 @@ import { PackageFragment } from '../fragments'
 export default gql`
   mutation addTagToPackage($tagId: ID!, $packageId: ID!) {
     addToTagOnPackage(tagsTagId: $tagId, packagesPackageId: $packageId) {
-      packagesPackages {
+      packagesPackage {
         ...PackageFragment
       }
     }

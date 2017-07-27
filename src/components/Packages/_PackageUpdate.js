@@ -1,46 +1,74 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
 
-import Grid from "material-ui/Grid";
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from "material-ui/Dialog";
+import Button from "material-ui/Button";
 
-import TagsUpdate from "./_TagsUpdate"
+import TagsUpdate from "./_TagsUpdate";
 
-import FETCH_PACKAGE from '../../queries/fetchPackage';
+import FETCH_PACKAGE from "../../queries/fetchPackage";
 import FETCH_TAGS from "../../queries/fetchTags";
 
 class PackageUpdate extends Component {
+  state = {
+    isModalOpen: this.props.isModalOpen
+  };
+
+  static defaultProps = {
+    isModalOpen: true
+  }
+
   render() {
-    const { pkg, tags } = this.props
-    if (pkg.loading || tags.loading) return <div></div>
+    const { history, pkg, tags } = this.props;
+    if (pkg.loading || tags.loading) return <div />;
 
     return (
-      <Grid 
-        container 
-        direction="column" 
-        align="center"
-        justify="center"
+      <Dialog 
+        open={this.state.isModalOpen}
       >
-        <Grid item>
-          <h2 className="mt0">Update Package</h2>
-          <h3 className="tc">{pkg.Package.name}</h3>
-        </Grid>
-        <Grid item>
+        <DialogTitle>Update Package</DialogTitle>
+        <DialogContent style={{ minWidth: '600px' }}>
+          <DialogContentText style={{ marginBottom: '10px' }}>
+            Tags
+          </DialogContentText>
           <TagsUpdate 
+            allTags={tags.allTags} 
             pkgTags={pkg.Package.tags}
-            allTags={tags.allTags}
+            pkgId={pkg.Package.id}
           />
-        </Grid>
-      </Grid>
-    )
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            color="primary" 
+            onClick={() => history.push(`/package/${pkg.Package.name}`)}
+          >
+            Exit
+          </Button>
+          <Button 
+            color="primary" 
+            onClick={() => history.push(`/package/${pkg.Package.name}`)}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   }
 }
 
 const fetchPackageOptions = {
   name: "pkg",
-  options: (props) => { return { 
-    variables: { name: props.match.params.name } } 
+  options: props => {
+    return {
+      variables: { name: props.match.params.name }
+    };
   }
-}
+};
 
 export default compose(
   graphql(FETCH_TAGS, { name: "tags" }),

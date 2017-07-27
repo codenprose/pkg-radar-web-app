@@ -110,7 +110,7 @@ class PackageDetail extends Component {
   }
 
   render() {
-    const { data } = this.props
+    const { data, history } = this.props
     if (data.loading) return <div></div>
 
     let readmeHtml = '<div>No Data Available</div>'
@@ -141,7 +141,7 @@ class PackageDetail extends Component {
 
           <Grid item xs={3}>
             {/* Package Title */}
-            {/* <Card style={styles.card}>
+             <Card style={styles.card}>
               <CardHeader
                 avatar={
                   <img 
@@ -164,7 +164,43 @@ class PackageDetail extends Component {
                   <Button dense>Repo</Button>
                 </Link>
               </CardActions>
-            </Card> */}
+            </Card> 
+            
+            {/* Tags */}
+            <Card style={styles.card}>
+              <CardContent style={{ paddingBottom: 0 }}>
+                <Typography type="title" component="h2">
+                  Tags
+                </Typography>
+                <div style={{ marginTop: '20px' }}>
+                  {
+                    data.Package.tags.map(({text}) => {
+                      return (
+                        <Link to={`/search?=${text}`} key={text}>
+                          <Chip 
+                            label={text} 
+                            style={{
+                              display: 'inline-block', 
+                              margin: '0 10px 10px 0',
+                              cursor: 'pointer',
+                              borderRadius: 0
+                            }} 
+                          />
+                        </Link>
+                      )
+                    })
+                  }
+                </div>
+              </CardContent>
+              <CardActions>
+                <Button 
+                  dense 
+                  onClick={() => history.push(`/package/update/${data.Package.name}`)}
+                >
+                  Update Tags
+                </Button>
+              </CardActions>
+            </Card>
 
             {/* Last Commit */}
             <Card style={styles.card}>
@@ -269,7 +305,7 @@ class PackageDetail extends Component {
           {/* Tabs */}
           <Grid item xs={9}>
             <Grid container>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <div style={{ marginBottom: '5px' }}>
                   <Typography 
                     style={{ display: 'inline-block', color: 'rgb(1%, 40%, 84%)' }} 
@@ -299,7 +335,7 @@ class PackageDetail extends Component {
                   })
                 }
                 <Button dense raised>Update Tags</Button>
-              </Grid>
+              </Grid> */}
               <Grid style={{ paddingTop: 0 }} item xs={9}>
                 <Tabs
                   index={this.state.index}
