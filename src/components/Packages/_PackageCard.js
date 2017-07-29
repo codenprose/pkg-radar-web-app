@@ -8,7 +8,7 @@ import Humanize from "humanize-plus";
 
 class PackageCard extends Component {
   render() {
-    const { avatar, name, owner, primaryLanguage, issues, stars } = this.props.pkg;
+    const { avatar, name, primaryLanguage, issues, stars } = this.props.pkg;
 
     const styles = {
       root: {
@@ -18,7 +18,7 @@ class PackageCard extends Component {
         paddingBottom: '10px'
       },
       content: {
-        padding: '5px 16px 0'
+        padding: '10px 16px 0'
       }
     };
 
@@ -33,7 +33,7 @@ class PackageCard extends Component {
               src={avatar}
             />
           }
-          title={`${owner}/${name}`}
+          title={<span style={{ fontSize: '20px' }}>{name}</span>}
           subheader={
             <div>
               <div

@@ -18,6 +18,7 @@ export default gql`
       primaryLanguage
       pullRequests
       readme
+      readmeExt
       pullRequests
       readme
       tags {

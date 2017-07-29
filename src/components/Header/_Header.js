@@ -102,7 +102,7 @@ class Header extends Component {
 
       if (name) {
         console.info('pkg created', name)
-        this.props.history.replace(`/package/${name}`)
+        this.props.history.replace(`/package/update/${name}`)
       } else {
         console.error('pkg name is undefined')
       }
@@ -136,7 +136,11 @@ class Header extends Component {
             >
               <Grid container align='center' gutter={16}>
                 <Grid item xs={3}>
-                  <Typography type="title" component='h1'>
+                  <Typography 
+                    type="title" 
+                    component='h1'
+                    style={{ fontSize: '24px' }}
+                  >
                     <Link
                       to="/"
                       className='no-underline white'
@@ -156,13 +160,10 @@ class Header extends Component {
                     padding: '0'
                   }}
                 >
-                  {
-                    user &&
-                    <div>
-                      <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
-                      <Search history={history}/>
-                    </div>
-                  }
+                  <div>
+                    <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
+                    <Search history={history}/>
+                  </div>
                 </Grid>
                 <Grid item xs={2}>
                   <div className='tr'>
@@ -175,7 +176,7 @@ class Header extends Component {
                          onTouchTap={() => this._login()}
                        >
                         <i className='fa fa-lg fa-github mr2' />
-                         Sign In
+                         Sign Up / Login
                       </Button>
                      </div>
                    }
@@ -257,16 +258,24 @@ class Header extends Component {
            <DialogActions>
              <Button
                className='mr3'
+               disabled={this.state.isCreatePackageLoading}
                onTouchTap={this._handleModalClose}
              >
                Cancel
             </Button>
-             <Button
+            <Button
                raised
                color="primary"
-               disabled={!this.state.isCreatePackageURLValid}
+               disabled={
+                 !this.state.isCreatePackageURLValid ||
+                 this.state.isCreatePackageLoading
+                }
                onTouchTap={this._handleCreatePackage}
              >
+              {
+                this.state.isCreatePackageLoading && 
+                <i className="fa fa-spinner fa-spin mr1" />
+              }
                Submit
             </Button>
            </DialogActions>

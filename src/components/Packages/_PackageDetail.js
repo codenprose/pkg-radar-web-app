@@ -23,6 +23,9 @@ import "github-markdown-css/github-markdown.css";
 import fetchPackage from "../../queries/fetchPackage";
 import updatePackageRecommendations from "../../mutations/updatePackageRecommendations";
 
+const rst2mdown = require('rst2mdown');
+const Text = require('react-format-text');
+
 const TabContainer = props =>
   <div style={{ marginTop: "20px" }}>
     {props.children}
@@ -132,8 +135,11 @@ class PackageDetail extends Component {
       changelogHtml = marked(data.Package.changelog);
     }
 
-    if (data.Package.readme) {
+    if (data.Package.readme && data.Package.readmeExt === "md") {
       readmeHtml = marked(data.Package.readme);
+    } else if (data.Package.readme && data.Package.readmeExt === "rst") {
+      const md = rst2mdown(data.Package.readme)
+      readmeHtml = marked(md)
     }
 
     const styles = {
@@ -348,10 +354,19 @@ class PackageDetail extends Component {
               onChangeIndex={this.handleMainContentChangeIndex}
             >
               <TabContainer>
-                <div
-                  className="markdown-body"
-                  dangerouslySetInnerHTML={{ __html: readmeHtml }}
-                />
+                {
+                  (data.Package.readmeExt === "md" || data.Package.readmeExt === "rst") &&
+                  <div
+                    className="markdown-body"
+                    dangerouslySetInnerHTML={{ __html: readmeHtml }}
+                  />
+                }
+                {
+                  data.Package.readmeExt === "txt" &&
+                  <div className="markdown-body">
+                    <Text>{data.Package.readme}</Text>
+                  </div>
+                }
               </TabContainer>
               <TabContainer>
                 {data.Package.lastRelease &&

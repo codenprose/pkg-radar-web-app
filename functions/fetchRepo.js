@@ -43,12 +43,22 @@ module.exports = function (event) {
             }
           }
         }
-        README: object(expression: "master:README.md") {
+        READMEmd: object(expression: "master:README.md") {
           ... on Blob {
             text
           }
         }
-    		Readme: object(expression: "master:Readme.md") {
+    		Readmemd: object(expression: "master:Readme.md") {
+          ... on Blob {
+            text
+          }
+        }
+        READMErst: object(expression: "master:README.rst") {
+          ... on Blob {
+            text
+          }
+        }
+        README: object(expression: "master:README") {
           ... on Blob {
             text
           }
@@ -121,10 +131,18 @@ module.exports = function (event) {
       eventData.repoUrl = repository.url
       eventData.stars = repository.stargazers ? repository.stargazers.totalCount : 0
 
-      if (repository.README) {
+      if (repository.READMEmd) {
+        eventData.readmeExt = 'md'
+        eventData.readme = repository.READMEmd.text
+      } else if (repository.Readmemd) {
+        eventData.readmeExt = 'md'
+        eventData.readme = repository.Readmemd.text
+      } else if (repository.READMErst) {
+        eventData.readmeExt = 'rst'
+        eventData.readme = repository.READMErst.text 
+      } else if (repository.README) {
+        eventData.readmeExt = 'txt'
         eventData.readme = repository.README.text
-      } else if (repository.Readme) {
-        eventData.readme = repository.Readme.text
       }
 
       if (repository.releases.edges.length) {

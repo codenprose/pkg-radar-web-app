@@ -5,10 +5,10 @@ import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs'
 
 import PackageCard from './_PackageCard'
-import AllPackagesQuery from '../../queries/fetchAllPackages'
+import FetchPackagesQuery from '../../queries/fetchPackages'
 
-import javascript from "../../images/javascript.svg"
-// import python from "../../images/python.svg"
+import javascriptIcon from "../../images/javascript.svg"
+import pythonIcon from "../../images/python.svg"
 // import java from "../../images/java.svg"
 // import go from "../../images/go.svg"
 // import swift from "../../images/swift.svg"
@@ -59,8 +59,8 @@ class PackageIndex extends Component {
   };
 
   render() {
-    const { data } = this.props;
-    if (data.loading) return <div />;
+    const { javascript, python } = this.props;
+    if (javascript.loading || python.loading) return <div />;
 
     const styles = {
       category: {
@@ -71,12 +71,12 @@ class PackageIndex extends Component {
     return (
       <Grid container direction="row">
         <Grid item xs={12} style={styles.category}>
-          {this._renderCategory(data.allPackages, javascript)}
+          {this._renderCategory(javascript.allPackages, javascriptIcon)}
+        </Grid>
+         <Grid item xs={12} style={styles.category}>
+          {this._renderCategory(python.allPackages, pythonIcon)}
         </Grid>
         {/* <Grid item xs={12} style={styles.category}>
-          {this._renderCategory(data.allPackages, python)}
-        </Grid>
-        <Grid item xs={12} style={styles.category}>
           {this._renderCategory(data.allPackages, java)}
         </Grid>
         <Grid item xs={12} style={styles.category}>
@@ -99,20 +99,31 @@ class PackageIndex extends Component {
         </Grid>
         <Grid item xs={12} style={styles.category}>
           {this._renderCategory(data.allPackages, ruby)}
-        </Grid> */}
+        </Grid>  */}
       </Grid>
     );
   }
 }
 
-const fetchAllPackagesOptions = {
+const fetchJavaScriptPackagesOptions = {
+  name: "javascript",
   options: props => {
     return {
-      variables: { first: 15, orderBy: "stars_DESC" }
+      variables: { first: 8, orderBy: "stars_DESC", tag: "javascript" }
+    };
+  }
+};
+
+const fetchPythonPackagesOptions = {
+  name: "python",
+  options: props => {
+    return {
+      variables: { first: 8, orderBy: "stars_DESC", tag: "python" }
     };
   }
 };
 
 export default compose(
-  graphql(AllPackagesQuery, fetchAllPackagesOptions),
+  graphql(FetchPackagesQuery, fetchJavaScriptPackagesOptions),
+  graphql(FetchPackagesQuery, fetchPythonPackagesOptions),
 )(PackageIndex)
