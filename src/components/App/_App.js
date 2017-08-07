@@ -12,7 +12,7 @@ import { Main } from '../Main'
 import Loader from './_Loader'
 
 import CreateUserMutation from '../../mutations/createUser'
-import SignInMutation from '../../mutations/signInUser'
+import SignInMutation from '../../mutations/signinUser'
 import UserQuery from '../../queries/user'
 
 const theme = createMuiTheme({
