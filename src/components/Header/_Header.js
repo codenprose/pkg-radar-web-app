@@ -19,6 +19,7 @@ import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import SearchIcon from 'material-ui-icons/Search'
+import GoogleLogin from 'react-google-login'
 
 import Search from './_Search'
 
@@ -116,7 +117,7 @@ class Header extends Component {
   }
 
   render() {
-    const { history, title, user } = this.props
+    const { googleAuth, history, title, user } = this.props
 
      return (
        <div>
@@ -170,14 +171,12 @@ class Header extends Component {
                    {
                      !user &&
                      <div>
-                      <Button
-                         raised
-                         color="default"
-                         onTouchTap={() => this._login()}
-                       >
-                        <i className='fa fa-lg fa-github mr2' />
-                         Sign Up / Login
-                      </Button>
+                       <GoogleLogin
+                         clientId="600848540479-26bnpknmemals69lseqdmakg2c70h5r3.apps.googleusercontent.com"
+                         buttonText="Login"
+                         onSuccess={googleAuth}
+                         onFailure={googleAuth}
+                       />
                      </div>
                    }
                    {

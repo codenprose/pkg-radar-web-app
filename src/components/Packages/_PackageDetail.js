@@ -123,6 +123,7 @@ class PackageDetail extends Component {
   render() {
     const { data, history } = this.props;
     if (data.loading) return <div />;
+    console.log(data)
 
     let readmeHtml = "<div>No Data Available</div>";
     let changelogHtml = "<div>No Data Available</div>";
@@ -140,12 +141,14 @@ class PackageDetail extends Component {
     } else if (data.Package.readme && data.Package.readmeExt === "rst") {
       const md = rst2mdown(data.Package.readme)
       readmeHtml = marked(md)
+    } else {
+      readmeHtml = marked(data.Package.readme);
     }
 
     const styles = {
       card: {
         marginBottom: "15px",
-        boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
+        // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
       }
     };
 
@@ -366,6 +369,13 @@ class PackageDetail extends Component {
                   <div className="markdown-body">
                     <Text>{data.Package.readme}</Text>
                   </div>
+                }
+                {
+                  !data.Package.readmeExt &&
+                  <div
+                    className="markdown-body"
+                    dangerouslySetInnerHTML={{ __html: readmeHtml }}
+                  />
                 }
               </TabContainer>
               <TabContainer>
