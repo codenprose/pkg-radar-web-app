@@ -15,7 +15,8 @@ import './index.css'
 injectTapEventPlugin()
 
 const networkInterface = createNetworkInterface({
-  uri: process.env.GRAPHQL_ENDPOINT,
+  // uri: process.env.GRAPHQL_ENDPOINT,
+  uri: 'http://localhost:8000/graphql'
 })
 
 networkInterface.use([{
@@ -25,8 +26,9 @@ networkInterface.use([{
     }
 
     // get the authentication token from local storage if it exists
-    if (localStorage.getItem('auth0IdToken')) {
-      req.options.headers.authorization = `Bearer ${localStorage.getItem('auth0IdToken')}`
+    const token = localStorage.getItem('pkgRadarToken')
+    if (token) {
+      req.options.headers.authorization = `Bearer ${token}`
     }
     next()
   },

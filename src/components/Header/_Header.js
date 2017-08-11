@@ -19,7 +19,6 @@ import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import SearchIcon from 'material-ui-icons/Search'
-import GoogleLogin from 'react-google-login'
 
 import Search from './_Search'
 
@@ -51,7 +50,7 @@ class Header extends Component {
   }
 
    _login = () => {
-    this.props.auth.show()
+    // 
   }
 
   _logout = () => {
@@ -117,14 +116,23 @@ class Header extends Component {
   }
 
   render() {
-    const { googleAuth, history, title, user } = this.props
+    const { githubAuth, history, title, user, location } = this.props
+    // console.log('header props', this.props)
+
+    let userSectionWidth = 8, isSearchVisible = false
+
+    if (location.pathname !== '/') {
+      userSectionWidth = 3
+      isSearchVisible = true
+    }
 
      return (
        <div>
           <AppBar
             id="Header"
             position="static"
-            color='primary'
+            color='default'
+            style={{ boxShadow: 'none' }}
           >
             <Toolbar
               style={{
@@ -136,7 +144,7 @@ class Header extends Component {
               }}
             >
               <Grid container align='center' gutter={16}>
-                <Grid item xs={3}>
+                <Grid item xs={4} style={{ paddingTop: 0 }}>
                   <Typography 
                     type="title" 
                     component='h1'
@@ -144,39 +152,49 @@ class Header extends Component {
                   >
                     <Link
                       to="/"
-                      className='no-underline white'
+                      className='no-underline black'
                     >
                       {title}
                     </Link>
                   </Typography>
                 </Grid>
-                <Grid
-                  item
-                  xs={7}
-                  style={{
-                    borderRadius: '2px',
-                    height: '36px',
-                    backgroundColor: 'rgba(255,255,255,.15)',
-                    color: '#fff',
-                    padding: '0'
-                  }}
-                >
-                  <div>
-                    <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
-                    <Search history={history}/>
-                  </div>
-                </Grid>
-                <Grid item xs={2}>
+                {
+                  isSearchVisible &&
+                  <Grid
+                    item
+                    xs={5}
+                    style={{
+                      borderRadius: '2px',
+                      height: '36px',
+                      backgroundColor: 'rgba(255,255,255,.15)',
+                      color: '#fff',
+                      padding: '0'
+                    }}
+                  >
+                    <div>
+                      <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
+                      <Search history={history}/>
+                    </div>
+                  </Grid>
+                }
+                <Grid item xs={userSectionWidth}>
                   <div className='tr'>
                    {
                      !user &&
                      <div>
-                       <GoogleLogin
-                         clientId="600848540479-26bnpknmemals69lseqdmakg2c70h5r3.apps.googleusercontent.com"
-                         buttonText="Login"
-                         onSuccess={googleAuth}
-                         onFailure={googleAuth}
-                       />
+                       <Button
+                         onTouchTap={githubAuth}
+                         style={{ marginRight: '10px' }}
+                       >
+                        Log In
+                       </Button>
+                       <Button
+                         raised
+                         onTouchTap={githubAuth}
+                       >
+                       <i className="fa fa-lg fa-github mr2" />
+                        Sign Up
+                       </Button>
                      </div>
                    }
                    {
@@ -186,7 +204,7 @@ class Header extends Component {
                          onTouchTap={this._handleModalOpen}
                          className='v-mid'
                        >
-                         <Add style={{ color: 'white' }} />
+                         <Add />
                        </IconButton>
                        <Avatar
                          src={user.avatar}
@@ -196,7 +214,6 @@ class Header extends Component {
                            verticalAlign: 'middle',
                            border: '1px solid white',
                            cursor: 'pointer',
-                           borderRadius: 0
                          }}
                          onClick={this._handleUserMenuClick}
                        />

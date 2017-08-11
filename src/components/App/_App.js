@@ -1,22 +1,16 @@
 import React, { Component } from 'react'
 import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
 // import PropTypes from 'prop-types'
+import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import createPalette from 'material-ui/styles/palette'
 import { blueGrey } from 'material-ui/styles/colors'
-import AWS from 'aws-sdk'
-import uuidv4 from 'uuid/v4'
-import 'amazon-cognito-js'
 
 import { Header } from '../Header'
 import { Main } from '../Main'
-// import Loader from './_Loader'
+import { Loader } from '../Shared'
 
-AWS.config.region = 'us-east-1';
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:21e5d2d6-a954-4e4a-8f67-39725835621d',
-});
-
+import GET_CURRENT_USER from '../../queries/currentUser'
 
 const theme = createMuiTheme({
   palette: createPalette({
@@ -48,59 +42,41 @@ class App extends Component {
     isLoading: false
   };
 
-  componentWillMount() {
-
+  githubAuth = () => {
+    const clientId = '1050d5bcb642ab0beb2e'
+    window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`
   }
 
-  googleAuth = response => {
-    console.log(response);
-    const idToken = response.tokenId;
-    const profile = response.profileObj;
-
-    AWS.config.credentials.params.Logins = {};
-    AWS.config.credentials.params.Logins["accounts.google.com"] = idToken;
-
-    AWS.config.credentials.get(() => {
-      const client = new AWS.CognitoSyncManager()
-
-      client.openOrCreateDataset("profile", (err, dataset) => {
-        // Set id only if one doesn't exist
-        profile.id = uuidv4()
-
-        dataset.putAll(profile, (err, record) => {
-          console.log("record", record);
-
-          dataset.synchronize({
-            onSuccess(data, newRecords) {
-              // Set token and profile to localStorage 
-              localStorage.setItem('pkgRadarIdToken', idToken)
-              localStorage.setItem('pkgRadarProfile', JSON.stringify(profile))
-              
-              console.log('sync success')
-              console.log('profile', profile)
-            },
-            onFailure(err) {
-              console.error(err);
-            }
-          });
-        });
-      });
-    });
-  };
-
   render() {
-    // const { data } = this.props;
-    // if (data.loading || this.state.isLoading) return <Loader />;
+    const { data } = this.props;
+    if (data.loading) return <Loader />;
 
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          <Header user={''} googleAuth={this.googleAuth} />
-          <Main user={''} />
+          <Header user={data.currentUser} githubAuth={this.githubAuth} />
+          <Main user={data.currentUser} />
         </div>
       </MuiThemeProvider>
     );
   }
 }
 
-export default withRouter(App)
+const getCurrentUserOptions = {
+  skip: (props) => {
+    const token = localStorage.getItem('pkgRadarToken')
+    return token === 'undefined' || !token
+  },
+  options: (props) => {
+    return {
+      variables: { 
+        username: localStorage.getItem('pkgRadarUsername'),
+        token: localStorage.getItem('pkgRadarToken')
+      }
+    };
+  }
+};
+
+export default compose(
+  graphql(GET_CURRENT_USER, getCurrentUserOptions),
+)(withRouter(App));

@@ -44,13 +44,13 @@ class Search extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ width: 'inherit' }}>
         <AsyncTypeahead
           autoFocus
           labelKey="name"
           onSearch={this._handleSearch}
           onChange={(selected) => this._handleSelection(selected)}
-          placeholder="Search for Packages by Name or Tag..."
+          placeholder=""
           renderMenuItemChildren={this._renderMenuItemChildren}
           options={this.state.options}
           filterBy={(option, text) => {
