@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 import { PackageDetail, PackageIndex, PackageUpdate } from '../Packages'
-import { GithubAuth, UserProfile, UserSettings } from '../Users'
-
+import { UserProfile, UserSettings } from '../Users'
 
 class Main extends Component {
   render() {
@@ -17,7 +16,6 @@ class Main extends Component {
           <Route exact path="/package/update/:name" render={(props) => <PackageUpdate {...props} />} />
           <Route exact path="/profile/:username" render={(props) => <UserProfile {...props} user={user} />} />
           <Route exact path="/settings" render={(props) => <UserSettings {...props} user={user} />} />
-          <Route exact path="/github/auth" render={(props) => <GithubAuth {...props} user={user} />} />
         </Switch>
       </main>
     )

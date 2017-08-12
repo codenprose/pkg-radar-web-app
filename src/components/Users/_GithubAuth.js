@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 
+import { Loader } from '../Shared'
+
 import CREATE_USER from '../../mutations/createUser'
 
 class GithubAuth extends Component {
   componentWillMount() {
-    if (this.props.user) this.props.history.replace('/')
+    const token = localStorage.getItem('pkgRadarToken')
+    if (token) this.props.history.replace('/')
 
     const code = window.location.href.match(/\?code=(.*)/)[1];
     console.log('github code', code)
@@ -38,7 +41,7 @@ class GithubAuth extends Component {
   }
 
   _createUser = async (profile, token) => {
-    console.log('create user')
+    console.log('authenticate user')
 
     try {
       await this.props.createUser({
@@ -54,22 +57,19 @@ class GithubAuth extends Component {
           website: profile.blog ? profile.blog : '',
         }
       })
-      console.log('create user success')
+      console.log('user authentication success')
 
       localStorage.setItem('pkgRadarToken', token)
       localStorage.setItem('pkgRadarUsername', profile.login)
 
-      this.props.history.replace('/')
+      window.location.replace('/')
     } catch (e) {
       console.error(e.message)
     }
   }
 
   render() {
-    console.log('github auth props', this.props)
-    return (
-      <div>Loading...</div>
-    )
+    return <Loader />
   }
 }
 

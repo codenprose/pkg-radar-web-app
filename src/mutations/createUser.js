@@ -27,6 +27,7 @@ export default gql`
         avatar
         bio
         company
+        id
         name
         totalPackages
         totalSubscriptions

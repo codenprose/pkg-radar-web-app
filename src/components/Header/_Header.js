@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import Button from 'material-ui/Button'
@@ -8,11 +8,11 @@ import Dialog, {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogTitle
 } from 'material-ui/Dialog'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
-import { Add } from 'material-ui-icons'
+import { Add, MoreHoriz } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
@@ -22,8 +22,9 @@ import SearchIcon from 'material-ui-icons/Search'
 
 import Search from './_Search'
 
-import CREATE_PACKAGE_MUTATION from '../../mutations/createPackage'
+// import { client } from '../../index'
 
+import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
@@ -38,29 +39,30 @@ class Header extends Component {
     isCreatePackageLoading: false
   }
 
-  _handleUserMenuClick = (event) => {
+  _handleUserMenuClick = event => {
     this.setState({
       isUserMenuOpen: true,
       userMenuAnchorEl: event.currentTarget
     })
-  };
-
-  _handleUserMenuClose = () => {
-    this.setState({ isUserMenuOpen: false });
   }
 
-   _login = () => {
-    // 
+  _handleUserMenuClose = () => {
+    this.setState({ isUserMenuOpen: false })
+  }
+
+  _login = () => {
+    this.props.githubAuth()
   }
 
   _logout = () => {
-    this.setState({ isUserMenuOpen: false }, () => {
-      setTimeout(() => {
-        // remove token from local storage and reload page to reset apollo client
-        window.localStorage.removeItem('auth0IdToken')
-        window.location.replace('/')
-      }, 500)
-    })
+    this.setState({ isUserMenuOpen: false })
+
+    setTimeout(() => {
+      localStorage.removeItem('pkgRadarUsername')
+      localStorage.removeItem('pkgRadarToken')
+  
+      window.location.reload()
+    }, 500)
   }
 
   _handleModalOpen = () => {
@@ -71,7 +73,7 @@ class Header extends Component {
     this.setState({ isCreatePackageModalOpen: false })
   }
 
-  _handlePackageURLChange = (url) => {
+  _handlePackageURLChange = url => {
     this.setState({ createPackageURL: url })
 
     if (url.includes('https://github.com')) {
@@ -86,16 +88,16 @@ class Header extends Component {
     this.setState({ isCreatePackageLoading: true })
 
     try {
-      const pkg = await this.props.createPackage({ 
+      const pkg = await this.props.createPackage({
         variables: {
           repoUrl: this.state.createPackageURL,
           createdBy: this.props.user.id
         }
       })
 
-      this.setState({ 
-        isCreatePackageModalOpen: false, 
-        isCreatePackageLoading: false 
+      this.setState({
+        isCreatePackageModalOpen: false,
+        isCreatePackageLoading: false
       })
 
       const name = pkg.data.createPackage.name
@@ -106,201 +108,247 @@ class Header extends Component {
       } else {
         console.error('pkg name is undefined')
       }
-    } catch(e) {
-      this.setState({ 
+    } catch (e) {
+      this.setState({
         isCreatePackageModalOpen: false,
-        isCreatePackageLoading: false 
+        isCreatePackageLoading: false
       })
       console.error(e)
     }
   }
 
   render() {
-    const { githubAuth, history, title, user, location } = this.props
+    const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 8, isSearchVisible = false
+    let userSectionWidth = 6,
+      isSearchVisible = false
 
     if (location.pathname !== '/') {
       userSectionWidth = 3
       isSearchVisible = true
     }
 
-     return (
-       <div>
-          <AppBar
-            id="Header"
-            position="static"
-            color='default'
-            style={{ boxShadow: 'none' }}
+    return (
+      <div>
+        <AppBar
+          id="Header"
+          position="static"
+          color="default"
+          style={{ boxShadow: 'none' }}
+        >
+          <Toolbar
+            style={{
+              padding: '0 20px',
+              height: '56px',
+              width: '100%',
+              maxWidth: '1600px',
+              margin: '0 auto'
+            }}
           >
-            <Toolbar
-              style={{
-                padding: '0 16px',
-                height: '56px',
-                width: '100%',
-                maxWidth: '1600px',
-                margin: '0 auto'
-              }}
+            <Grid
+              container
+              align="center"
+              gutter={16}
+              style={{ height: '100%' }}
             >
-              <Grid container align='center' gutter={16}>
-                <Grid item xs={4} style={{ paddingTop: 0 }}>
-                  <Typography 
-                    type="title" 
-                    component='h1'
-                    style={{ fontSize: '24px' }}
+              <Grid item xs={6} style={{ height: '100%' }}>
+                <Typography
+                  type="title"
+                  component="h1"
+                  style={{
+                    fontSize: '24px',
+                    display: 'inline-block',
+                    paddingRight: '15px',
+                    borderRight: '2px solid gray'
+                  }}
+                >
+                  <Link
+                    to="/"
+                    className="no-underline"
+                    style={{ color: '#263238' }}
                   >
-                    <Link
-                      to="/"
-                      className='no-underline black'
-                    >
-                      {title}
-                    </Link>
-                  </Typography>
-                </Grid>
-                {
-                  isSearchVisible &&
-                  <Grid
-                    item
-                    xs={5}
-                    style={{
-                      borderRadius: '2px',
-                      height: '36px',
-                      backgroundColor: 'rgba(255,255,255,.15)',
-                      color: '#fff',
-                      padding: '0'
-                    }}
-                  >
-                    <div>
-                      <SearchIcon style={{ position: 'absolute', margin: '0 10px 0 15px', top: '18px' }} />
-                      <Search history={history}/>
-                    </div>
-                  </Grid>
-                }
-                <Grid item xs={userSectionWidth}>
-                  <div className='tr'>
-                   {
-                     !user &&
-                     <div>
-                       <Button
-                         onTouchTap={githubAuth}
-                         style={{ marginRight: '10px' }}
-                       >
-                        Log In
-                       </Button>
-                       <Button
-                         raised
-                         onTouchTap={githubAuth}
-                       >
-                       <i className="fa fa-lg fa-github mr2" />
-                        Sign Up
-                       </Button>
-                     </div>
-                   }
-                   {
-                     user &&
-                     <div>
-                       <IconButton
-                         onTouchTap={this._handleModalOpen}
-                         className='v-mid'
-                       >
-                         <Add />
-                       </IconButton>
-                       <Avatar
-                         src={user.avatar}
-                         alt="User Image"
-                         style={{
-                           display: 'inline-block',
-                           verticalAlign: 'middle',
-                           border: '1px solid white',
-                           cursor: 'pointer',
-                         }}
-                         onClick={this._handleUserMenuClick}
-                       />
-                       <Menu
-                         id="simple-menu"
-                         anchorEl={this.state.userMenuAnchorEl}
-                         open={this.state.isUserMenuOpen}
-                         onRequestClose={this._handleUserMenuClose}
-                         style={{ marginTop: '40px', width: '150px' }}
-                       >
-                         <MenuItem
-                           onClick={this._handleUserMenuClose}
-                         >
-                           <Link
-                             to={`/profile/${user.username}`}
-                             className='no-underline fw4'
-                             style={{ color: 'rgba(0, 0, 0, 0.87)' }}
-                           >
-                             Profile
-                          </Link>
-                         </MenuItem>
-                         <MenuItem onClick={this._handleUserMenuClose}>
-                           <Link
-                             to={`/settings`}
-                             className='no-underline fw4'
-                             style={{ color: 'rgba(0, 0, 0, 0.87)' }}
-                           >
-                             Settings
-                          </Link>
-                         </MenuItem>
-                         <MenuItem onClick={() => this._logout()}>Logout</MenuItem>
-                       </Menu>
-                     </div>
-                   }
-                  </div>
-                </Grid>
+                    {title}
+                  </Link>
+                </Typography>
+                <Link
+                  to="/"
+                  className="no-underline"
+                  style={{
+                    color: '#777',
+                    fontSize: '12px',
+                    padding: '0 10px 0 15px',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  LANGUAGES
+                </Link>
+                <Link
+                  to="/"
+                  className="no-underline"
+                  style={{
+                    color: '#777',
+                    fontSize: '12px',
+                    padding: '0 10px',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  TOP PACKAGES
+                </Link>
+                <Link
+                  to="/"
+                  className="no-underline"
+                  style={{
+                    color: '#777',
+                    fontSize: '12px',
+                    padding: '0 10px',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  TOP BOARDS
+                </Link>
+                <IconButton className="v-mid">
+                  <MoreHoriz />
+                </IconButton>
               </Grid>
-            </Toolbar>
-          </AppBar>
+              {isSearchVisible &&
+                <Grid
+                  item
+                  xs={3}
+                  style={{
+                    borderRadius: '2px',
+                    height: '36px',
+                    backgroundColor: 'rgba(255,255,255,.15)',
+                    color: '#fff',
+                    padding: '0'
+                  }}
+                >
+                  <div>
+                    <SearchIcon
+                      style={{
+                        position: 'absolute',
+                        margin: '0 10px 0 15px',
+                        top: '18px'
+                      }}
+                    />
+                    <Search history={history} />
+                  </div>
+                </Grid>}
+              <Grid item xs={userSectionWidth} style={{ height: '100%' }}>
+                <div className="tr">
+                  {!isUserLoading && !user &&
+                    <div>
+                      <Button
+                        onTouchTap={githubAuth}
+                        style={{ marginRight: '10px' }}
+                      >
+                        Log In
+                      </Button>
+                      <Button raised color="primary" onTouchTap={githubAuth}>
+                        <i className="fa fa-lg fa-github mr2" />
+                        Sign Up
+                      </Button>
+                    </div>}
+                  {!isUserLoading && user &&
+                    <div>
+                      <IconButton
+                        onTouchTap={this._handleModalOpen}
+                        className="v-mid"
+                      >
+                        <Add />
+                      </IconButton>
+                      <Avatar
+                        src={user.avatar}
+                        alt="User Image"
+                        style={{
+                          display: 'inline-block',
+                          verticalAlign: 'middle',
+                          border: '1px solid white',
+                          cursor: 'pointer'
+                        }}
+                        onClick={this._handleUserMenuClick}
+                      />
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={this.state.userMenuAnchorEl}
+                        open={this.state.isUserMenuOpen}
+                        onRequestClose={this._handleUserMenuClose}
+                        style={{ marginTop: '40px', width: '150px' }}
+                      >
+                        <MenuItem onClick={this._handleUserMenuClose}>
+                          <Link
+                            to={`/profile/${user.username}`}
+                            className="no-underline fw4"
+                            style={{ color: 'rgba(0, 0, 0, 0.87)' }}
+                          >
+                            Profile
+                          </Link>
+                        </MenuItem>
+                        <MenuItem onClick={this._handleUserMenuClose}>
+                          <Link
+                            to={`/settings`}
+                            className="no-underline fw4"
+                            style={{ color: 'rgba(0, 0, 0, 0.87)' }}
+                          >
+                            Settings
+                          </Link>
+                        </MenuItem>
+                        <MenuItem onClick={() => this._logout()}>
+                          Logout
+                        </MenuItem>
+                      </Menu>
+                    </div>}
+                </div>
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </AppBar>
 
-          <Dialog
-            open={this.state.isCreatePackageModalOpen}
-            onRequestClose={this._handleModalClose}
-          >
-           <DialogTitle>Add New Package</DialogTitle>
-           <DialogContent style={{ width: '500px' }}>
-             <DialogContentText style={{ marginBottom: '10px' }}>
-               Enter a valid Github Repo url below:
-             </DialogContentText>
-             <TextField
-               autoFocus
-               value={this.state.createPackageURL}
-               style={{ width: '100%' }}
-               onChange={(e) => this._handlePackageURLChange(e.target.value)}
-               InputProps={{ placeholder: 'https://github.com/facebook/react' }}
-             />
-           </DialogContent>
-           <DialogActions>
-             <Button
-               className='mr3'
-               disabled={this.state.isCreatePackageLoading}
-               onTouchTap={this._handleModalClose}
-             >
-               Cancel
+        <Dialog
+          open={this.state.isCreatePackageModalOpen}
+          onRequestClose={this._handleModalClose}
+        >
+          <DialogTitle>Add New Package</DialogTitle>
+          <DialogContent style={{ width: '500px' }}>
+            <DialogContentText style={{ marginBottom: '10px' }}>
+              Enter a valid Github Repo url below:
+            </DialogContentText>
+            <TextField
+              autoFocus
+              value={this.state.createPackageURL}
+              style={{ width: '100%' }}
+              onChange={e => this._handlePackageURLChange(e.target.value)}
+              InputProps={{ placeholder: 'https://github.com/facebook/react' }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              className="mr3"
+              disabled={this.state.isCreatePackageLoading}
+              onTouchTap={this._handleModalClose}
+            >
+              Cancel
             </Button>
             <Button
-               raised
-               color="primary"
-               disabled={
-                 !this.state.isCreatePackageURLValid ||
-                 this.state.isCreatePackageLoading
-                }
-               onTouchTap={this._handleCreatePackage}
-             >
-              {
-                this.state.isCreatePackageLoading && 
-                <i className="fa fa-spinner fa-spin mr1" />
+              raised
+              color="primary"
+              disabled={
+                !this.state.isCreatePackageURLValid ||
+                this.state.isCreatePackageLoading
               }
-               Submit
+              onTouchTap={this._handleCreatePackage}
+            >
+              {this.state.isCreatePackageLoading &&
+                <i className="fa fa-spinner fa-spin mr1" />}
+              Submit
             </Button>
-           </DialogActions>
-         </Dialog>
-        </div>
-     )
+          </DialogActions>
+        </Dialog>
+      </div>
+    )
   }
 }
 
-export default graphql(CREATE_PACKAGE_MUTATION, { name: 'createPackage' })(
-  withRouter(Header)
-)
+export default compose(
+  graphql(CREATE_PACKAGE, { name: 'createPackage' }),
+)(withRouter(Header))

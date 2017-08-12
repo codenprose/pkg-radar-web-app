@@ -5,12 +5,15 @@ import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import createPalette from 'material-ui/styles/palette'
 import { blueGrey } from 'material-ui/styles/colors'
+import { Route } from 'react-router-dom'
 
 import { Header } from '../Header'
 import { Main } from '../Main'
-import { Loader } from '../Shared'
+import { GithubAuth } from '../Users'
+import { Footer } from '../Footer'
+// import { Loader } from '../Shared'
 
-import GET_CURRENT_USER from '../../queries/currentUser'
+import CURRENT_USER from '../../queries/currentUser'
 
 const theme = createMuiTheme({
   palette: createPalette({
@@ -48,14 +51,31 @@ class App extends Component {
   }
 
   render() {
-    const { data } = this.props;
-    if (data.loading) return <Loader />;
+    const { data, location } = this.props;
+    const isUserAuthenticating = location.pathname.includes('github')
+
+    let currentUser = null
+    if (data) currentUser = data.currentUser
+
+    let isDataLoading = false
+    if (data) isDataLoading = data.loading
 
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          <Header user={data.currentUser} githubAuth={this.githubAuth} />
-          <Main user={data.currentUser} />
+          {
+            !isUserAuthenticating &&
+            <div>
+              <Header 
+                user={currentUser} 
+                isUserLoading={isDataLoading}
+                githubAuth={this.githubAuth} 
+              />
+              <Main user={currentUser} />
+              <Footer />
+            </div>
+          }
+          <Route exact path="/github/auth" component={GithubAuth} />
         </div>
       </MuiThemeProvider>
     );
@@ -78,5 +98,5 @@ const getCurrentUserOptions = {
 };
 
 export default compose(
-  graphql(GET_CURRENT_USER, getCurrentUserOptions),
+  graphql(CURRENT_USER, getCurrentUserOptions),
 )(withRouter(App));
