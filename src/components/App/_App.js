@@ -53,6 +53,7 @@ class App extends Component {
   render() {
     const { data, location } = this.props;
     const isUserAuthenticating = location.pathname.includes('github')
+    // const isUserHome = location.pathname === '/'
 
     let currentUser = null
     if (data) currentUser = data.currentUser
@@ -72,7 +73,10 @@ class App extends Component {
                 githubAuth={this.githubAuth} 
               />
               <Main user={currentUser} />
-              <Footer />
+              {
+                false &&
+                <Footer />
+              }
             </div>
           }
           <Route exact path="/github/auth" component={GithubAuth} />

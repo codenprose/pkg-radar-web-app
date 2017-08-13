@@ -121,12 +121,11 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 6,
-      isSearchVisible = false
+    let userSectionWidth = 6, isSearchVisible = false
 
     if (location.pathname !== '/') {
-      userSectionWidth = 3
-      isSearchVisible = true
+      // isSearchVisible = true
+      // userSectionWidth = 3
     }
 
     return (
@@ -134,13 +133,12 @@ class Header extends Component {
         <AppBar
           id="Header"
           position="static"
-          color="default"
-          style={{ boxShadow: 'none' }}
+          color='primary'
         >
           <Toolbar
             style={{
               padding: '0 20px',
-              height: '56px',
+              height: '60px',
               width: '100%',
               maxWidth: '1600px',
               margin: '0 auto'
@@ -166,7 +164,7 @@ class Header extends Component {
                   <Link
                     to="/"
                     className="no-underline"
-                    style={{ color: '#263238' }}
+                    style={{ color: 'white' }}
                   >
                     {title}
                   </Link>
@@ -175,7 +173,7 @@ class Header extends Component {
                   to="/"
                   className="no-underline"
                   style={{
-                    color: '#777',
+                    color: 'white',
                     fontSize: '12px',
                     padding: '0 10px 0 15px',
                     verticalAlign: 'middle'
@@ -187,7 +185,7 @@ class Header extends Component {
                   to="/"
                   className="no-underline"
                   style={{
-                    color: '#777',
+                    color: 'white',
                     fontSize: '12px',
                     padding: '0 10px',
                     verticalAlign: 'middle'
@@ -199,7 +197,7 @@ class Header extends Component {
                   to="/"
                   className="no-underline"
                   style={{
-                    color: '#777',
+                    color: 'white',
                     fontSize: '12px',
                     padding: '0 10px',
                     verticalAlign: 'middle'
@@ -208,7 +206,7 @@ class Header extends Component {
                   TOP BOARDS
                 </Link>
                 <IconButton className="v-mid">
-                  <MoreHoriz />
+                  <MoreHoriz style={{ color: 'white' }} />
                 </IconButton>
               </Grid>
               {isSearchVisible &&
@@ -240,11 +238,16 @@ class Header extends Component {
                     <div>
                       <Button
                         onTouchTap={githubAuth}
-                        style={{ marginRight: '10px' }}
+                        style={{ marginRight: '10px', color: 'white' }}
                       >
                         Log In
                       </Button>
-                      <Button raised color="primary" onTouchTap={githubAuth}>
+                      <Button 
+                        raised 
+                        color="default" 
+                        style={{ marginTop: '5px'}} 
+                        onTouchTap={githubAuth}
+                      >
                         <i className="fa fa-lg fa-github mr2" />
                         Sign Up
                       </Button>
@@ -255,7 +258,7 @@ class Header extends Component {
                         onTouchTap={this._handleModalOpen}
                         className="v-mid"
                       >
-                        <Add />
+                        <Add style={{ color: 'white' }} />
                       </IconButton>
                       <Avatar
                         src={user.avatar}
@@ -263,8 +266,9 @@ class Header extends Component {
                         style={{
                           display: 'inline-block',
                           verticalAlign: 'middle',
+                          cursor: 'pointer',
                           border: '1px solid white',
-                          cursor: 'pointer'
+                          borderRadius: '0'
                         }}
                         onClick={this._handleUserMenuClick}
                       />

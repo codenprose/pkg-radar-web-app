@@ -18,10 +18,10 @@ import Dialog, {
 import TextField from "material-ui/TextField";
 import moment from "moment";
 
-import "github-markdown-css/github-markdown.css";
+import { Loader } from '../Shared'
+import GET_PACKAGE from '../../queries/package'
 
-import fetchPackage from "../../queries/fetchPackage";
-import updatePackageRecommendations from "../../mutations/updatePackageRecommendations";
+import "github-markdown-css/github-markdown.css";
 
 const rst2mdown = require('rst2mdown');
 const Text = require('react-format-text');
@@ -63,7 +63,7 @@ class PackageDetail extends Component {
     // TODO: check if recommendation already exists
     const variables = {
       recommendations: [
-        ...this.props.data.Package.recommendations,
+        ...this.props.data.package.recommendations,
         this.state.recommendationSelection
       ]
     };
@@ -81,8 +81,8 @@ class PackageDetail extends Component {
   };
 
   _renderRecommendations = () => {
-    const { Package } = this.props.data;
-    return Package.recommendations.map(
+    const { data } = this.props;
+    return data.package.recommendations.map(
       ({ name, avatar, stars, description }) => {
         return (
           <Grid item xs={4} key={name}>
@@ -122,27 +122,24 @@ class PackageDetail extends Component {
 
   render() {
     const { data, history } = this.props;
-    if (data.loading) return <div />;
     console.log(data)
+
+    if (data.loading) return <Loader />
 
     let readmeHtml = "<div>No Data Available</div>";
     let changelogHtml = "<div>No Data Available</div>";
 
-    if (data.Package.lastRelease) {
-      changelogHtml = marked(data.Package.lastRelease.description);
+    if (data.package.lastRelease) {
+      changelogHtml = marked(data.package.lastRelease.description);
     }
 
-    if (data.Package.changelog) {
-      changelogHtml = marked(data.Package.changelog);
-    }
-
-    if (data.Package.readme && data.Package.readmeExt === "md") {
-      readmeHtml = marked(data.Package.readme);
-    } else if (data.Package.readme && data.Package.readmeExt === "rst") {
-      const md = rst2mdown(data.Package.readme)
+    if (data.package.readme.text && data.package.readme.extension === "md") {
+      readmeHtml = marked(data.package.readme.text);
+    } else if (data.package.readme.text && data.package.readme.extension === "rst") {
+      const md = rst2mdown(data.package.readme.text)
       readmeHtml = marked(md)
     } else {
-      readmeHtml = marked(data.Package.readme);
+      readmeHtml = marked(data.package.readme.text);
     }
 
     const styles = {
@@ -162,25 +159,25 @@ class PackageDetail extends Component {
               <CardHeader
                 avatar={
                   <img
-                    alt={`${data.Package.name}-logo`}
+                    alt={`${data.package.packageName}-logo`}
                     style={{ height: "42px" }}
-                    src={data.Package.avatar}
+                    src={data.package.ownerAvatar}
                   />
                 }
-                title={`${data.Package.owner}/${data.Package.name}`}
-                subheader={data.Package.primaryLanguage.name}
+                title={`${data.package.ownerName}/${data.package.packageName}`}
+                subheader={data.package.language}
               />
               <CardActions>
-                {data.Package.homepageUrl &&
+                {data.package.websiteUrl &&
                   <Link
-                    to={data.Package.homepageUrl}
+                    to={data.package.websiteUrl}
                     target="_blank"
                     className="no-underline"
                   >
                     <Button dense>Website</Button>
                   </Link>}
                 <Link
-                  to={data.Package.repoUrl}
+                  to={data.package.repoUrl}
                   target="_blank"
                   className="no-underline"
                 >
@@ -197,7 +194,7 @@ class PackageDetail extends Component {
                 </Typography>
                 <div style={{ marginTop: '20px' }}>
                   {
-                    data.Package.tags.map(({text}) => {
+                    data.package.tags.map(({text}) => {
                       return (
                         <Link to={`/search?=${text}`} key={text}>
                           <Chip 
@@ -218,7 +215,12 @@ class PackageDetail extends Component {
               <CardActions>
                 <Button 
                   dense 
-                  onClick={() => history.push(`/package/update/${data.Package.name}`)}
+                  onClick={() => { 
+                      const owner = data.package.ownerName
+                      const pkg = data.package.packageName
+                      history.push(`/package/update/${owner}/${pkg}`)
+                    }
+                  }
                 >
                   Update Tags
                 </Button>
@@ -232,14 +234,14 @@ class PackageDetail extends Component {
                   Last Commit
                 </Typography>
                 <Typography type="body1">
-                  {moment(data.Package.lastCommit.author.date).format(
+                  {moment(data.package.lastCommit.author.date).format(
                     "MMMM Do, YYYY"
                   )}
                 </Typography>
               </CardContent>
               <CardActions>
                 <Link
-                  to={data.Package.lastCommit.commitUrl}
+                  to={data.package.lastCommit.commitUrl}
                   target="_blank"
                   className="no-underline"
                 >
@@ -255,7 +257,7 @@ class PackageDetail extends Component {
                   Stars
                 </Typography>
                 <Typography type="body1">
-                  {Humanize.formatNumber(data.Package.stars)}
+                  {Humanize.formatNumber(data.package.stars)}
                 </Typography>
               </CardContent>
             </Card>
@@ -267,7 +269,7 @@ class PackageDetail extends Component {
                   Issues
                 </Typography>
                 <Typography type="body1">
-                  {Humanize.formatNumber(data.Package.issues)}
+                  {Humanize.formatNumber(data.package.issues)}
                 </Typography>
               </CardContent>
             </Card>
@@ -279,7 +281,7 @@ class PackageDetail extends Component {
                   Issue-to-Star Ratio
                 </Typography>
                 <Typography type="body1">
-                  {Humanize.formatNumber(data.Package.issues / data.Package.stars * 100)}%
+                  {Humanize.formatNumber(data.package.issues / data.package.stars * 100)}%
                 </Typography>
               </CardContent>
             </Card> */}
@@ -291,7 +293,7 @@ class PackageDetail extends Component {
                   Pull Requests
                 </Typography>
                 <Typography type="body1">
-                  {Humanize.formatNumber(data.Package.pullRequests)}
+                  {Humanize.formatNumber(data.package.pullRequests)}
                 </Typography>
               </CardContent>
               <CardActions>
@@ -319,7 +321,7 @@ class PackageDetail extends Component {
                   License
                 </Typography>
                 <Typography type="body1">
-                  {data.Package.license}
+                  {data.package.license}
                 </Typography>
               </CardContent>
               <CardActions>
@@ -342,7 +344,7 @@ class PackageDetail extends Component {
                   <Tab label="Readme" />
                   <Tab label="Latest Release" />
                   <Tab label="Recommendations" />
-                  <Tab label="Analytics" />
+                  {/* <Tab label="Analytics" /> */}
                 </Tabs>
               </Grid>
               <Grid item xs={3}>
@@ -358,20 +360,23 @@ class PackageDetail extends Component {
             >
               <TabContainer>
                 {
-                  (data.Package.readmeExt === "md" || data.Package.readmeExt === "rst") &&
+                  (
+                    data.package.readme.extension === "md" || 
+                    data.package.readme.extension === "rst"
+                  ) &&
                   <div
                     className="markdown-body"
                     dangerouslySetInnerHTML={{ __html: readmeHtml }}
                   />
                 }
                 {
-                  data.Package.readmeExt === "txt" &&
+                  data.package.readme.extension === "txt" &&
                   <div className="markdown-body">
-                    <Text>{data.Package.readme}</Text>
+                    <Text>{data.package.readme}</Text>
                   </div>
                 }
                 {
-                  !data.Package.readmeExt &&
+                  !data.package.readme.extension &&
                   <div
                     className="markdown-body"
                     dangerouslySetInnerHTML={{ __html: readmeHtml }}
@@ -379,14 +384,14 @@ class PackageDetail extends Component {
                 }
               </TabContainer>
               <TabContainer>
-                {data.Package.lastRelease &&
+                {data.package.lastRelease &&
                   <div>
                     <Typography
                       style={{ marginBottom: "10px" }}
                       type="display1"
                       component="h2"
                     >
-                      {data.Package.lastRelease.name}
+                      {data.package.lastRelease.name}
                     </Typography>
                     <Typography
                       style={{ marginBottom: "20px" }}
@@ -394,7 +399,7 @@ class PackageDetail extends Component {
                       component="p"
                     >
                       Published:{" "}
-                      {moment(data.Package.lastRelease.publishedAt).format(
+                      {moment(data.package.lastRelease.publishedAt).format(
                         "MMMM Do, YYYY"
                       )}
                     </Typography>
@@ -409,7 +414,7 @@ class PackageDetail extends Component {
               <TabContainer>
                 <Grid container>
                   {
-                    data.Package.recommendations &&
+                    data.package.recommendations &&
                     this._renderRecommendations()
                   }
 
@@ -432,9 +437,9 @@ class PackageDetail extends Component {
                 </Grid>
               </TabContainer>
 
-              <TabContainer>
+              {/* <TabContainer>
                 {"Analytics"}
-              </TabContainer>
+              </TabContainer> */}
             </SwipeableViews>
           </Grid>
         </Grid>
@@ -472,17 +477,17 @@ class PackageDetail extends Component {
   }
 }
 
-const fetchPackageOptions = {
+const packageOptions = {
   options: props => {
     return {
-      variables: { name: props.match.params.name }
+      variables: { 
+        ownerName: props.match.params.owner,
+        packageName: props.match.params.package
+      }
     };
   }
 };
 
 export default compose(
-  graphql(fetchPackage, fetchPackageOptions),
-  graphql(updatePackageRecommendations, {
-    name: "updatePackageRecommendations"
-  })
+  graphql(GET_PACKAGE, packageOptions),
 )(PackageDetail);

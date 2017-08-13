@@ -24,7 +24,7 @@ class PackageIndex extends Component {
       >
         <Grid item xs={6} style={{ maxWidth: '585px' }}>
           {/* <img style={styles.logo} src={logo} /> */}
-          <h2 style={{ textAlign: 'center', fontSize: '60px', color: '#263238', marginTop: '100px' }}>{title}</h2>
+          <h2 style={{ textAlign: 'center', fontSize: '60px', color: '#263238' }}>{title}</h2>
           <Paper elevation={4} style={{ padding: '10px' }}>
             <Search />
           </Paper>

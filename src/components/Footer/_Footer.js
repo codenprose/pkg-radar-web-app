@@ -5,15 +5,15 @@ class Footer extends Component {
   render() {
     const styles = {
       containerOuter: {
-        background: '#F2F2F2',
-        padding: '15px 20px',
-        position: 'absolute',
+        background: '#CFD8DC',
+        position: 'fixed',
         bottom: 0,
         width: '100%'
       },
       containerInner: {
         maxWidth: '1600px',
-        margin: '0 auto'
+        margin: '0 auto',
+        padding: '15px 20px'
       }
     }
     return (

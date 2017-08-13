@@ -11,7 +11,7 @@ import Button from "material-ui/Button";
 
 import TagsUpdate from "./_TagsUpdate";
 
-import FETCH_PACKAGE from "../../queries/fetchPackage";
+import GET_PACKAGE from "../../queries/package";
 import FETCH_TAGS from "../../queries/fetchTags";
 
 class PackageUpdate extends Component {
@@ -65,12 +65,15 @@ const fetchPackageOptions = {
   name: "pkg",
   options: props => {
     return {
-      variables: { name: props.match.params.name }
+      variables: { 
+        ownerName: props.match.params.owner,
+        packageName: props.match.params.package
+      }
     };
   }
 };
 
 export default compose(
   graphql(FETCH_TAGS, { name: "tags" }),
-  graphql(FETCH_PACKAGE, fetchPackageOptions)
+  graphql(GET_PACKAGE, fetchPackageOptions)
 )(PackageUpdate);
