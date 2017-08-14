@@ -34,8 +34,8 @@ const styleSheet = createStyleSheet('KanbanCard', theme => ({
 const cardDragSpec = {
   beginDrag(props) {
     return {
-      id: props.id,
-      list: props.list
+      packageId: props.packageId,
+      status: props.status
     };
   },
   endDrag(props) {
@@ -45,8 +45,8 @@ const cardDragSpec = {
 
 const cardDropSpec = {
   hover(props, monitor) {
-    const draggedId = monitor.getItem().id;
-    props.cardCallbacks.updatePosition(draggedId, props.id);
+    const draggedId = monitor.getItem().packageId;
+    props.cardCallbacks.updatePosition(draggedId, props.packageId);
   }
 };
 
@@ -75,12 +75,13 @@ class KanbanCard extends Component {
 
   render() {
     const {
-      id,
-      name,
-      list,
+      packageId,
+      ownerName,
+      packageName,
+      status,
       stars,
       description,
-      avatar,
+      ownerAvatar,
       connectDragSource,
       connectDropTarget,
       classes,
@@ -101,14 +102,14 @@ class KanbanCard extends Component {
           <KanbanCardContainer>
             <Card style={styles.card}>
               <CardHeader
-                title={name}
+                title={packageName}
                 style={{ paddingBottom: 0 }}
                 subheader={`stars: ${Humanize.formatNumber(stars)}`}
                 avatar={
                   <img
-                    alt={`${name}-logo`}
+                    alt={`${packageName}-logo`}
                     style={{ height: "40px" }}
-                    src={avatar}
+                    src={ownerAvatar}
                   />
                 }
               />
@@ -124,10 +125,10 @@ class KanbanCard extends Component {
                 </CardContent>
               </Collapse>
               <CardActions>
-                <Link to={`/package/${name}`} className='no-underline'>
+                <Link to={`/package/${ownerName}/${packageName}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
-                <Button dense onClick={() => removeCard(id, name, currentBoard, list)}>Remove</Button>
+                <Button dense onClick={() => removeCard(packageId, packageName, currentBoard, status)}>Remove</Button>
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {

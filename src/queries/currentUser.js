@@ -7,6 +7,13 @@ export default gql`
       bio
       company
       id
+      kanbanBoards
+      kanbanCardPositions {
+        board
+        ownerName
+        packageName
+        status
+      }
       name
       totalPackages
       totalSubscriptions

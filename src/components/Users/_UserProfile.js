@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { graphql, compose } from "react-apollo";
 import Grid from "material-ui/Grid";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -6,6 +7,8 @@ import findIndex from 'lodash/findIndex'
 
 import { KanbanBoardContainer } from "../Kanban";
 import userBgImg from "../../images/user_profile_bg.jpg"
+
+import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 
 const ProfileHeader = styled.div`
   position: relative;
@@ -68,7 +71,7 @@ const Packages = styled.h5`
   font-weight: normal;
 `
 
-const Subscriptions = styled.h5`
+const Connections = styled.h5`
   display: inline-block;  
   margin-right: 20px;
   color: white;
@@ -78,28 +81,27 @@ const Subscriptions = styled.h5`
 
 class UserProfile extends Component {
   _formatCards = (packages) => {
-    const { kanbanLayouts } = this.props.user
+    const { kanbanCardPositions } = this.props.user
     const cards = []
 
     if (!packages || !packages.length) return cards
 
-    for (let i in kanbanLayouts) {
-      const layout = kanbanLayouts[i]
-      const pkgIndex = findIndex(packages, (o) => o.name === layout.name );
+    for (let i in kanbanCardPositions) {
+      const layout = kanbanCardPositions[i]
+      const pkgIndex = findIndex(packages, (o) => {
+        return o.ownerName === layout.ownerName && o.packageName === layout.packageName
+      });
       let pkg = packages[pkgIndex]
-
-      if (pkg) {
-        pkg.board = layout.board
-        pkg.list = layout.list
-        cards.push(pkg)
-      }
+      if (pkg) cards.push(pkg)
     }
     return cards
   }
 
   render() {
-    const { user } = this.props;
-    const packages = this._formatCards(user.packages)
+    const { data, user } = this.props;
+    if (!user || data.loading) return <div />
+
+    const cards = this._formatCards(data.userKanbanPackages)
 
     return (
       <div>
@@ -119,10 +121,10 @@ class UserProfile extends Component {
                 <UserName>
                   @{user.username}
                 </UserName>
-                <Bio>developer, designer, entrepreneur</Bio>
+                <Bio>{user.bio}</Bio>
                 <Link
                   className="white no-underline fw3"
-                  to={`danielkhunter.com`}
+                  to={user.website}
                 >
                   danielkhunter.com
                 </Link>
@@ -131,29 +133,41 @@ class UserProfile extends Component {
             <Grid item xs={6}>
               <Grid direction="row" container justify="flex-end">
                 <Grid item className="tc">
+                  <Connections>
+                    <div>{0}</div>
+                    <div>Connections</div>
+                  </Connections>
                   <Packages>
-                    <div>
-                      {packages ? packages.length : 0}
-                    </div>
+                    <div>{cards.length}</div>
                     <div>Packages</div>
                   </Packages>
-                  <Subscriptions>
-                    <div>{user.subscriptions ? user.subscriptions.length : 0}</div>
-                    <div>Subscriptions</div>
-                  </Subscriptions>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </ProfileHeader>
-
         <KanbanBoardContainer
-          cards={packages}
-          user={user}
+          cards={cards}
+          user={user} 
         />
       </div>
     );
   }
 }
 
-export default UserProfile;
+const userKanbanOptions = {
+  skip: (props) => {
+    return !props.user
+  },
+  options: props => {
+    return {
+      variables: { 
+        userId: props.user.id,
+      }
+    };
+  }
+};
+
+export default compose(
+  graphql(USER_KANBAN_PACKAGES, userKanbanOptions),
+)(UserProfile)

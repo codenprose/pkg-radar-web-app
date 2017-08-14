@@ -21,9 +21,8 @@ import SearchPackages from "./_SearchPackages";
 
 import ADD_USER_TO_PACKAGE from "../../mutations/addUserToPackage";
 import REMOVE_USER_FROM_PACKAGE from "../../mutations/removeUserFromPackage";
-import UPDATE_USER_KANBAN_LAYOUTS from '../../mutations/updateUserKanbanLayouts';
+import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
 import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
-import FETCH_CURRENT_USER from '../../queries/user';
 
 import 'react-select/dist/react-select.css';
 
@@ -31,7 +30,6 @@ class KanbanBoardContainer extends Component {
   state = {
     cards: this.props.cards,
     kanbanBoards: this.props.user.kanbanBoards,
-    kanbanLayouts: this.props.user.kanbanLayouts,
     isAddPackageModalOpen: false,
     isAddBoardModalOpen: false,
     addBoardName: "",
@@ -75,10 +73,10 @@ class KanbanBoardContainer extends Component {
       });
 
       pkg.board = selectedBoard
-      pkg.list = selectedList
+      pkg.status = selectedList
 
       cards = [...cards, pkg]
-      this.setState({ cards }, this._updateUserKanbanLayouts)
+      this.setState({ cards }, this._updateKanbanCardPositions)
     } catch (e) {
       console.error(e.message);
     }
@@ -96,7 +94,7 @@ class KanbanBoardContainer extends Component {
       });
 
       cards = [...cards].filter(card => card.id !== pkgId)
-      this.setState({ cards }, this._updateUserKanbanLayouts)
+      this.setState({ cards }, this._updateKanbanCardPositions)
     } catch (e) {
       console.error(e.message);
     }
@@ -107,21 +105,20 @@ class KanbanBoardContainer extends Component {
     let kanbanLayouts = [];
 
     for (let index in cards) {
-      const { name, board, list } = cards[index];
-      kanbanLayouts.push({ name, board, list });
+      const { board, ownerName, packageName, status } = cards[index];
+      kanbanLayouts.push({ board, ownerName, packageName, status });
     }
     return kanbanLayouts;
   };
 
-  _updateUserKanbanLayouts = async () => {
+  _updateKanbanCardPositions = async () => {
     console.log('updating kanban board layouts')
     try {
-      await this.props.updateUserKanbanLayouts({
+      await this.props.updateKanbanCardPositions({
         variables: { 
           id: this.props.user.id, 
           kanbanLayouts: this._formatKanbanLayouts()
         },
-        refetchQueries: [{ query: FETCH_CURRENT_USER }]
       });
       console.log('updated kanban board layouts')
       this._closePackageModal()
@@ -130,19 +127,19 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  updateCardList = (cardId, listId) => {
+  updateCardStatus = (cardId, statusId) => {
     // Find the index of the card
-    let cardIndex = this.state.cards.findIndex(card => card.id === cardId);
+    let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
     // Get the current card
     let card = this.state.cards[cardIndex];
-    // Only proceed if hovering over a different list
-    if (card.list !== listId) {
+    // Only proceed if hovering over a different status
+    if (card.status !== statusId) {
       // set the component state to the mutated object
       this.setState(
         update(this.state, {
           cards: {
             [cardIndex]: {
-              list: { $set: listId }
+              status: { $set: statusId }
             }
           }
         })
@@ -154,11 +151,11 @@ class KanbanBoardContainer extends Component {
     // Only proceed if hovering over a different card
     if (cardId !== afterId) {
       // Find the index of the card
-      let cardIndex = this.state.cards.findIndex(card => card.id === cardId);
+      let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
       // Get the current card
       let card = this.state.cards[cardIndex];
       // Find the index of the card the user is hovering over
-      let afterIndex = this.state.cards.findIndex(card => card.id === afterId);
+      let afterIndex = this.state.cards.findIndex(card => card.packageId === afterId);
       // Use splice to remove the card and reinsert it a the new index
       this.setState(
         update(this.state, {
@@ -199,17 +196,6 @@ class KanbanBoardContainer extends Component {
           id: user.id,
           kanbanBoards: [...user.kanbanBoards, this.state.addBoardName]
         },
-        update: (store, { data: { updateUser } }) => {
-          const kanbanBoards = updateUser.kanbanBoards;
-          store.writeQuery({
-            query: FETCH_CURRENT_USER,
-            data: { 
-              user: {
-                ...user, kanbanBoards
-              }
-             }
-          });
-        }
       });
       
       const boards = response.data.updateUser.kanbanBoards;
@@ -241,17 +227,6 @@ class KanbanBoardContainer extends Component {
             return board !== currentBoard;
           })
         },
-        update: (store, { data: { updateUser } }) => {
-          const kanbanBoards = updateUser.kanbanBoards;
-          store.writeQuery({
-            query: FETCH_CURRENT_USER,
-            data: { 
-              user: {
-                ...this.props.user, kanbanBoards
-              }
-             }
-          });
-        }
       });
       this.setState({ tabIndex: 0, currentBoard: "All" });
     } catch (e) {
@@ -274,6 +249,7 @@ class KanbanBoardContainer extends Component {
   render() {
     const { user } = this.props;
     const boardSelectOptions = this._formatBoardSelectItems();
+    console.log('kanban container', this.props)
 
     return (
       <div>
@@ -318,9 +294,9 @@ class KanbanBoardContainer extends Component {
         <KanbanBoard
           cards={this.state.cards}
           cardCallbacks={{
-            updateStatus: throttle(this.updateCardList),
+            updateStatus: throttle(this.updateCardStatus),
             updatePosition: throttle(this.updateCardPosition, 500),
-            persistCardDrag: this._updateUserKanbanLayouts,
+            persistCardDrag: this._updateKanbanCardPositions,
             removeCard: this._handleRemovePackage
           }}
           currentBoard={this.state.currentBoard}
@@ -390,9 +366,9 @@ class KanbanBoardContainer extends Component {
                 onChange={this._handleListSelection}
               />
               <LabelRadio
-                label="Staging"
-                value="staging"
-                checked={this.state.selectedList === "staging"}
+                label="Trial"
+                value="trial"
+                checked={this.state.selectedList === "trial"}
                 onChange={this._handleListSelection}
               />
               <LabelRadio
@@ -437,9 +413,19 @@ class KanbanBoardContainer extends Component {
   }
 }
 
+const userKanbanOptions = {
+  options: props => {
+    return {
+      variables: { 
+        userId: props.user.id,
+      }
+    };
+  }
+};
+
 export default compose(
   graphql(ADD_USER_TO_PACKAGE, { name: "addUserToPackage" }),
   graphql(REMOVE_USER_FROM_PACKAGE, { name: "removeUserFromPackage" }),
-  graphql(UPDATE_USER_KANBAN_LAYOUTS, { name: "updateUserKanbanLayouts" }),
+  graphql(UPDATE_KANBAN_CARD_POSITIONS, { name: "updateKanbanCardPositions" }),
   graphql(UPDATE_USER_KANBAN_BOARDS, { name: "updateUserKanbanBoards" })
 )(KanbanBoardContainer)

@@ -37,7 +37,7 @@ class KanbanList extends Component {
     return cards.map(card => {
       return (
         <KanbanCard
-          key={card.id}
+          key={card.packageId}
           cardCallbacks={cardCallbacks}
           currentBoard={currentBoard}
           {...card}

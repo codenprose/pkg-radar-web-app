@@ -22,16 +22,16 @@ class KanbanBoard extends Component {
           <KanbanList
             id="backlog"
             title="Backlog"
-            cards={cards.filter(card => card.list === "backlog")}
+            cards={cards.filter(card => card.status === "backlog")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
           />
         </Grid>
         <Grid item xs={3}>
           <KanbanList
-            id="staging"
-            title="Staging"
-            cards={cards.filter(card => card.list === "staging")}
+            id="trial"
+            title="Trial"
+            cards={cards.filter(card => card.status === "trial")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
           />
@@ -40,7 +40,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="production"
             title="Production"
-            cards={cards.filter(card => card.list === "production")}
+            cards={cards.filter(card => card.status === "production")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
           />
@@ -49,7 +49,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="archive"
             title="Archive"
-            cards={cards.filter(card => card.list === "archive")}
+            cards={cards.filter(card => card.status === "archive")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
           />
