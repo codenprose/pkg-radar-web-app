@@ -92,7 +92,11 @@ class UserProfile extends Component {
         return o.ownerName === layout.ownerName && o.packageName === layout.packageName
       });
       let pkg = packages[pkgIndex]
-      if (pkg) cards.push(pkg)
+      
+      if (pkg) {
+        pkg.board = layout.board
+        cards.push(pkg)
+      }
     }
     return cards
   }

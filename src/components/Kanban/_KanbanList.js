@@ -19,7 +19,7 @@ const KanbanListTitle = styled.h3`
 
 const listTargetSpec = {
   hover(props, monitor) {
-    const draggedId = monitor.getItem().id;
+    const draggedId = monitor.getItem().packageId;
     props.cardCallbacks.updateStatus(draggedId, props.id)
   }
 };

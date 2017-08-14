@@ -39,7 +39,9 @@ const cardDragSpec = {
     };
   },
   endDrag(props) {
-    props.cardCallbacks.persistCardDrag();
+    const { packageId} = props
+    props.cardCallbacks.persistCardPositions()
+    props.cardCallbacks.persistPackageStatus(packageId);
   }
 };
 

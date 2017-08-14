@@ -28,7 +28,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> radar'
+    title: '<pkg>'
   }
 
   state = {

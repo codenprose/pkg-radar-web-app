@@ -5,7 +5,7 @@ import { Search } from '../Header'
 
 class PackageIndex extends Component {
   render() {
-    const title = '<pkg> radar'
+    const title = '<pkg>'
     // const styles = {
     //   logo: {
     //     display: 'block',

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  mutation updateKanbanCardPositions($username: String!, $kanbanCardPositions: [KanbanCardInput]) {
+  mutation updateKanbanCardPositions($username: String!, $kanbanCardPositions: [KanbanCardInput!]!) {
     updateUser(username: $username, kanbanCardPositions: $kanbanCardPositions) {
       user {
         username
@@ -9,7 +9,6 @@ export default gql`
           board
           ownerName
           packageName
-          status
         }
       }
     }

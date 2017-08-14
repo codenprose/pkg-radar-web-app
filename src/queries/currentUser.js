@@ -12,7 +12,6 @@ export default gql`
         board
         ownerName
         packageName
-        status
       }
       name
       totalPackages

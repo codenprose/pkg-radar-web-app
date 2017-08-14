@@ -21,6 +21,7 @@ import SearchPackages from "./_SearchPackages";
 
 import ADD_USER_TO_PACKAGE from "../../mutations/addUserToPackage";
 import REMOVE_USER_FROM_PACKAGE from "../../mutations/removeUserFromPackage";
+import UPDATE_KANBAN_PACKAGE_STATUS from '../../mutations/updateKanbanPackageStatus'
 import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
 import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
 
@@ -100,13 +101,13 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  _formatKanbanLayouts = (useState) => {
+  _formatKanbanCardPositions = (useState) => {
     const { cards } = this.state;
     let kanbanLayouts = [];
 
     for (let index in cards) {
-      const { board, ownerName, packageName, status } = cards[index];
-      kanbanLayouts.push({ board, ownerName, packageName, status });
+      const { board, ownerName, packageName } = cards[index];
+      kanbanLayouts.push({ board, ownerName, packageName });
     }
     return kanbanLayouts;
   };
@@ -116,8 +117,8 @@ class KanbanBoardContainer extends Component {
     try {
       await this.props.updateKanbanCardPositions({
         variables: { 
-          id: this.props.user.id, 
-          kanbanLayouts: this._formatKanbanLayouts()
+          username: this.props.user.username, 
+          kanbanCardPositions: this._formatKanbanCardPositions()
         },
       });
       console.log('updated kanban board layouts')
@@ -126,6 +127,41 @@ class KanbanBoardContainer extends Component {
       console.error(e.message);
     }
   };
+
+  updateCardPositions = (cardId, afterId) => {
+    // Only proceed if hovering over a different card
+    if (cardId !== afterId) {
+      // Find the index of the card
+      let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
+      // Get the current card
+      let card = this.state.cards[cardIndex];
+      // Find the index of the card the user is hovering over
+      let afterIndex = this.state.cards.findIndex(card => card.packageId === afterId);
+      // Use splice to remove the card and reinsert it a the new index
+      this.setState(
+        update(this.state, {
+          cards: {
+            $splice: [[cardIndex, 1], [afterIndex, 0, card]]
+          }
+        })
+      );
+    }
+  };
+
+  _updateKanbanPackageStatus = async (packageId) => {
+    console.log('updating package status')
+    const cardIndex = this.state.cards.findIndex(card => card.packageId === packageId)
+    const status = this.state.cards[cardIndex].status
+
+    try {
+      await this.props.updateKanbanPackageStatus({
+        variables: { packageId, status, userId: this.props.user.id }
+      });
+      console.log('updated package status')
+    } catch (e) {
+      console.error(e.message);
+    }
+  }
 
   updateCardStatus = (cardId, statusId) => {
     // Find the index of the card
@@ -147,28 +183,10 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  updateCardPosition = (cardId, afterId) => {
-    // Only proceed if hovering over a different card
-    if (cardId !== afterId) {
-      // Find the index of the card
-      let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
-      // Get the current card
-      let card = this.state.cards[cardIndex];
-      // Find the index of the card the user is hovering over
-      let afterIndex = this.state.cards.findIndex(card => card.packageId === afterId);
-      // Use splice to remove the card and reinsert it a the new index
-      this.setState(
-        update(this.state, {
-          cards: {
-            $splice: [[cardIndex, 1], [afterIndex, 0, card]]
-          }
-        })
-      );
-    }
-  };
-
   _handleTabChange = (event, tabIndex) => {
-    const currentBoard = this.props.user.kanbanBoards[tabIndex];
+    const { user } = this.props
+    const kanbanBoards = user.kanbanBoards.sort()
+    const currentBoard = kanbanBoards[tabIndex];
     const cards = this.props.cards;
 
     this.setState({ tabIndex, currentBoard, cards });
@@ -248,8 +266,10 @@ class KanbanBoardContainer extends Component {
 
   render() {
     const { user } = this.props;
-    const boardSelectOptions = this._formatBoardSelectItems();
-    console.log('kanban container', this.props)
+    const kanbanBoards = user.kanbanBoards.sort()
+    const boardSelectOptions = this._formatBoardSelectItems()
+
+    // console.log('kanban container', this.props)
 
     return (
       <div>
@@ -264,9 +284,7 @@ class KanbanBoardContainer extends Component {
               scrollButtons="auto"
               style={{ marginBottom: "20px" }}
             >
-              {user.kanbanBoards.map(board => {
-                return <Tab key={board} label={board} />;
-              })}
+              {kanbanBoards.map(board => <Tab key={board} label={board} /> )}
             </Tabs>
           </Grid>
           <Grid item xs={3}>
@@ -294,9 +312,10 @@ class KanbanBoardContainer extends Component {
         <KanbanBoard
           cards={this.state.cards}
           cardCallbacks={{
-            updateStatus: throttle(this.updateCardStatus),
-            updatePosition: throttle(this.updateCardPosition, 500),
-            persistCardDrag: this._updateKanbanCardPositions,
+            updateStatus: this.updateCardStatus,
+            updatePosition: throttle(this.updateCardPositions, 500),
+            persistCardPositions: this._updateKanbanCardPositions,
+            persistPackageStatus: this._updateKanbanPackageStatus,
             removeCard: this._handleRemovePackage
           }}
           currentBoard={this.state.currentBoard}
@@ -413,19 +432,10 @@ class KanbanBoardContainer extends Component {
   }
 }
 
-const userKanbanOptions = {
-  options: props => {
-    return {
-      variables: { 
-        userId: props.user.id,
-      }
-    };
-  }
-};
-
 export default compose(
   graphql(ADD_USER_TO_PACKAGE, { name: "addUserToPackage" }),
   graphql(REMOVE_USER_FROM_PACKAGE, { name: "removeUserFromPackage" }),
+  graphql(UPDATE_KANBAN_PACKAGE_STATUS, { name: "updateKanbanPackageStatus" }),
   graphql(UPDATE_KANBAN_CARD_POSITIONS, { name: "updateKanbanCardPositions" }),
   graphql(UPDATE_USER_KANBAN_BOARDS, { name: "updateUserKanbanBoards" })
 )(KanbanBoardContainer)
