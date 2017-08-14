@@ -127,7 +127,7 @@ class KanbanCard extends Component {
                 </CardContent>
               </Collapse>
               <CardActions>
-                <Link to={`/package/${ownerName}/${packageName}`} className='no-underline'>
+                <Link to={`/${ownerName}/${packageName}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
                 <Button dense onClick={() => removeCard(packageId, packageName, currentBoard, status)}>Remove</Button>

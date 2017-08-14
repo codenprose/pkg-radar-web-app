@@ -5,7 +5,7 @@ import { Search } from '../Header'
 
 class PackageIndex extends Component {
   render() {
-    const title = '<pkg>'
+    const title = '<pkg> radar'
     // const styles = {
     //   logo: {
     //     display: 'block',
@@ -16,7 +16,7 @@ class PackageIndex extends Component {
     // const logo = 'http://www.underconsideration.com/brandnew/archives/google_2015_logo_detail.png'
 
     return (
-      <Grid 
+      <Grid
         container
         align="center"
         justify="center"

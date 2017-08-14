@@ -67,10 +67,10 @@ class App extends Component {
           {
             !isUserAuthenticating &&
             <div>
-              <Header 
-                user={currentUser} 
+              <Header
+                user={currentUser}
                 isUserLoading={isDataLoading}
-                githubAuth={this.githubAuth} 
+                githubAuth={this.githubAuth}
               />
               <Main user={currentUser} />
               {
@@ -87,13 +87,13 @@ class App extends Component {
 }
 
 const getCurrentUserOptions = {
-  skip: (props) => {
-    const token = localStorage.getItem('pkgRadarToken')
-    return token === 'undefined' || !token
-  },
+  // skip: (props) => {
+  //   const token = localStorage.getItem('pkgRadarToken')
+  //   return token === 'undefined' || !token
+  // },
   options: (props) => {
     return {
-      variables: { 
+      variables: {
         username: localStorage.getItem('pkgRadarUsername'),
         token: localStorage.getItem('pkgRadarToken')
       }

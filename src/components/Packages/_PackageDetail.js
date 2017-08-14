@@ -86,8 +86,8 @@ class PackageDetail extends Component {
       ({ name, avatar, stars, description }) => {
         return (
           <Grid item xs={4} key={name}>
-            <Card 
-              style={{ 
+            <Card
+              style={{
                 marginBottom: "15px",
                 boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
               }}
@@ -194,17 +194,18 @@ class PackageDetail extends Component {
                 </Typography>
                 <div style={{ marginTop: '20px' }}>
                   {
-                    data.package.tags.map(({text}) => {
+                    data.package.tags.length &&
+                    data.package.tags.map(({tagName}, i) => {
                       return (
-                        <Link to={`/search?=${text}`} key={text}>
-                          <Chip 
-                            label={text} 
+                        <Link to={`/search?=${tagName}`} key={i}>
+                          <Chip
+                            label={tagName}
                             style={{
-                              display: 'inline-block', 
+                              display: 'inline-block',
                               margin: '0 10px 10px 0',
                               cursor: 'pointer',
                               borderRadius: 0
-                            }} 
+                            }}
                           />
                         </Link>
                       )
@@ -213,9 +214,9 @@ class PackageDetail extends Component {
                 </div>
               </CardContent>
               <CardActions>
-                <Button 
-                  dense 
-                  onClick={() => { 
+                <Button
+                  dense
+                  onClick={() => {
                       const owner = data.package.ownerName
                       const pkg = data.package.packageName
                       history.push(`/package/update/${owner}/${pkg}`)
@@ -361,7 +362,7 @@ class PackageDetail extends Component {
               <TabContainer>
                 {
                   (
-                    data.package.readme.extension === "md" || 
+                    data.package.readme.extension === "md" ||
                     data.package.readme.extension === "rst"
                   ) &&
                   <div
@@ -385,16 +386,15 @@ class PackageDetail extends Component {
               </TabContainer>
               <TabContainer>
                 {data.package.lastRelease &&
-                  <div>
+                  <div className='tc'>
                     <Typography
                       style={{ marginBottom: "10px" }}
                       type="display1"
                       component="h2"
                     >
-                      {data.package.lastRelease.name}
+                      v{data.package.lastRelease.name}
                     </Typography>
                     <Typography
-                      style={{ marginBottom: "20px" }}
                       type="body1"
                       component="p"
                     >
@@ -480,7 +480,7 @@ class PackageDetail extends Component {
 const packageOptions = {
   options: props => {
     return {
-      variables: { 
+      variables: {
         ownerName: props.match.params.owner,
         packageName: props.match.params.package
       }

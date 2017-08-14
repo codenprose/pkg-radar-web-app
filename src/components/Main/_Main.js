@@ -12,7 +12,7 @@ class Main extends Component {
       <main>
         <Switch>
           <Route exact path="/" render={(props) => <PackageIndex {...props} />} />
-          <Route exact path="/profile/:username" render={(props) => <UserProfile {...props} user={user} />} />
+          <Route exact path="/@:username" render={(props) => <UserProfile {...props} user={user} />} />
           <Route exact path="/package/update/:owner/:package" render={(props) => <PackageUpdate {...props} />} />
           <Route exact path="/settings" render={(props) => <UserSettings {...props} user={user} />} />
           <Route exact path="/:owner/:package" render={(props) => <PackageDetail {...props} />} />

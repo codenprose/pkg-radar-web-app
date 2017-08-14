@@ -28,7 +28,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg>'
+    title: '<pkg> radar'
   }
 
   state = {
@@ -60,7 +60,7 @@ class Header extends Component {
     setTimeout(() => {
       localStorage.removeItem('pkgRadarUsername')
       localStorage.removeItem('pkgRadarToken')
-  
+
       window.location.reload()
     }, 500)
   }
@@ -242,10 +242,10 @@ class Header extends Component {
                       >
                         Log In
                       </Button>
-                      <Button 
-                        raised 
-                        color="default" 
-                        style={{ marginTop: '5px'}} 
+                      <Button
+                        raised
+                        color="default"
+                        style={{ marginTop: '5px'}}
                         onTouchTap={githubAuth}
                       >
                         <i className="fa fa-lg fa-github mr2" />
@@ -281,7 +281,7 @@ class Header extends Component {
                       >
                         <MenuItem onClick={this._handleUserMenuClose}>
                           <Link
-                            to={`/profile/${user.username}`}
+                            to={`/@${user.username}`}
                             className="no-underline fw4"
                             style={{ color: 'rgba(0, 0, 0, 0.87)' }}
                           >

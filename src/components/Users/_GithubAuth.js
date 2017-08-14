@@ -7,8 +7,8 @@ import CREATE_USER from '../../mutations/createUser'
 
 class GithubAuth extends Component {
   componentWillMount() {
-    const token = localStorage.getItem('pkgRadarToken')
-    if (token) this.props.history.replace('/')
+    // const token = localStorage.getItem('pkgRadarToken')
+    // if (token) this.props.history.replace('/')
 
     const code = window.location.href.match(/\?code=(.*)/)[1];
     console.log('github code', code)
