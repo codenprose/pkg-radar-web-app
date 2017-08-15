@@ -87,12 +87,9 @@ class App extends Component {
 }
 
 const getCurrentUserOptions = {
-  // skip: (props) => {
-  //   const token = localStorage.getItem('pkgRadarToken')
-  //   return token === 'undefined' || !token
-  // },
   options: (props) => {
     return {
+      fetchPolicy: 'network-only',
       variables: {
         username: localStorage.getItem('pkgRadarUsername'),
         token: localStorage.getItem('pkgRadarToken')

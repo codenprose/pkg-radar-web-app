@@ -19,8 +19,9 @@ import Select from 'react-select';
 import KanbanBoard from "./_KanbanBoard";
 import SearchPackages from "./_SearchPackages";
 
-import ADD_USER_TO_PACKAGE from "../../mutations/addUserToPackage";
-import REMOVE_USER_FROM_PACKAGE from "../../mutations/removeUserFromPackage";
+import CURRENT_USER from '../../queries/currentUser'
+import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
+import DELETE_USER_KANBAN_PACKAGE from '../../mutations/deleteUserKanbanPackage'
 import UPDATE_KANBAN_PACKAGE_STATUS from '../../mutations/updateKanbanPackageStatus'
 import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
 import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
@@ -62,19 +63,22 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddPackage = async () => {
-    let { cards, selectedList, selectedBoard } = this.state
+    let { cards, selectedStatus, selectedBoard } = this.state
     let pkg = this.state.selectedPackage
 
     try {
-      await this.props.addUserToPackage({
+      await this.props.createUserKanbanPackage({
         variables: {
-          userId: this.props.user.id,
+          ownerName: pkg.ownerName,
           packageId: pkg.id,
+          packageName: pkg.packageName,
+          status: selectedStatus,
+          userId: this.props.user.id,
         },
       });
 
       pkg.board = selectedBoard
-      pkg.status = selectedList
+      pkg.status = selectedStatus
 
       cards = [...cards, pkg]
       this.setState({ cards }, this._updateKanbanCardPositions)
@@ -83,19 +87,21 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  _handleRemovePackage = async (pkgId, pkgName, pkgBoard) => {
+  _handleRemovePackage = async (pkgId) => {
+    console.log('removing package')
     let { cards } = this.state
 
     try {
-      await this.props.removeUserFromPackage({
+      await this.props.deleteUserKanbanPackage({
         variables: {
           userId: this.props.user.id,
           packageId: pkgId
         },
       });
 
-      cards = [...cards].filter(card => card.id !== pkgId)
+      cards = [...cards].filter(card => card.packageId !== pkgId)
       this.setState({ cards }, this._updateKanbanCardPositions)
+      console.log('removed package')
     } catch (e) {
       console.error(e.message);
     }
@@ -205,20 +211,31 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddBoard = async () => {
-    const { user, updateUserKanbanBoards } = this.props;
     console.log(`adding ${this.state.addBoardName} to user boards`);
+    
+    const { user, updateUserKanbanBoards } = this.props;
+    const kanbanBoards = [...user.kanbanBoards, this.state.addBoardName]
 
     try {
-      const response = await updateUserKanbanBoards({
-        variables: {
-          id: user.id,
-          kanbanBoards: [...user.kanbanBoards, this.state.addBoardName]
+      await updateUserKanbanBoards({
+        variables: { username: user.username, kanbanBoards },
+        update: (store, { data: { updateUser } }) => {
+          const token = localStorage.getItem('pkgRadarToken')
+          // Read the data from our cache for this query.
+          const data = store.readQuery({ 
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
+          });
+          // Add our comment from the mutation to the end.
+          data.currentUser.kanbanBoards = updateUser.user.kanbanBoards;
+          console.log('data', data)
+          // Write our data back to the cache.
+          store.writeQuery({ query: CURRENT_USER, data });
         },
       });
       
-      const boards = response.data.updateUser.kanbanBoards;
-      const tabIndex = boards.length - 1;
-      const currentBoard = boards[tabIndex];
+      const tabIndex = kanbanBoards.length - 1;
+      const currentBoard = kanbanBoards[tabIndex];
 
       this.setState({ 
         tabIndex, 
@@ -226,6 +243,7 @@ class KanbanBoardContainer extends Component {
         addBoardName: "", 
         isAddBoardModalOpen: false 
       });
+      console.log('updated user kanban boards')
     } catch (e) {
       console.error(e.message);
       this.setState({ addBoardName: "", isAddBoardModalOpen: false });
@@ -233,20 +251,35 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleRemoveBoard = async () => {
+    console.log('removing kanban board')
+    const { user } = this.props
     const currentBoard = this.state.currentBoard;
-    const boardNotEmpty = find(this.state.cards, { board: currentBoard })
-    if (boardNotEmpty) return  alert('Remove packages from board')
+    const packagesOnBoard = find(this.state.cards, { board: currentBoard })
+    if (packagesOnBoard) return  alert('Remove packages from current board')
+
+    const kanbanBoards = [...user.kanbanBoards].filter(board => {
+      return board !== currentBoard;
+    })
 
     try {
       await this.props.updateUserKanbanBoards({
-        variables: {
-          id: this.props.user.id,
-          kanbanBoards: [...this.props.user.kanbanBoards].filter(board => {
-            return board !== currentBoard;
-          })
+        variables: { username: user.username, kanbanBoards },
+        update: (store, { data: { updateUser } }) => {
+          const token = localStorage.getItem('pkgRadarToken')
+          // Read the data from our cache for this query.
+          const data = store.readQuery({ 
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
+          });
+          // Add our comment from the mutation to the end.
+          data.currentUser.kanbanBoards = updateUser.user.kanbanBoards;
+          console.log('data', data)
+          // Write our data back to the cache.
+          store.writeQuery({ query: CURRENT_USER, data });
         },
       });
       this.setState({ tabIndex: 0, currentBoard: "All" });
+      console.log('removed kanban board')
     } catch (e) {
       console.error(e.message);
       this.setState({ tabIndex: 0, currentBoard: "All" });
@@ -433,8 +466,8 @@ class KanbanBoardContainer extends Component {
 }
 
 export default compose(
-  graphql(ADD_USER_TO_PACKAGE, { name: "addUserToPackage" }),
-  graphql(REMOVE_USER_FROM_PACKAGE, { name: "removeUserFromPackage" }),
+  graphql(CREATE_USER_KANBAN_PACKAGE, { name: 'createUserKanbanPackage' }),
+  graphql(DELETE_USER_KANBAN_PACKAGE, { name: "deleteUserKanbanPackage" }),
   graphql(UPDATE_KANBAN_PACKAGE_STATUS, { name: "updateKanbanPackageStatus" }),
   graphql(UPDATE_KANBAN_CARD_POSITIONS, { name: "updateKanbanCardPositions" }),
   graphql(UPDATE_USER_KANBAN_BOARDS, { name: "updateUserKanbanBoards" })
