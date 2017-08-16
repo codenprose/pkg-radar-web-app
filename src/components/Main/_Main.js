@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import { PackageDetail, PackageIndex, PackageUpdate } from '../Packages'
+import { PackageDetail, PackageUpdate } from '../Packages'
 import { UserProfile, UserSettings } from '../Users'
+import { Home } from '../Home'
 
 class Main extends Component {
   render() {
@@ -11,11 +12,11 @@ class Main extends Component {
     return (
       <main>
         <Switch>
-          <Route exact path="/" render={(props) => <PackageIndex {...props} />} />
+          <Route exact path="/" render={(props) => <Home {...props} />} />
           <Route exact path="/@:username" render={(props) => <UserProfile {...props} user={user} />} />
-          <Route exact path="/package/update/:owner/:package" render={(props) => <PackageUpdate {...props} />} />
-          <Route exact path="/settings" render={(props) => <UserSettings {...props} user={user} />} />
+          <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
           <Route exact path="/:owner/:package" render={(props) => <PackageDetail {...props} />} />
+          <Route exact path="/:owner/:package/update" render={(props) => <PackageUpdate {...props} />} />
         </Switch>
       </main>
     )

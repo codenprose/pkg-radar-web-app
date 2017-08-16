@@ -28,7 +28,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> radar'
+    title: '<pkg> hunter'
   }
 
   state = {
@@ -203,7 +203,7 @@ class Header extends Component {
                     verticalAlign: 'middle'
                   }}
                 >
-                  TOP BOARDS
+                  RADAR
                 </Link>
                 <IconButton className="v-mid">
                   <MoreHoriz style={{ color: 'white' }} />
