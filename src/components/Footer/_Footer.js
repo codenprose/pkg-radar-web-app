@@ -5,7 +5,7 @@ class Footer extends Component {
   render() {
     const styles = {
       containerOuter: {
-        background: '#CFD8DC',
+        background: '#F2F2F2',
         position: 'fixed',
         bottom: 0,
         width: '100%'

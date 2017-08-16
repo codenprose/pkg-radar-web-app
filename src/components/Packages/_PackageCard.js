@@ -8,11 +8,19 @@ import Humanize from "humanize-plus";
 
 class PackageCard extends Component {
   render() {
-    const { avatar, name, primaryLanguage, issues, stars } = this.props.pkg;
+    const { 
+      avatar, 
+      color,
+      issues, 
+      language, 
+      ownerName, 
+      packageName, 
+      stars 
+    } = this.props
 
     const styles = {
       root: {
-        // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
+        boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
       },
       header: {
         paddingBottom: '10px'
@@ -28,12 +36,16 @@ class PackageCard extends Component {
           style={styles.header}
           avatar={
             <img
-              alt={`${name}-logo`}
+              alt={`${packageName}-logo`}
               style={{ height: "42px" }}
               src={avatar}
             />
           }
-          title={<span style={{ fontSize: '20px' }}>{name}</span>}
+          title={
+            <span style={{ fontSize: '20px' }}>
+              {ownerName}/{packageName}
+            </span>
+          }
           subheader={
             <div>
               <div
@@ -44,10 +56,10 @@ class PackageCard extends Component {
                   marginRight: "5px",
                   borderRadius: "50%",
                   verticalAlign: "sub",
-                  backgroundColor: `${primaryLanguage.color}`
+                  backgroundColor: `${color}`
                 }}
               />
-              <span>{primaryLanguage.name}</span>
+              <span>{language}</span>
             </div>
           }
         />
@@ -76,7 +88,7 @@ class PackageCard extends Component {
           </div>
         </CardContent>
         <CardActions>
-          <Link className="no-underline" to={`/package/${name}`}>
+          <Link className="no-underline" to={`/${ownerName}/${packageName}`}>
             <Button dense>View Package</Button>
           </Link>
         </CardActions>
