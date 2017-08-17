@@ -10,15 +10,10 @@ import Humanize from "humanize-plus";
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 import Collapse from "material-ui/transitions/Collapse";
 import classNames from 'classnames';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { Link } from 'react-router-dom'
 
-const styleSheet = createStyleSheet('KanbanCard', theme => ({
-  MuiCardContent: {
-    root: {
-      paddingBottom: 0
-    }
-  },
+const styles = theme => ({
   expand: {
     transform: 'rotate(0deg)',
     transition: theme.transitions.create('transform', {
@@ -29,7 +24,7 @@ const styleSheet = createStyleSheet('KanbanCard', theme => ({
     transform: 'rotate(180deg)',
   },
   flexGrow: { flex: '1 1 auto' },
-}));
+})
 
 const cardDragSpec = {
   beginDrag(props) {
@@ -159,4 +154,4 @@ const dragDropHighOrderCard = DropTarget(
   collectDrop
 )(dragHighOrderCard);
 
-export default  withStyles(styleSheet)(dragDropHighOrderCard);
+export default withStyles(styles)(dragDropHighOrderCard);

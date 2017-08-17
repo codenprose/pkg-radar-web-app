@@ -147,7 +147,6 @@ class Header extends Component {
             <Grid
               container
               align="center"
-              gutter={16}
               style={{ height: '100%' }}
             >
               <Grid item xs={6} style={{ height: '100%' }}>

@@ -4,7 +4,7 @@ import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
 import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import createPalette from 'material-ui/styles/palette'
-import { blueGrey } from 'material-ui/styles/colors'
+import { blueGrey } from 'material-ui/colors'
 import { Route } from 'react-router-dom'
 
 import { Header } from '../Header'

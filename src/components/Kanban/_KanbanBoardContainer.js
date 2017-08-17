@@ -10,7 +10,7 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog";
-import { LabelRadio } from "material-ui/Radio";
+import Radio from "material-ui/Radio";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
@@ -309,7 +309,7 @@ class KanbanBoardContainer extends Component {
         <Grid container>
           <Grid item xs={9} style={{ paddingTop: 0 }}>
             <Tabs
-              index={this.state.tabIndex}
+              value={this.state.tabIndex}
               onChange={this._handleTabChange}
               indicatorColor="primary"
               textColor="primary"
@@ -411,26 +411,26 @@ class KanbanBoardContainer extends Component {
               style={{ marginBottom: "20px" }}
             />
             <div style={{ marginBottom: "20px" }}>
-              <LabelRadio
-                label="Backlog"
+              <Radio
+                name="Backlog"
                 value="backlog"
                 checked={this.state.selectedList === "backlog"}
                 onChange={this._handleListSelection}
               />
-              <LabelRadio
-                label="Trial"
+              <Radio
+                name="Trial"
                 value="trial"
                 checked={this.state.selectedList === "trial"}
                 onChange={this._handleListSelection}
               />
-              <LabelRadio
-                label="Production"
+              <Radio
+                name="Production"
                 value="production"
                 checked={this.state.selectedList === "production"}
                 onChange={this._handleListSelection}
               />
-              <LabelRadio
-                label="Archive"
+              <Radio
+                name="Archive"
                 value="archive"
                 checked={this.state.selectedList === "archive"}
                 onChange={this._handleListSelection}
