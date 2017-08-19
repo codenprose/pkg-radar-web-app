@@ -40,7 +40,7 @@ main {
 /* React Bootstrap Typeahead */
 #Header .bootstrap-tokenizer-input,
 #Header .bootstrap-typeahead-input {
-  margin: 10px 0 0 55px;
+  margin: 12px 0 0 55px;
 }
 
 .bootstrap-typeahead-input-main {

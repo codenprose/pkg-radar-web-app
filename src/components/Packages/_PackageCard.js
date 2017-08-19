@@ -20,7 +20,7 @@ class PackageCard extends Component {
 
     const styles = {
       root: {
-        boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
+        // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
       },
       header: {
         paddingBottom: '10px'

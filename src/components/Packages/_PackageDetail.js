@@ -336,7 +336,7 @@ class PackageDetail extends Component {
             <Grid container>
               <Grid style={{ paddingTop: 0 }} item xs={9}>
                 <Tabs
-                  index={this.state.index}
+                  value={this.state.index}
                   onChange={this.handleMainContentTabChange}
                   indicatorColor="primary"
                   textColor="primary"
@@ -350,7 +350,7 @@ class PackageDetail extends Component {
               </Grid>
               <Grid item xs={3}>
                 <Button raised style={{ marginRight: "10px" }}>
-                  Save To Board
+                  Add To Radar
                 </Button>
                 {/* <Button raised>Monitor</Button> */}
               </Grid>

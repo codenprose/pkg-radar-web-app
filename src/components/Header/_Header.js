@@ -121,11 +121,11 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 6, isSearchVisible = false
+    let userSectionWidth = 7, isSearchVisible = false
 
     if (location.pathname !== '/') {
-      // isSearchVisible = true
-      // userSectionWidth = 3
+      isSearchVisible = true
+      userSectionWidth = 2
     }
 
     return (
@@ -138,7 +138,6 @@ class Header extends Component {
           <Toolbar
             style={{
               padding: '0 20px',
-              height: '60px',
               width: '100%',
               maxWidth: '1600px',
               margin: '0 auto'
@@ -149,72 +148,74 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={6} style={{ height: '100%' }}>
-                <Typography
-                  type="title"
-                  component="h1"
-                  style={{
-                    fontSize: '24px',
-                    display: 'inline-block',
-                    paddingRight: '15px',
-                    borderRight: '2px solid gray'
-                  }}
-                >
+              <Grid item xs={5} style={{ height: '100%' }}>
+                <Grid container align='center'>
+                  <Typography
+                    type="title"
+                    component="h1"
+                    style={{
+                      fontSize: '24px',
+                      display: 'inline-block',
+                      paddingRight: '15px',
+                      borderRight: '2px solid gray'
+                    }}
+                  >
+                    <Link
+                      to="/"
+                      className="no-underline"
+                      style={{ color: 'white' }}
+                    >
+                      {title}
+                    </Link>
+                  </Typography>
                   <Link
                     to="/"
                     className="no-underline"
-                    style={{ color: 'white' }}
+                    style={{
+                      color: 'white',
+                      fontSize: '12px',
+                      padding: '0 10px 0 15px',
+                      marginTop: '5px'
+                    }}
                   >
-                    {title}
+                    LANGUAGES
                   </Link>
-                </Typography>
-                <Link
-                  to="/"
-                  className="no-underline"
-                  style={{
-                    color: 'white',
-                    fontSize: '12px',
-                    padding: '0 10px 0 15px',
-                    verticalAlign: 'middle'
-                  }}
-                >
-                  LANGUAGES
-                </Link>
-                <Link
-                  to="/"
-                  className="no-underline"
-                  style={{
-                    color: 'white',
-                    fontSize: '12px',
-                    padding: '0 10px',
-                    verticalAlign: 'middle'
-                  }}
-                >
-                  TOP PACKAGES
-                </Link>
-                <Link
-                  to="/"
-                  className="no-underline"
-                  style={{
-                    color: 'white',
-                    fontSize: '12px',
-                    padding: '0 10px',
-                    verticalAlign: 'middle'
-                  }}
-                >
-                  RADAR
-                </Link>
-                <IconButton className="v-mid">
-                  <MoreHoriz style={{ color: 'white' }} />
-                </IconButton>
+                  <Link
+                    to="/"
+                    className="no-underline"
+                    style={{
+                      color: 'white',
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      marginTop: '5px'
+                    }}
+                  >
+                    TOP PACKAGES
+                  </Link>
+                  <Link
+                    to="/"
+                    className="no-underline"
+                    style={{
+                      color: 'white',
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      marginTop: '5px'
+                    }}
+                  >
+                    RADAR
+                  </Link>
+                  <IconButton style={{ marginTop: '5px' }}>
+                    <MoreHoriz style={{ color: 'white' }} />
+                  </IconButton>
+                </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={3}
+                  xs={5}
                   style={{
                     borderRadius: '2px',
-                    height: '36px',
+                    height: '42px',
                     backgroundColor: 'rgba(255,255,255,.15)',
                     color: '#fff',
                     padding: '0'
@@ -225,7 +226,7 @@ class Header extends Component {
                       style={{
                         position: 'absolute',
                         margin: '0 10px 0 15px',
-                        top: '18px'
+                        top: '21px'
                       }}
                     />
                     <Search history={history} />
@@ -235,12 +236,12 @@ class Header extends Component {
                 <div className="tr">
                   {!isUserLoading && !user &&
                     <div>
-                      <Button
+                      {/* <Button
                         onTouchTap={githubAuth}
                         style={{ marginRight: '10px', color: 'white' }}
                       >
                         Log In
-                      </Button>
+                      </Button> */}
                       <Button
                         raised
                         color="default"
@@ -248,7 +249,7 @@ class Header extends Component {
                         onTouchTap={githubAuth}
                       >
                         <i className="fa fa-lg fa-github mr2" />
-                        Sign Up
+                        Log In
                       </Button>
                     </div>}
                   {!isUserLoading && user &&
