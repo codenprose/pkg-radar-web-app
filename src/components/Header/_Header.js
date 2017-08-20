@@ -12,7 +12,7 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
-import { Add, MoreHoriz } from 'material-ui-icons'
+import { Add } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
@@ -22,13 +22,11 @@ import SearchIcon from 'material-ui-icons/Search'
 
 import Search from './_Search'
 
-// import { client } from '../../index'
-
 import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> hunter'
+    title: '<pkg> radar'
   }
 
   state = {
@@ -148,7 +146,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={5} style={{ height: '100%' }}>
+              <Grid item xs={3} style={{ height: '100%' }}>
                 <Grid container align='center'>
                   <Typography
                     type="title"
@@ -156,8 +154,7 @@ class Header extends Component {
                     style={{
                       fontSize: '24px',
                       display: 'inline-block',
-                      paddingRight: '15px',
-                      borderRight: '2px solid gray'
+                      paddingLeft: '10px'
                     }}
                   >
                     <Link
@@ -168,7 +165,7 @@ class Header extends Component {
                       {title}
                     </Link>
                   </Typography>
-                  <Link
+                  {/* <Link
                     to="/"
                     className="no-underline"
                     style={{
@@ -206,13 +203,13 @@ class Header extends Component {
                   </Link>
                   <IconButton style={{ marginTop: '5px' }}>
                     <MoreHoriz style={{ color: 'white' }} />
-                  </IconButton>
+                  </IconButton> */}
                 </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={5}
+                  xs={7}
                   style={{
                     borderRadius: '2px',
                     height: '42px',

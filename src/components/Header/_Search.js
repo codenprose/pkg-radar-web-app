@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
-import algoliasearch from 'algoliasearch'
+import elasticsearch from 'elasticsearch'
 
-const client = algoliasearch("P8B4X1W4VV", "881ba02c36abee3f34e20a790bfd81f2")
-const index = client.initIndex('Packages')
-
+const client = new elasticsearch.Client({
+  host: 'https://search-pkg-radar-dev-packages-bfnemqricttw7m2gal2aecwqze.us-east-1.es.amazonaws.com'
+});
 
 class Search extends Component {
   state = {
@@ -13,9 +13,9 @@ class Search extends Component {
 
   _renderMenuItemChildren(option, props, index) {
     return (
-      <div key={option.id}>
+      <div key={option._id}>
         <img
-          src={option.avatar}
+          src={option._source.owner_avatar}
           style={{
             height: '30px',
             marginRight: '10px',
@@ -24,7 +24,9 @@ class Search extends Component {
           }}
           alt="search-result"
         />
-        <span>{option.name}</span>
+        <span>
+          {option._source.owner_name}/{option._source.package_name}
+          </span>
       </div>
     );
   }
@@ -32,14 +34,36 @@ class Search extends Component {
   _handleSearch = (query) => {
     if (!query) return
 
-    index.search(query, (err, content) => {
-      this.setState({ options: content.hits })
+    client.search({
+      index: 'packages',
+      type: 'package-details',
+      body: {
+        query: {
+          query_string: {
+            query: `${query}*`
+          },
+        }
+      }
+    }).then(body => {
+      const hits = body.hits.hits
+
+      if (hits.length) {
+        this.setState({ options: hits })
+      } else {
+        this.setState({ options: [] })
+      }
+    }, error => {
+      console.trace(error.message);
     })
   }
 
   _handleSelection = (selection) => {
     const pkg = selection[0]
-    if (pkg) this.props.history.push(`/package/${pkg.name}`)
+    
+    if (pkg) { 
+      const { owner_name, package_name } = pkg._source
+      this.props.history.push(`/${owner_name}/${package_name}`)
+    }
   }
 
   render() {
@@ -47,16 +71,12 @@ class Search extends Component {
       <div style={{ width: 'inherit' }}>
         <AsyncTypeahead
           autoFocus
-          labelKey="name"
+          labelKey={option => option._source.package_name}
           onSearch={this._handleSearch}
-          onChange={(selected) => this._handleSelection(selected)}
-          placeholder=""
+          onChange={selected => this._handleSelection(selected)}
+          placeholder="Search for Packages"
           renderMenuItemChildren={this._renderMenuItemChildren}
           options={this.state.options}
-          filterBy={(option, text) => {
-            const tags = option.tags.map( ({ name }) => name)
-            return ['name', ...tags]
-          }}
         />
       </div>
     )

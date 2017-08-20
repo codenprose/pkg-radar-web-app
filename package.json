@@ -9,6 +9,7 @@
     "autosuggest-highlight": "^3.1.0",
     "aws-sdk": "^2.95.0",
     "classnames": "^2.2.5",
+    "elasticsearch": "^13.3.1",
     "github-markdown-css": "^2.8.0",
     "graphql-tag": "^2.4.0",
     "humanize-plus": "^1.8.2",

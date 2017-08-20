@@ -122,7 +122,6 @@ class PackageDetail extends Component {
 
   render() {
     const { data, history } = this.props;
-    console.log(data)
 
     if (data.loading) return <Loader />
 

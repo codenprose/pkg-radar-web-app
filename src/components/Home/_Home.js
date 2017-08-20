@@ -11,7 +11,7 @@ import { Search } from '../Shared'
 
 class Home extends Component {
   static defaultProps = {
-    title: '<pkg> hunter'
+    title: '<pkg> radar'
   }
 
   render() {
