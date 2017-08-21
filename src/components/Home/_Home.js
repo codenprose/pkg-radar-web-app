@@ -6,7 +6,7 @@ import Paper from 'material-ui/Paper'
 // import Divider from 'material-ui/Divider';
 
 import { PackageCard } from '../Packages'
-import { Search } from '../Shared'
+import { SearchMain } from '../Shared'
 // import { Footer } from '../Footer'
 
 class Home extends Component {
@@ -38,7 +38,7 @@ class Home extends Component {
             {title}
           </h2>
           <Paper elevation={4} style={{ padding: '10px 0' }}>
-            <Search />
+            <SearchMain />
           </Paper>
           <p 
             style={{ 

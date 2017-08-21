@@ -20,7 +20,7 @@ import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import SearchIcon from 'material-ui-icons/Search'
 
-import Search from './_Search'
+import { SearchMain } from '../Shared'
 
 import CREATE_PACKAGE from '../../mutations/createPackage'
 
@@ -205,7 +205,7 @@ class Header extends Component {
                     padding: '0'
                   }}
                 >
-                  <div>
+                  <div style={{ height: '100%' }}>
                     <SearchIcon
                       style={{
                         position: 'absolute',
@@ -213,7 +213,10 @@ class Header extends Component {
                         top: '21px'
                       }}
                     />
-                    <Search history={history} />
+                    <SearchMain
+                      id='SearchMain--header'
+                      history={history} 
+                    />
                   </div>
                 </Grid>}
               <Grid item xs={userSectionWidth} style={{ height: '100%' }}>
