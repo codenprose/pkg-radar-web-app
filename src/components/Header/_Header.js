@@ -26,7 +26,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> radar'
+    title: '<pkg> hunter'
   }
 
   state = {
@@ -119,7 +119,7 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 7, isSearchVisible = false
+    let userSectionWidth = 8, isSearchVisible = false
 
     if (location.pathname !== '/') {
       isSearchVisible = true
@@ -146,7 +146,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={3} style={{ height: '100%' }}>
+              <Grid item xs={4} style={{ height: '100%' }}>
                 <Grid container align='center'>
                   <Typography
                     type="title"
@@ -154,7 +154,9 @@ class Header extends Component {
                     style={{
                       fontSize: '24px',
                       display: 'inline-block',
-                      paddingLeft: '10px'
+                      paddingRight: '15px',
+                      paddingLeft: '10px',
+                      borderRight: '2px solid gray'
                     }}
                   >
                     <Link
@@ -165,7 +167,7 @@ class Header extends Component {
                       {title}
                     </Link>
                   </Typography>
-                  {/* <Link
+                  <Link
                     to="/"
                     className="no-underline"
                     style={{
@@ -187,29 +189,14 @@ class Header extends Component {
                       marginTop: '5px'
                     }}
                   >
-                    TOP PACKAGES
-                  </Link>
-                  <Link
-                    to="/"
-                    className="no-underline"
-                    style={{
-                      color: 'white',
-                      fontSize: '12px',
-                      padding: '0 10px',
-                      marginTop: '5px'
-                    }}
-                  >
                     RADAR
                   </Link>
-                  <IconButton style={{ marginTop: '5px' }}>
-                    <MoreHoriz style={{ color: 'white' }} />
-                  </IconButton> */}
                 </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={7}
+                  xs={6}
                   style={{
                     borderRadius: '2px',
                     height: '42px',

@@ -35,7 +35,7 @@ class KanbanBoardContainer extends Component {
     isAddPackageModalOpen: false,
     isAddBoardModalOpen: false,
     addBoardName: "",
-    selectedList: "",
+    selectedStatus: "",
     selectedBoard: "",
     selectedPackage: {},
     tabIndex: 0,
@@ -50,8 +50,8 @@ class KanbanBoardContainer extends Component {
     this.setState({ isAddPackageModalOpen: false });
   };
 
-  _handleListSelection = e => {
-    this.setState({ selectedList: e.target.value });
+  _handleStatusSelection = e => {
+    this.setState({ selectedStatus: e.target.value });
   };
 
   _handleBoardSelection = option => {
@@ -63,22 +63,32 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddPackage = async () => {
-    let { cards, selectedStatus, selectedBoard } = this.state
-    let pkg = this.state.selectedPackage
+    let { cards, selectedStatus, selectedBoard, selectedPackage } = this.state
+    let pkg = {
+      board: selectedBoard,
+      color: selectedPackage._source.color,
+      description: selectedPackage._source.description,
+      issues: selectedPackage._source.issues,
+      language: selectedPackage._source.language,
+      ownerAvatar: selectedPackage._source.owner_avatar,
+      ownerName: selectedPackage._source.owner_name,
+      packageId: selectedPackage._id,
+      packageName: selectedPackage._source.package_name,
+      stars: selectedPackage._source.stars,
+      status: selectedStatus,
+      userId: this.props.user.id
+    }
 
     try {
       await this.props.createUserKanbanPackage({
         variables: {
           ownerName: pkg.ownerName,
-          packageId: pkg.id,
+          packageId: pkg.packageId,
           packageName: pkg.packageName,
           status: selectedStatus,
-          userId: this.props.user.id,
+          userId: pkg.userId,
         },
       });
-
-      pkg.board = selectedBoard
-      pkg.status = selectedStatus
 
       cards = [...cards, pkg]
       this.setState({ cards }, this._updateKanbanCardPositions)
@@ -302,7 +312,7 @@ class KanbanBoardContainer extends Component {
     const kanbanBoards = user.kanbanBoards.sort()
     const boardSelectOptions = this._formatBoardSelectItems()
 
-    // console.log('kanban container', this.props)
+    console.log('kanban container', this.props)
 
     return (
       <div>
@@ -401,7 +411,7 @@ class KanbanBoardContainer extends Component {
           onRequestClose={this._handlePackageModal}
         >
           <DialogTitle>Add Package</DialogTitle>
-          <DialogContent style={{ width: "500px", marginBottom: "30px" }}>
+          <DialogContent style={{ width: "550px", marginBottom: "30px" }}>
             <Select
               options={boardSelectOptions}
               placeholder="Select Board"
@@ -414,32 +424,36 @@ class KanbanBoardContainer extends Component {
               <Radio
                 name="Backlog"
                 value="backlog"
-                checked={this.state.selectedList === "backlog"}
-                onChange={this._handleListSelection}
+                checked={this.state.selectedStatus === "backlog"}
+                onChange={this._handleStatusSelection}
               />
+              <label style={{ verticalAlign: 'super' }}>Backlog</label>
               <Radio
                 name="Trial"
                 value="trial"
-                checked={this.state.selectedList === "trial"}
-                onChange={this._handleListSelection}
+                checked={this.state.selectedStatus === "trial"}
+                onChange={this._handleStatusSelection}
               />
+              <label style={{ verticalAlign: 'super' }}>Trial</label>
               <Radio
                 name="Production"
                 value="production"
-                checked={this.state.selectedList === "production"}
-                onChange={this._handleListSelection}
+                checked={this.state.selectedStatus === "production"}
+                onChange={this._handleStatusSelection}
               />
+              <label style={{ verticalAlign: 'super' }}>Production</label>
               <Radio
                 name="Archive"
                 value="archive"
-                checked={this.state.selectedList === "archive"}
-                onChange={this._handleListSelection}
+                checked={this.state.selectedStatus === "archive"}
+                onChange={this._handleStatusSelection}
               />
+              <label style={{ verticalAlign: 'super' }}>Archive</label>
             </div>
             <SearchPackages
               _handlePackageSelection={this._handlePackageSelection}
               selectedBoard={this.state.selectedBoard}
-              selectedList={this.state.selectedList}
+              selectedStatus={this.state.selectedStatus}
             />
           </DialogContent>
           <DialogActions>
@@ -450,7 +464,7 @@ class KanbanBoardContainer extends Component {
               raised
               color="primary"
               disabled={
-                !this.state.selectedList || 
+                !this.state.selectedStatus || 
                   !this.state.selectedBoard ||
                     !Object.keys(this.state.selectedPackage).length
               }
