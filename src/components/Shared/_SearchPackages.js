@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
-import Paper from 'material-ui/Paper';
-import { MenuItem } from 'material-ui/Menu';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { withStyles } from 'material-ui/styles';
 import { withRouter } from 'react-router-dom';
 import elasticsearch from 'elasticsearch'
+
+import Paper from 'material-ui/Paper';
+import Input from 'material-ui/Input/Input';
+import { MenuItem } from 'material-ui/Menu';
 
 const client = new elasticsearch.Client({
   host: 'https://search-pkg-radar-dev-packages-bfnemqricttw7m2gal2aecwqze.us-east-1.es.amazonaws.com'
@@ -17,11 +19,15 @@ function renderInput(inputProps) {
   const { classes, home, value, ref, ...other } = inputProps;
 
   return (
-    <input
-      autoFocus={true}
+    <Input
+      fullWidth
       className={classes.textField}
       value={value}
-      { ...other }
+      inputProps={{
+        'aria-label': 'Select Package',
+        'placeholder': 'Select Package'
+      }}
+      { ...other}
     />
   );
 }
@@ -76,10 +82,9 @@ const styles = theme => ({
     height: '100%'
   },
   suggestionsContainerOpen: {
-    position: 'absolute',
-    zIndex: 5,
-    marginTop: '11px',
-    marginBottom: theme.spacing.unit * 3,
+    position: 'fixed',
+    width: '500px',
+    margin: '10px auto',
     left: 0,
     right: 0,
   },
@@ -96,12 +101,11 @@ const styles = theme => ({
     height: '100%',
     outline: 'none',
     border: 'none',
-    background: 'none',
-    paddingLeft: '16px'
+    background: 'none'
   },
 });
 
-class SearchMain extends Component {
+class SearchPackages extends Component {
   state = {
     value: '',
     suggestions: [],
@@ -138,8 +142,8 @@ class SearchMain extends Component {
   };
 
   handleSuggestionSelected = (event, response) => {
-    const { package_name, owner_name } = response.suggestion._source
-    this.props.history.push(`/${owner_name}/${package_name}`)
+    const pkg = response.suggestion
+    this.props._handlePackageSelection(pkg)
   }
 
   handleChange = (event, { newValue }) => {
@@ -165,15 +169,15 @@ class SearchMain extends Component {
           }}
           renderInputComponent={renderInput}
           suggestions={this.state.suggestions}
-          highlightFirstSuggestion={true}
           onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
           onSuggestionSelected={this.handleSuggestionSelected}
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
+          focusInputOnSuggestionClick={false}
           inputProps={{
-            autoFocus: true,
+            autoFocus: false,
             classes,
             value: this.state.value,
             onChange: this.handleChange
@@ -184,12 +188,12 @@ class SearchMain extends Component {
   }
 }
 
-SearchMain.propTypes = {
+SearchPackages.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-SearchMain.defaultProps = {
-  id: 'SearchMain'
+SearchPackages.defaultProps = {
+  id: 'SearchPackages'
 }
 
-export default withRouter(withStyles(styles)(SearchMain));
+export default withRouter(withStyles(styles)(SearchPackages));

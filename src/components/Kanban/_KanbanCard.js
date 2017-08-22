@@ -125,7 +125,7 @@ class KanbanCard extends Component {
                 <Link to={`/${ownerName}/${packageName}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
-                <Button dense onClick={() => removeCard(packageId, packageName, currentBoard, status)}>Remove</Button>
+                <Button dense onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}>Remove</Button>
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {

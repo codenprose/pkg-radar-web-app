@@ -104,7 +104,6 @@ class UserProfile extends Component {
   render() {
     const { data, user } = this.props;
     if (!user || data.loading) return <div />
-
     const cards = this._formatCards(data.userKanbanPackages)
 
     return (
@@ -160,13 +159,11 @@ class UserProfile extends Component {
 }
 
 const userKanbanOptions = {
-  skip: (props) => {
-    return !props.user
-  },
+  skip: (ownProps) => !ownProps.user,
   options: props => {
     return {
       variables: { 
-        userId: props.user.id,
+        userId: props.user ? props.user.id : '',
       }
     };
   }
