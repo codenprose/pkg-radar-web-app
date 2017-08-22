@@ -43,6 +43,11 @@ class KanbanBoardContainer extends Component {
     currentBoard: "All"
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps.cards)
+    this.setState({ cards: nextProps.cards }) // FIXME: This doesn't work with _updateKanbanCardPositions
+  }
+
   _handlePackageModalOpen = () => {
     this.setState({ isAddPackageModalOpen: true });
   };
@@ -95,11 +100,13 @@ class KanbanBoardContainer extends Component {
             query: USER_KANBAN_PACKAGES,
             variables: { userId: user.id }
           });
-
+          
           userKanbanPackage.color = pkg.color
           userKanbanPackage.description = pkg.description
           userKanbanPackage.issues = pkg.issues
           userKanbanPackage.language = pkg.language
+          userKanbanPackage.ownerAvatar = pkg.ownerAvatar
+          userKanbanPackage.stars = pkg.stars
 
           data.userKanbanPackages.push(userKanbanPackage)
           // Write our data back to the cache.
@@ -110,14 +117,12 @@ class KanbanBoardContainer extends Component {
 
       console.log('updating card positions')
       let kanbanCardPositions = this._formatKanbanCardPositions()
-      kanbanCardPositions.push({ 
-        board: selectedBoard, ownerName: pkg.ownerName, packageName: pkg.packageName
-      })
+      let card = { board: selectedBoard, ownerName: pkg.ownerName, packageName: pkg.packageName }
 
       await this.props.updateKanbanCardPositions({
         variables: { 
           username: user.username, 
-          kanbanCardPositions
+          kanbanCardPositions: [...kanbanCardPositions, card]
         },
         update: (store, { data: { updateUser } }) => {
           const token = localStorage.getItem('pkgRadarToken')
@@ -126,41 +131,23 @@ class KanbanBoardContainer extends Component {
             query: CURRENT_USER,
             variables: { username: user.username, token }
           });
-          console.log('data', data)
-          data.currentUser.kanbanCardPositions = kanbanCardPositions
+          card.__typename = 'KanbanCard'
+          data.currentUser.kanbanCardPositions = [...kanbanCardPositions, card]
           // Write our data back to the cache.
           store.writeQuery({ query: CURRENT_USER, data });
         },
       });
       console.log('updated card positions')
+      this._closePackageModal()
     } catch (e) {
       console.error(e.message);
+      this._closePackageModal()
     }
   };
 
   _handleRemovePackage = async (pkgId, packageName, currentBoard, status, ownerName) => {
     const { user } = this.props
     try {
-      console.log('removing package')
-      await this.props.deleteUserKanbanPackage({
-        variables: {
-          userId: this.props.user.id,
-          packageId: pkgId
-        },
-        update: (store, { data: { deleteUserKanbanPackage } }) => {
-          let data = store.readQuery({ 
-            query: USER_KANBAN_PACKAGES,
-            variables: { userId: user.id }
-          });
-          data.userKanbanPackages = data.userKanbanPackages.filter(pkg => {
-            return pkg.packageId !== pkgId
-          })
-          // Write our data back to the cache.
-          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
-        },
-      });
-      console.log('removed package')
-
       console.log('updating card positions')
       let kanbanCardPositions = this._formatKanbanCardPositions()
       kanbanCardPositions = kanbanCardPositions.filter(card => {
@@ -185,6 +172,26 @@ class KanbanBoardContainer extends Component {
         },
       });
       console.log('updated card positions')
+
+      console.log('removing package')
+      await this.props.deleteUserKanbanPackage({
+        variables: {
+          userId: this.props.user.id,
+          packageId: pkgId
+        },
+        update: (store, { data: { deleteUserKanbanPackage } }) => {
+          let data = store.readQuery({ 
+            query: USER_KANBAN_PACKAGES,
+            variables: { userId: user.id }
+          });
+          data.userKanbanPackages = data.userKanbanPackages.filter(pkg => {
+            return pkg.packageId !== pkgId
+          })
+          // Write our data back to the cache.
+          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
+        },
+      });
+      console.log('removed package')
     } catch (e) {
       console.error(e.message);
     }
@@ -383,9 +390,7 @@ class KanbanBoardContainer extends Component {
     const { user } = this.props;
     const kanbanBoards = user.kanbanBoards.sort()
     const boardSelectOptions = this._formatBoardSelectItems()
-    console.log('cards', this.state.cards)
-
-    // console.log('kanban container', user)
+    console.log('KanbanBoardContainer cards', this.state.cards)
 
     return (
       <div>

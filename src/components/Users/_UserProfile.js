@@ -105,6 +105,7 @@ class UserProfile extends Component {
     const { data, user } = this.props;
     if (!user || data.loading) return <div />
     const cards = this._formatCards(data.userKanbanPackages)
+    console.log('UserProfile cards', cards)
 
     return (
       <div>
@@ -163,7 +164,7 @@ const userKanbanOptions = {
   options: props => {
     return {
       variables: { 
-        userId: props.user ? props.user.id : '',
+        userId: props.user ? props.user.id : '', // https://github.com/apollographql/react-apollo/issues/903
       }
     };
   }
