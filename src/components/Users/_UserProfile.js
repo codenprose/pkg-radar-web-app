@@ -6,9 +6,12 @@ import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
 
 import { KanbanBoardContainer } from "../Kanban";
+import { Loader } from '../Shared'
+
 import userBgImg from "../../images/user_profile_bg.jpg"
 
 import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
+import GET_USER from '../../queries/user'
 
 const ProfileHeader = styled.div`
   position: relative;
@@ -81,9 +84,8 @@ const Connections = styled.h5`
 
 class UserProfile extends Component {
   _formatCards = (packages) => {
-    const { kanbanCardPositions } = this.props.user
+    const { kanbanCardPositions } = this.props.user.user
     const cards = []
-
     if (!packages || !packages.length) return cards
 
     for (let i in kanbanCardPositions) {
@@ -102,10 +104,12 @@ class UserProfile extends Component {
   }
 
   render() {
-    const { data, user } = this.props;
-    if (!user || data.loading) return <div />
+    const { data, currentUser, user, userKanbanPackages } = this.props;
+    if (user.loading || userKanbanPackages.loading ) return <Loader />
+    console.log('user', user)
+    console.log('userKanbanPackages', userKanbanPackages)
+    return <div />
     const cards = this._formatCards(data.userKanbanPackages)
-    console.log('UserProfile cards', cards)
 
     return (
       <div>
@@ -117,20 +121,20 @@ class UserProfile extends Component {
             style={{ height: "100%", padding: "0 80px", margin: 0 }}
           >
             <Grid item xs={6}>
-              <ProfileImage src={user.avatar} />
+              <ProfileImage src={user.user.avatar} />
               <UserInfoContainer>
                 <Name>
-                  {user.name}
+                  {user.user.name}
                 </Name>
                 <UserName>
-                  @{user.username}
+                  @{user.user.username}
                 </UserName>
-                <Bio>{user.bio}</Bio>
+                <Bio>{user.user.bio}</Bio>
                 <Link
                   className="white no-underline fw3"
-                  to={user.website}
+                  to={user.user.website}
                 >
-                  danielkhunter.com
+                  {user.user.website}
                 </Link>
               </UserInfoContainer>
             </Grid>
@@ -152,24 +156,38 @@ class UserProfile extends Component {
         </ProfileHeader>
         <KanbanBoardContainer
           cards={cards}
-          user={user} 
+          user={currentUser} 
         />
       </div>
     );
   }
 }
 
-const userKanbanOptions = {
-  skip: (ownProps) => !ownProps.user,
+const userOptions = {
+  name: 'user',
   options: props => {
     return {
+      fetchPolicy: 'network-only',
       variables: { 
-        userId: props.user ? props.user.id : '', // https://github.com/apollographql/react-apollo/issues/903
+        username: props.match.params.username
+      }
+    };
+  }
+}
+
+const userKanbanOptions = {
+  name: 'userKanbanPackages',
+  options: props => {
+    return {
+      fetchPolicy: 'network-only',
+      variables: { 
+        username: props.match.params.username
       }
     };
   }
 };
 
 export default compose(
+  graphql(GET_USER, userOptions),
   graphql(USER_KANBAN_PACKAGES, userKanbanOptions),
 )(UserProfile)

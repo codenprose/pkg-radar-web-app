@@ -15,6 +15,7 @@ import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import Select from 'react-select';
+import equal from 'deep-equal'
 
 import KanbanBoard from "./_KanbanBoard";
 import { SearchPackages } from '../Shared'
@@ -44,8 +45,9 @@ class KanbanBoardContainer extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps.cards)
-    this.setState({ cards: nextProps.cards }) // FIXME: This doesn't work with _updateKanbanCardPositions
+    if (!equal(this.props.cards, nextProps.cards)) {
+      this.setState({ cards: nextProps.cards })
+    }
   }
 
   _handlePackageModalOpen = () => {
@@ -70,72 +72,43 @@ class KanbanBoardContainer extends Component {
 
   _handleAddPackage = async () => {
     const { user } = this.props
-    let { selectedStatus, selectedBoard, selectedPackage } = this.state
-    let pkg = {
-      color: selectedPackage._source.color,
-      description: selectedPackage._source.description,
-      issues: selectedPackage._source.issues,
-      language: selectedPackage._source.language,
-      ownerAvatar: selectedPackage._source.owner_avatar,
-      ownerName: selectedPackage._source.owner_name,
-      packageId: selectedPackage._id,
-      packageName: selectedPackage._source.package_name,
-      status: selectedStatus,
-      stars: selectedPackage._source.stars
-    }
+    const { selectedStatus, selectedBoard, selectedPackage } = this.state
 
     try {
       console.log('adding package')
       await this.props.createUserKanbanPackage({
         variables: {
-          ownerName: pkg.ownerName,
-          packageId: pkg.packageId,
-          packageName: pkg.packageName,
+          ownerName: selectedPackage._source.owner_name,
+          packageId: selectedPackage._id,
+          packageName: selectedPackage._source.package_name,
           status: selectedStatus,
           userId: user.id
         },
-        update: (store, { data: { createUserKanbanPackage } }) => {
-          const { userKanbanPackage } = createUserKanbanPackage
-          let data = store.readQuery({ 
-            query: USER_KANBAN_PACKAGES,
-            variables: { userId: user.id }
-          });
-          
-          userKanbanPackage.color = pkg.color
-          userKanbanPackage.description = pkg.description
-          userKanbanPackage.issues = pkg.issues
-          userKanbanPackage.language = pkg.language
-          userKanbanPackage.ownerAvatar = pkg.ownerAvatar
-          userKanbanPackage.stars = pkg.stars
-
-          data.userKanbanPackages.push(userKanbanPackage)
-          // Write our data back to the cache.
-          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
-        }
+        refetchQueries: [{ 
+          query: USER_KANBAN_PACKAGES, 
+          variables: { userId: user.id }
+        }]
       });
       console.log('added package')
 
       console.log('updating card positions')
-      let kanbanCardPositions = this._formatKanbanCardPositions()
-      let card = { board: selectedBoard, ownerName: pkg.ownerName, packageName: pkg.packageName }
+      const token = localStorage.getItem('pkgRadarToken')
+      const kanbanCardPositions = this._formatKanbanCardPositions()
+      const card = { 
+        board: selectedBoard, 
+        ownerName: selectedPackage._source.owner_name,
+        packageName: selectedPackage._source.package_name,
+      }
 
       await this.props.updateKanbanCardPositions({
         variables: { 
           username: user.username, 
           kanbanCardPositions: [...kanbanCardPositions, card]
         },
-        update: (store, { data: { updateUser } }) => {
-          const token = localStorage.getItem('pkgRadarToken')
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ 
-            query: CURRENT_USER,
-            variables: { username: user.username, token }
-          });
-          card.__typename = 'KanbanCard'
-          data.currentUser.kanbanCardPositions = [...kanbanCardPositions, card]
-          // Write our data back to the cache.
-          store.writeQuery({ query: CURRENT_USER, data });
-        },
+        refetchQueries: [{
+          query: CURRENT_USER,
+          variables: { username: user.username, token }
+        }]
       });
       console.log('updated card positions')
       this._closePackageModal()
@@ -197,24 +170,38 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  _formatKanbanCardPositions = (useState) => {
+  _formatKanbanCardPositions = (addTypename) => {
     const { cards } = this.state;
     let kanbanLayouts = [];
 
     for (let index in cards) {
       const { board, ownerName, packageName } = cards[index];
-      kanbanLayouts.push({ board, ownerName, packageName });
+      const card = { board, ownerName, packageName }
+      if (addTypename) card.__typename = 'KanbanCard'
+      kanbanLayouts.push(card);
     }
     return kanbanLayouts;
   };
 
   _updateKanbanCardPositions = async () => {
-    console.log('updating kanban board layouts')
+    const { user } = this.props
     try {
+      console.log('updating kanban board layouts')
       await this.props.updateKanbanCardPositions({
         variables: { 
-          username: this.props.user.username, 
+          username: user.username, 
           kanbanCardPositions: this._formatKanbanCardPositions()
+        },
+        update: (store, { data: { updatUser } }) => {
+          const token = localStorage.getItem('pkgRadarToken')
+          // Read the data from our cache for this query.
+          const data = store.readQuery({ 
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
+          });
+          data.currentUser.kanbanCardPositions = this._formatKanbanCardPositions('addTypename')
+          // Write our data back to the cache.
+          store.writeQuery({ query: CURRENT_USER, data });
         },
       });
       console.log('updated kanban board layouts')
@@ -245,13 +232,24 @@ class KanbanBoardContainer extends Component {
   };
 
   _updateKanbanPackageStatus = async (packageId) => {
-    console.log('updating package status')
+    const { user } = this.props
     const cardIndex = this.state.cards.findIndex(card => card.packageId === packageId)
     const status = this.state.cards[cardIndex].status
-
+    
     try {
+      console.log('updating package status')
       await this.props.updateKanbanPackageStatus({
-        variables: { packageId, status, userId: this.props.user.id }
+        variables: { packageId, status, userId: this.props.user.id },
+        update: (store, { data: { getUserKanbanPackages} }) => {
+          let data = store.readQuery({ 
+            query: USER_KANBAN_PACKAGES,
+            variables: { userId: user.id }
+          });
+
+          const pkgIndex = data.userKanbanPackages.findIndex(pkg => pkg.packageId === packageId)
+          data.userKanbanPackages[pkgIndex].status = status
+          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
+        }
       });
       console.log('updated package status')
     } catch (e) {
@@ -283,9 +281,8 @@ class KanbanBoardContainer extends Component {
     const { user } = this.props
     const kanbanBoards = user.kanbanBoards.sort()
     const currentBoard = kanbanBoards[tabIndex];
-    const cards = this.props.cards;
 
-    this.setState({ tabIndex, currentBoard, cards });
+    this.setState({ tabIndex, currentBoard });
   };
 
   _handleAddBoardModalOpen = () => {
@@ -390,7 +387,6 @@ class KanbanBoardContainer extends Component {
     const { user } = this.props;
     const kanbanBoards = user.kanbanBoards.sort()
     const boardSelectOptions = this._formatBoardSelectItems()
-    console.log('KanbanBoardContainer cards', this.state.cards)
 
     return (
       <div>

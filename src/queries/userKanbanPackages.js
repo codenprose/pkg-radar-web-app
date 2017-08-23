@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  query getUserKanbanPackages($userId: ID!) {
-    userKanbanPackages(payload: { userId: $userId }) {
+  query getUserKanbanPackages($username: String!) {
+    userKanbanPackages(payload: { username: $username }) {
       color
       description
       issues

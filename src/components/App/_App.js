@@ -10,7 +10,7 @@ import { Route } from 'react-router-dom'
 import { Header } from '../Header'
 import { Main } from '../Main'
 import { GithubAuth } from '../Users'
-import { Footer } from '../Footer'
+// import { Footer } from '../Footer'
 // import { Loader } from '../Shared'
 
 import CURRENT_USER from '../../queries/currentUser'
@@ -53,14 +53,10 @@ class App extends Component {
   render() {
     const { data, location } = this.props;
     const isUserAuthenticating = location.pathname.includes('github')
-    // const isUserHome = location.pathname === '/'
 
-    let currentUser = null
-    if (data) currentUser = data.currentUser
-
-    let isDataLoading = false
-    if (data) isDataLoading = data.loading
-
+    const currentUser = data.currentUser
+    const isDataLoading = data.loading
+    
     return (
       <MuiThemeProvider theme={theme}>
         <div>
@@ -73,10 +69,6 @@ class App extends Component {
                 githubAuth={this.githubAuth}
               />
               <Main user={currentUser} />
-              {
-                false &&
-                <Footer />
-              }
             </div>
           }
           <Route exact path="/github/auth" component={GithubAuth} />
