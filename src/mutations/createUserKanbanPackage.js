@@ -6,21 +6,21 @@ export default gql`
     $packageId: ID!,
     $packageName: String!,
     $status: String!,
-    $userId: ID!
+    $username: String!
   ) {
     createUserKanbanPackage(
       ownerName: $ownerName,
       packageId: $packageId,
       packageName: $packageName,
       status: $status,
-      userId: $userId
+      username: $username
     ) {
       userKanbanPackage {
         ownerName
         packageId
         packageName
         status
-        userId
+        username
       }
     }
   }

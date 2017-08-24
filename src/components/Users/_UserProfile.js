@@ -104,12 +104,9 @@ class UserProfile extends Component {
   }
 
   render() {
-    const { data, currentUser, user, userKanbanPackages } = this.props;
+    const { currentUser, user, userKanbanPackages } = this.props;
     if (user.loading || userKanbanPackages.loading ) return <Loader />
-    console.log('user', user)
-    console.log('userKanbanPackages', userKanbanPackages)
-    return <div />
-    const cards = this._formatCards(data.userKanbanPackages)
+    const cards = this._formatCards(userKanbanPackages.userKanbanPackages)
 
     return (
       <div>
@@ -156,7 +153,8 @@ class UserProfile extends Component {
         </ProfileHeader>
         <KanbanBoardContainer
           cards={cards}
-          user={currentUser} 
+          currentUser={currentUser}
+          user={user.user}
         />
       </div>
     );

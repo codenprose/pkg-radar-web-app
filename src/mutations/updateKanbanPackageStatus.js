@@ -1,12 +1,12 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  mutation updateKanbanPackageStatus($packageId: ID!, $status: String!, $userId: ID!) {
-    updateUserKanbanPackage(packageId: $packageId, status: $status, userId: $userId) {
+  mutation updateKanbanPackageStatus($packageId: ID!, $status: String!, $username: String!) {
+    updateUserKanbanPackage(packageId: $packageId, status: $status, username: $username) {
       userKanbanPackage {
         packageId
         status
-        userId
+        username
       }
     }
   }

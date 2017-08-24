@@ -82,11 +82,11 @@ class KanbanBoardContainer extends Component {
           packageId: selectedPackage._id,
           packageName: selectedPackage._source.package_name,
           status: selectedStatus,
-          userId: user.id
+          username: user.username
         },
         refetchQueries: [{ 
           query: USER_KANBAN_PACKAGES, 
-          variables: { userId: user.id }
+          variables: { username: user.username }
         }]
       });
       console.log('added package')
@@ -149,13 +149,13 @@ class KanbanBoardContainer extends Component {
       console.log('removing package')
       await this.props.deleteUserKanbanPackage({
         variables: {
-          userId: this.props.user.id,
+          username: user.username,
           packageId: pkgId
         },
         update: (store, { data: { deleteUserKanbanPackage } }) => {
           let data = store.readQuery({ 
             query: USER_KANBAN_PACKAGES,
-            variables: { userId: user.id }
+            variables: { username: user.username }
           });
           data.userKanbanPackages = data.userKanbanPackages.filter(pkg => {
             return pkg.packageId !== pkgId
@@ -239,11 +239,11 @@ class KanbanBoardContainer extends Component {
     try {
       console.log('updating package status')
       await this.props.updateKanbanPackageStatus({
-        variables: { packageId, status, userId: this.props.user.id },
+        variables: { packageId, status, username: user.username },
         update: (store, { data: { getUserKanbanPackages} }) => {
           let data = store.readQuery({ 
             query: USER_KANBAN_PACKAGES,
-            variables: { userId: user.id }
+            variables: { username: user.username }
           });
 
           const pkgIndex = data.userKanbanPackages.findIndex(pkg => pkg.packageId === packageId)
