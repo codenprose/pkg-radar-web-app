@@ -11,7 +11,7 @@ import { SearchMain } from '../Shared'
 
 class Home extends Component {
   static defaultProps = {
-    title: '<pkg> hunter'
+    title: '<pkg> radar'
   }
 
   render() {
@@ -48,7 +48,7 @@ class Home extends Component {
               fontWeight: '300'
             }}
           >
-            Search and Discover the best of Open Source Software
+            Search and Discover. Evaluate and Save.
           </p>
         </Grid>
         <Grid item xs={12}>

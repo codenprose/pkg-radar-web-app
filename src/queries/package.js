@@ -6,7 +6,20 @@ export default gql`
       archive
       backlog
       color
+      commits {
+        total
+        url
+      }
+      contributors {
+        top100 {
+          avatar
+          url
+          username
+        }
+        total
+      }
       description
+      forks
       id
       issues
       language
@@ -35,12 +48,14 @@ export default gql`
         extension
         text
       }
+      releases
       repoUrl
       stars
       tags {
         tagName
       }
       trial
+      watchers
       websiteUrl
     }
   }
