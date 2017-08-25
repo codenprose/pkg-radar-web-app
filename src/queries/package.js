@@ -51,9 +51,7 @@ export default gql`
       releases
       repoUrl
       stars
-      tags {
-        tagName
-      }
+      tags
       trial
       watchers
       websiteUrl

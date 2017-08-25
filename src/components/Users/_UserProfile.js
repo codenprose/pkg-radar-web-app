@@ -151,6 +151,7 @@ class UserProfile extends Component {
             </Grid>
           </Grid>
         </ProfileHeader>
+        
         <KanbanBoardContainer
           cards={cards}
           currentUser={currentUser}

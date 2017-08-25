@@ -26,7 +26,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> radar'
+    title: '<pkg> hunter'
   }
 
   state = {
@@ -215,6 +215,7 @@ class Header extends Component {
                     />
                     <SearchMain
                       id='SearchMain--header'
+                      placeholder='Search'
                       history={history} 
                     />
                   </div>

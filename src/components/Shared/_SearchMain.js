@@ -149,7 +149,7 @@ class SearchMain extends Component {
   };
 
   render() {
-    const { classes, id } = this.props;
+    const { classes, id, placeholder } = this.props;
 
     return (
       <div 
@@ -174,6 +174,7 @@ class SearchMain extends Component {
           renderSuggestion={renderSuggestion}
           inputProps={{
             autoFocus: true,
+            placeholder: placeholder ? placeholder : '',
             classes,
             value: this.state.value,
             onChange: this.handleChange

@@ -127,6 +127,7 @@ class PackageDetail extends Component {
 
     let readmeHtml = "<div>No Data Available</div>";
     let changelogHtml = "<div>No Data Available</div>";
+    console.log('data', data)
 
     if (data.package.lastRelease) {
       changelogHtml = marked(data.package.lastRelease.description);
@@ -153,7 +154,7 @@ class PackageDetail extends Component {
         <Grid container>
           <Grid item xs={3}>
 
-            {/* Package Title */}
+            {/* Package Info / Stats */}
             <Card style={styles.card}>
               <CardHeader
                 avatar={
@@ -164,8 +165,37 @@ class PackageDetail extends Component {
                   />
                 }
                 title={`${data.package.ownerName}/${data.package.packageName}`}
-                subheader={data.package.language}
+                subheader={
+                  <div>
+                    <div 
+                      style={{ 
+                        display: 'inline-block', 
+                        width: '15px', 
+                        height: '15px', 
+                        marginRight: '5px', 
+                        borderRadius: '50%',
+                        verticalAlign: 'sub', 
+                        backgroundColor: data.package.color
+                      }}
+                    />
+                    <span>{data.package.language}</span>
+                  </div>
+                }
               />
+              <CardContent style={{ padding: '0 16px' }}>
+                <ul className='list pl0 dib mr4 mt0 mb0'>
+                  <li>Stars: {Humanize.formatNumber(data.package.stars)}</li>
+                  <li>Issues: {Humanize.formatNumber(data.package.issues)}</li>
+                  <li>Commits: {Humanize.formatNumber(data.package.commits.total)}</li>
+                  <li>Releases: {Humanize.formatNumber(data.package.releases)}</li>
+                </ul>
+                <ul className='list pl0 dib mt0 mb0'>
+                  <li>Contributors: {Humanize.formatNumber(data.package.contributors.total)}</li>
+                  <li>Watchers: {Humanize.formatNumber(data.package.watchers)} </li>
+                  <li>Pull Requests: {Humanize.formatNumber(data.package.pullRequests)}</li>
+                  <li>Forks: {Humanize.formatNumber(data.package.forks)}</li>
+                </ul>
+              </CardContent>
               <CardActions>
                 {data.package.websiteUrl &&
                   <Link
@@ -186,7 +216,7 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Tags */}
-            <Card style={styles.card}>
+            {/* <Card style={styles.card}>
               <CardContent style={{ paddingBottom: 0 }}>
                 <Typography type="title" component="h2">
                   Tags
@@ -194,11 +224,11 @@ class PackageDetail extends Component {
                 <div style={{ marginTop: '20px' }}>
                   {
                     data.package.tags.length &&
-                    data.package.tags.map(({tagName}, i) => {
+                    data.package.tags.map((tag, i) => {
                       return (
-                        <Link to={`/search?=${tagName}`} key={i}>
+                        <Link to={`/search?=${tag}`} key={i}>
                           <Chip
-                            label={tagName}
+                            label={tag}
                             style={{
                               display: 'inline-block',
                               margin: '0 10px 10px 0',
@@ -212,25 +242,12 @@ class PackageDetail extends Component {
                   }
                 </div>
               </CardContent>
-              <CardActions>
-                <Button
-                  dense
-                  onClick={() => {
-                      const owner = data.package.ownerName
-                      const pkg = data.package.packageName
-                      history.push(`/package/update/${owner}/${pkg}`)
-                    }
-                  }
-                >
-                  Update Tags
-                </Button>
-              </CardActions>
-            </Card>
+            </Card> */}
 
             {/* Last Commit */}
             <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
+              <CardContent style={{ paddingBottom: 0 }}>
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h2">
                   Last Commit
                 </Typography>
                 <Typography type="body1">
@@ -250,68 +267,29 @@ class PackageDetail extends Component {
               </CardActions>
             </Card>
 
-            {/* Package Stars */}
-            <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Stars
-                </Typography>
-                <Typography type="body1">
-                  {Humanize.formatNumber(data.package.stars)}
-                </Typography>
-              </CardContent>
-            </Card>
-
-            {/* Package Issues */}
-            <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Issues
-                </Typography>
-                <Typography type="body1">
-                  {Humanize.formatNumber(data.package.issues)}
-                </Typography>
-              </CardContent>
-            </Card>
-
-            {/* Package Star-to-Issue ratio */}
-            {/* <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Issue-to-Star Ratio
-                </Typography>
-                <Typography type="body1">
-                  {Humanize.formatNumber(data.package.issues / data.package.stars * 100)}%
-                </Typography>
-              </CardContent>
-            </Card> */}
-
-            {/* Pull Requests */}
-            <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Pull Requests
-                </Typography>
-                <Typography type="body1">
-                  {Humanize.formatNumber(data.package.pullRequests)}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button dense>View Pull Requests</Button>
-              </CardActions>
-            </Card>
-
             {/* Contributors */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography type="title" component="h2">
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h2">
                   Contributors
                 </Typography>
-                <Typography type="body1">Add Contributors</Typography>
+                {
+                  data.package.contributors.top100.map(contributor => {
+                    return (
+                      <a
+                        key={contributor.username} 
+                        href={contributor.url} 
+                        style={{ marginRight: '10px' }}
+                      >
+                        <img 
+                          style={{ width: '32px' }} 
+                          src={contributor.avatar} 
+                        />
+                      </a>
+                    )
+                  })
+                }
               </CardContent>
-              <CardActions>
-                <Button dense>View Contributors</Button>
-              </CardActions>
             </Card>
 
             {/* License */}
@@ -328,6 +306,21 @@ class PackageDetail extends Component {
                 <Button dense>View License</Button>
               </CardActions>
             </Card>
+
+            {/* Pull Requests */}
+            {/* <Card style={styles.card}>
+              <CardContent>
+                <Typography type="title" component="h2">
+                  Pull Requests
+                </Typography>
+                <Typography type="body1">
+                  {Humanize.formatNumber(data.package.pullRequests)}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button dense>View Pull Requests</Button>
+              </CardActions>
+            </Card> */}
           </Grid>
 
           {/* Tabs */}
