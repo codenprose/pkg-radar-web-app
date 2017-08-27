@@ -8,6 +8,7 @@ import parse from 'autosuggest-highlight/parse';
 import { withStyles } from 'material-ui/styles';
 import { withRouter } from 'react-router-dom';
 import elasticsearch from 'elasticsearch'
+import Humanize from "humanize-plus";
 
 const client = new elasticsearch.Client({
   host: 'https://search-pkg-radar-dev-packages-bfnemqricttw7m2gal2aecwqze.us-east-1.es.amazonaws.com'
@@ -31,27 +32,63 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   const parts = parse(suggestion._source.package_name, matches);
 
   return (
-    <MenuItem selected={isHighlighted} component="div">
+    <MenuItem 
+      selected={isHighlighted}
+      style={{ height: 'auto' }}
+      component="div"
+    >
       <div>
         <img
           src={suggestion._source.owner_avatar}
           style={{
-            height: '30px',
+            height: '40px',
             marginRight: '10px',
-            width: '30px',
-            verticalAlign: 'middle'
+            width: '40px',
+            verticalAlign: 'text-bottom'
           }}
           alt="search-result"
         />
-        {parts.map((part, index) => {
-          return part.highlight
-            ? <span key={index} style={{ fontWeight: 300 }}>
-                {part.text}
-              </span>
-            : <strong key={index} style={{ fontWeight: 500 }}>
-                {part.text}
-              </strong>;
-        })}
+        <div className='dib'>
+          {parts.map((part, index) => {
+            return part.highlight
+              ? <span key={index} style={{ background: 'yellow', fontSize: '20px', fontWeight: 300 }}>
+                  {part.text}
+                </span>
+              : <strong key={index} style={{ fontWeight: 500, fontSize: '20px' }}>
+                  {part.text}
+                </strong>;
+          })}
+          <i className="fa fa-star ml3 mr1" aria-hidden="true" />
+          <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
+          <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
+          <span>{Humanize.formatNumber(suggestion._source.issues)}</span>
+          
+          <div style={{ lineHeight: '16px' }}>
+            <span>tags: </span>
+            <ul className='list dib pa0'>
+              {
+                suggestion._source.tags.map(tag => {
+                  const matches = match(tag, query);
+                  const parts = parse(tag, matches);
+
+                  return ( 
+                    <li key={tag} className='dib mr2'>
+                      {parts.map((part, index) => {
+                        return part.highlight
+                          ? <span key={index} style={{ background: 'yellow' }}>
+                              {part.text}
+                            </span>
+                          : <span key={index}>
+                              {part.text}
+                            </span>;
+                      })}
+                    </li> 
+                  )
+                })
+              }
+            </ul>
+          </div>
+        </div>
       </div>
     </MenuItem>
   );
@@ -121,6 +158,7 @@ class SearchMain extends Component {
       }
     }).then(body => {
       const hits = body.hits.hits
+      // console.log('hits', hits)
       if (hits.length) {
         this.setState({ suggestions: hits })
       } else {
@@ -165,7 +203,6 @@ class SearchMain extends Component {
           }}
           renderInputComponent={renderInput}
           suggestions={this.state.suggestions}
-          highlightFirstSuggestion={true}
           onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
           onSuggestionSelected={this.handleSuggestionSelected}

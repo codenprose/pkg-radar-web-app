@@ -319,16 +319,56 @@ class PackageDetail extends Component {
               />
               <CardContent style={{ padding: '0 16px' }}>
                 <ul className='list pl0 dib mr4 mt0 mb0'>
-                  <li>{Humanize.formatNumber(data.package.stars)} Stars</li>
-                  <li>{Humanize.formatNumber(data.package.issues)} Issues</li>
-                  <li>{Humanize.formatNumber(data.package.commits.total)} Commits</li>
-                  <li>{Humanize.formatNumber(data.package.releases)} Releases</li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-star fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.stars)} Stars
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.issues)} Issues
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-plus-circle fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.commits.total)} Commits
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-tags fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.releases)} Releases
+                    </Typography>
+                  </li>
                 </ul>
                 <ul className='list pl0 dib mt0 mb0'>
-                  <li>{Humanize.formatNumber(data.package.contributors.total)} Contributors</li>
-                  <li>{Humanize.formatNumber(data.package.watchers)} Watchers</li>
-                  <li>{Humanize.formatNumber(data.package.pullRequests)} Pull Requests</li>
-                  <li>{Humanize.formatNumber(data.package.forks)} Forks</li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-users fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.contributors.total)} Contributors
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-eye fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.watchers)} Watchers
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.pullRequests)} Pull Requests
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography type="body1">
+                      <i className="fa fa-code-fork fa-fw mr1" aria-hidden="true" />
+                      {Humanize.formatNumber(data.package.forks)} Forks
+                    </Typography>
+                  </li>
                 </ul>
               </CardContent>
               <CardActions>
@@ -382,7 +422,7 @@ class PackageDetail extends Component {
             {/* Last Commit */}
             <Card style={styles.card}>
               <CardContent style={{ paddingBottom: 0 }}>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h2">
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
                   Last Commit
                 </Typography>
                 <Typography type="body1">
@@ -405,7 +445,7 @@ class PackageDetail extends Component {
             {/* Contributors */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h2">
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
                   Contributors
                 </Typography>
                 {
@@ -431,11 +471,15 @@ class PackageDetail extends Component {
             {/* License */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography type="title" component="h2">
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
                   License
                 </Typography>
                 <Typography type="body1">
-                  {data.package.license}
+                  {
+                    data.package.license ?
+                      data.package.license :
+                        'No License Provided'
+                  }
                 </Typography>
               </CardContent>
               <CardActions>
