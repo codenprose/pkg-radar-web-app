@@ -55,7 +55,7 @@ class App extends Component {
     const isUserAuthenticating = location.pathname.includes('github')
 
     const currentUser = data.currentUser
-    const isDataLoading = data.loading
+    const isUserLoading = data.loading
     
     return (
       <MuiThemeProvider theme={theme}>
@@ -65,10 +65,13 @@ class App extends Component {
             <div>
               <Header
                 user={currentUser}
-                isUserLoading={isDataLoading}
+                isUserLoading={isUserLoading}
                 githubAuth={this.githubAuth}
               />
-              <Main user={currentUser} />
+              <Main 
+                isUserLoading={isUserLoading}
+                user={currentUser} 
+              />
             </div>
           }
           <Route exact path="/github/auth" component={GithubAuth} />

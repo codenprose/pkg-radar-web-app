@@ -9,7 +9,6 @@ import Button from "material-ui/Button";
 import SwipeableViews from "react-swipeable-views";
 import Humanize from "humanize-plus";
 import marked from "marked";
-import Chip from "material-ui/Chip";
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -17,9 +16,16 @@ import Dialog, {
 } from "material-ui/Dialog";
 import TextField from "material-ui/TextField";
 import moment from "moment";
+import Select from 'react-select';
+import find from 'lodash/find'
 
 import { Loader } from '../Shared'
+
+import CURRENT_USER from '../../queries/currentUser'
 import GET_PACKAGE from '../../queries/package'
+import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
+import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
+import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
 
 import "github-markdown-css/github-markdown.css";
 
@@ -34,9 +40,98 @@ const TabContainer = props =>
 class PackageDetail extends Component {
   state = {
     index: 0,
+    isAddPackageModalOpen: false,
     isModalOpen: false,
+    isAddPackageLoading: false,
     recommendationSearch: "",
-    recommendationSelection: {}
+    recommendationSelection: {},
+    selectedStatus: '',
+    selectedBoard: '',
+  };
+
+  static defaultProps = {
+    kanbanStatusOptions: [
+      { label: 'backlog', value: 'backlog' },
+      { label: 'trial', value: 'trial' },
+      { label: 'production', value: 'production' },
+      { label: 'archive', value: 'archive' }
+    ]
+  }
+
+  _formatKanbanCardPositions = () => {
+    const kanbanCardPositions = this.props.currentUser.kanbanCardPositions
+    let cards = []
+
+    for (let item in kanbanCardPositions) {
+      const card = kanbanCardPositions[item]
+      const { board, ownerName, packageName } = card
+      cards.push({ board, ownerName, packageName })
+    }
+    return cards
+  }
+
+  _handleAddPackage = async () => {
+    const { currentUser, data } = this.props
+    const { selectedStatus, selectedBoard} = this.state
+
+    this.setState({ isAddPackageLoading: true })
+
+    try {
+      console.log('adding package')
+      await this.props.createUserKanbanPackage({
+        variables: {
+          ownerName: data.package.ownerName,
+          packageId: data.package.id,
+          packageName: data.package.packageName,
+          status: selectedStatus,
+          username: currentUser.username
+        },
+        refetchQueries: [{ 
+          query: USER_KANBAN_PACKAGES, 
+          variables: { username: currentUser.username }
+        }]
+      });
+      console.log('added package')
+
+      console.log('updating card positions')
+      const token = localStorage.getItem('pkgRadarToken')
+      const kanbanCardPositions = this._formatKanbanCardPositions()
+      const card = { 
+        board: selectedBoard, 
+        ownerName: data.package.ownerName,
+        packageName: data.package.packageName,
+      }
+
+      await this.props.updateKanbanCardPositions({
+        variables: { 
+          username: currentUser.username, 
+          kanbanCardPositions: [...kanbanCardPositions, card]
+        },
+        refetchQueries: [{
+          query: CURRENT_USER,
+          variables: { username: currentUser.username, token }
+        }]
+      });
+      console.log('updated card positions')
+      this.setState({ 
+        isAddPackageLoading: false, 
+        isAddPackageModalOpen: false 
+      })
+    } catch (e) {
+      console.error(e.message);
+      this.setState({ 
+        isAddPackageLoading: false, 
+        isAddPackageModalOpen: false 
+      })
+    }
+  };
+
+  _handleBoardSelection = option => {
+    this.setState({ selectedBoard: option.value });
+  };
+
+  _handleStatusSelection = option => {
+    this.setState({ selectedStatus: option.value });
   };
 
   handleMainContentTabChange = (event, index) => {
@@ -120,14 +215,55 @@ class PackageDetail extends Component {
     );
   };
 
-  render() {
-    const { data, history } = this.props;
+  _openPackageModal = () => {
+    this.setState({ isAddPackageModalOpen: true });
+  };
 
-    if (data.loading) return <Loader />
+  _closePackageModal = () => {
+    this.setState({ isAddPackageModalOpen: false });
+  };
+
+  _formatBoardSelectItems = () => {
+    const { kanbanBoards } = this.props.currentUser;
+    const arr = [];
+
+    for (let item in kanbanBoards) {
+      const board = kanbanBoards[item];
+      arr.push({ label: board, value: board });
+    }
+    return arr;
+  };
+
+  _checkIfPackageIsSaved = () => {
+    const { currentUser, data } = this.props
+    if (!currentUser) return false
+    
+    const saved = find(currentUser.kanbanCardPositions, (card) => {
+      return card.ownerName === data.package.ownerName &&
+        card.packageName === data.package.packageName
+    })
+    return typeof(saved) === 'object'
+  }
+
+  render() {
+    const { currentUser, data, isUserLoading } = this.props;
+    if (data.loading || isUserLoading) return <Loader />
+    console.log('props', this.props)
+    // console.log('current user', currentUser)
+
+    let isPackageSaved = this._checkIfPackageIsSaved()
+    let addPackageBtnText = 'Add To Radar'
+    let addPackageBtnColor = 'black'
+    let addPackageBtnBgColor = 'white'
+
+    if (isPackageSaved) {
+      addPackageBtnText = 'Saved'
+      addPackageBtnColor = 'white'
+      addPackageBtnBgColor = '#009688'
+    }
 
     let readmeHtml = "<div>No Data Available</div>";
     let changelogHtml = "<div>No Data Available</div>";
-    console.log('data', data)
 
     if (data.package.lastRelease) {
       changelogHtml = marked(data.package.lastRelease.description);
@@ -144,8 +280,7 @@ class PackageDetail extends Component {
 
     const styles = {
       card: {
-        marginBottom: "15px",
-        // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
+        marginBottom: "15px"
       }
     };
 
@@ -184,16 +319,16 @@ class PackageDetail extends Component {
               />
               <CardContent style={{ padding: '0 16px' }}>
                 <ul className='list pl0 dib mr4 mt0 mb0'>
-                  <li>Stars: {Humanize.formatNumber(data.package.stars)}</li>
-                  <li>Issues: {Humanize.formatNumber(data.package.issues)}</li>
-                  <li>Commits: {Humanize.formatNumber(data.package.commits.total)}</li>
-                  <li>Releases: {Humanize.formatNumber(data.package.releases)}</li>
+                  <li>{Humanize.formatNumber(data.package.stars)} Stars</li>
+                  <li>{Humanize.formatNumber(data.package.issues)} Issues</li>
+                  <li>{Humanize.formatNumber(data.package.commits.total)} Commits</li>
+                  <li>{Humanize.formatNumber(data.package.releases)} Releases</li>
                 </ul>
                 <ul className='list pl0 dib mt0 mb0'>
-                  <li>Contributors: {Humanize.formatNumber(data.package.contributors.total)}</li>
-                  <li>Watchers: {Humanize.formatNumber(data.package.watchers)} </li>
-                  <li>Pull Requests: {Humanize.formatNumber(data.package.pullRequests)}</li>
-                  <li>Forks: {Humanize.formatNumber(data.package.forks)}</li>
+                  <li>{Humanize.formatNumber(data.package.contributors.total)} Contributors</li>
+                  <li>{Humanize.formatNumber(data.package.watchers)} Watchers</li>
+                  <li>{Humanize.formatNumber(data.package.pullRequests)} Pull Requests</li>
+                  <li>{Humanize.formatNumber(data.package.forks)} Forks</li>
                 </ul>
               </CardContent>
               <CardActions>
@@ -282,6 +417,7 @@ class PackageDetail extends Component {
                         style={{ marginRight: '10px' }}
                       >
                         <img 
+                          alt='contributor'
                           style={{ width: '32px' }} 
                           src={contributor.avatar} 
                         />
@@ -306,21 +442,6 @@ class PackageDetail extends Component {
                 <Button dense>View License</Button>
               </CardActions>
             </Card>
-
-            {/* Pull Requests */}
-            {/* <Card style={styles.card}>
-              <CardContent>
-                <Typography type="title" component="h2">
-                  Pull Requests
-                </Typography>
-                <Typography type="body1">
-                  {Humanize.formatNumber(data.package.pullRequests)}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button dense>View Pull Requests</Button>
-              </CardActions>
-            </Card> */}
           </Grid>
 
           {/* Tabs */}
@@ -337,14 +458,22 @@ class PackageDetail extends Component {
                   <Tab label="Readme" />
                   <Tab label="Latest Release" />
                   <Tab label="Recommendations" />
-                  {/* <Tab label="Analytics" /> */}
+                  <Tab label="History" />
                 </Tabs>
               </Grid>
               <Grid item xs={3}>
-                <Button raised style={{ marginRight: "10px" }}>
-                  Add To Radar
+                <Button 
+                  raised
+                  disabled={isPackageSaved}
+                  onClick={this._openPackageModal}
+                  style={{ 
+                    color: addPackageBtnColor,
+                    backgroundColor: addPackageBtnBgColor,
+                    marginRight: "10px" 
+                  }}
+                >
+                  {addPackageBtnText}
                 </Button>
-                {/* <Button raised>Monitor</Button> */}
               </Grid>
             </Grid>
             <SwipeableViews
@@ -378,13 +507,13 @@ class PackageDetail extends Component {
               </TabContainer>
               <TabContainer>
                 {data.package.lastRelease &&
-                  <div className='tc'>
+                  <div className='markdown-body' style={{ paddingBottom: 0 }}>
                     <Typography
                       style={{ marginBottom: "10px" }}
                       type="display1"
                       component="h2"
                     >
-                      v{data.package.lastRelease.name}
+                      {data.package.lastRelease.name}
                     </Typography>
                     <Typography
                       type="body1"
@@ -436,6 +565,56 @@ class PackageDetail extends Component {
           </Grid>
         </Grid>
 
+        {/* Add Package */}
+        {
+          currentUser &&
+            <Dialog
+              open={this.state.isAddPackageModalOpen}
+              onRequestClose={this._closePackageModal}
+            >
+              <DialogTitle>Add Package</DialogTitle>
+              <DialogContent style={{ width: "550px", marginBottom: "30px" }}>
+                <Select
+                  options={this._formatBoardSelectItems()}
+                  placeholder="Select Board"
+                  value={this.state.selectedBoard}
+                  onChange={this._handleBoardSelection}
+                  autofocus
+                  style={{ marginBottom: "20px" }}
+                />
+                <Select
+                  options={this.props.kanbanStatusOptions}
+                  placeholder="Select Status"
+                  value={this.state.selectedStatus}
+                  onChange={this._handleStatusSelection}
+                  style={{ marginBottom: "20px" }}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button className="mr3" onTouchTap={this._closePackageModal}>
+                  Cancel
+                </Button>
+                <Button
+                  raised
+                  color="primary"
+                  disabled={
+                    !this.state.selectedStatus || 
+                      !this.state.selectedBoard ||
+                        this.state.isAddPackageLoading
+                  }
+                  onTouchTap={this._handleAddPackage}
+                >
+                  {
+                    this.state.isAddPackageLoading &&
+                    <i className="fa fa-circle-o-notch fa-spin mr2"></i>
+                  }
+                  Submit
+                </Button>
+              </DialogActions>
+            </Dialog>
+        }
+        
+        {/* Recommendation */}
         <Dialog
           style={{ width: "100%" }}
           open={this.state.isModalOpen}
@@ -481,5 +660,7 @@ const packageOptions = {
 };
 
 export default compose(
+  graphql(CREATE_USER_KANBAN_PACKAGE, { name: 'createUserKanbanPackage' }),
+  graphql(UPDATE_KANBAN_CARD_POSITIONS, { name: "updateKanbanCardPositions" }),
   graphql(GET_PACKAGE, packageOptions),
 )(PackageDetail);

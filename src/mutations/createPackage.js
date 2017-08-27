@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  mutation createPackage($owner: String!, $name: String!, $username: String!) {
-    createPackage(owner: $owner, name: $name, username: $username) {
+  mutation createPackage($owner: String!, $name: String!, $createdBy: String!) {
+    createPackage(owner: $owner, name: $name, createdBy: $createdBy) {
       package {
         ownerName
         packageName

@@ -120,6 +120,8 @@ class KanbanBoardContainer extends Component {
 
   _handleRemovePackage = async (pkgId, packageName, currentBoard, status, ownerName) => {
     const { user } = this.props
+    const token = localStorage.getItem('pkgRadarToken')
+
     try {
       console.log('updating card positions')
       let kanbanCardPositions = this._formatKanbanCardPositions()
@@ -132,17 +134,10 @@ class KanbanBoardContainer extends Component {
           username: user.username, 
           kanbanCardPositions
         },
-        update: (store, { data: { updatUser } }) => {
-          const token = localStorage.getItem('pkgRadarToken')
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ 
-            query: CURRENT_USER,
-            variables: { username: user.username, token }
-          });
-          data.currentUser.kanbanCardPositions = kanbanCardPositions
-          // Write our data back to the cache.
-          store.writeQuery({ query: CURRENT_USER, data });
-        },
+        refetchQueries: [{
+          query: CURRENT_USER,
+          variables: { username: user.username, token }
+        }]
       });
       console.log('updated card positions')
 
@@ -152,18 +147,11 @@ class KanbanBoardContainer extends Component {
           username: user.username,
           packageId: pkgId
         },
-        update: (store, { data: { deleteUserKanbanPackage } }) => {
-          let data = store.readQuery({ 
-            query: USER_KANBAN_PACKAGES,
-            variables: { username: user.username }
-          });
-          data.userKanbanPackages = data.userKanbanPackages.filter(pkg => {
-            return pkg.packageId !== pkgId
-          })
-          // Write our data back to the cache.
-          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
-        },
-      });
+        refetchQueries: [{ 
+          query: USER_KANBAN_PACKAGES, 
+          variables: { username: user.username }
+        }]
+      })
       console.log('removed package')
     } catch (e) {
       console.error(e.message);
@@ -426,21 +414,25 @@ class KanbanBoardContainer extends Component {
             </Grid>
           </Grid>
         </Grid>
-        <KanbanBoard
-          cards={this.state.cards}
-          cardCallbacks={{
-            updateStatus: this.updateCardStatus,
-            updatePosition: throttle(this.updateCardPositions, 500),
-            persistCardPositions: this._updateKanbanCardPositions,
-            persistPackageStatus: this._updateKanbanPackageStatus,
-            removeCard: this._handleRemovePackage
-          }}
-          currentBoard={this.state.currentBoard}
-        />
+        <Grid container>
+          <Grid item xs={11}>
+            <KanbanBoard
+              cards={this.state.cards}
+              cardCallbacks={{
+                updateStatus: this.updateCardStatus,
+                updatePosition: throttle(this.updateCardPositions, 500),
+                persistCardPositions: this._updateKanbanCardPositions,
+                persistPackageStatus: this._updateKanbanPackageStatus,
+                removeCard: this._handleRemovePackage
+              }}
+              currentBoard={this.state.currentBoard}
+            />
+          </Grid>
+        </Grid>
         <Button
           fab
           color="primary"
-          style={{ position: "fixed", bottom: "20px", right: "20px" }}
+          style={{ position: "sticky", bottom: "20px", left: "100%" }}
           onClick={this._handlePackageModalOpen}
         >
           <AddIcon />
@@ -482,7 +474,7 @@ class KanbanBoardContainer extends Component {
         {/* Add Package */}
         <Dialog
           open={this.state.isAddPackageModalOpen}
-          onRequestClose={this._handlePackageModal}
+          onRequestClose={this._closePackageModal}
         >
           <DialogTitle>Add Package</DialogTitle>
           <DialogContent style={{ width: "550px", marginBottom: "30px" }}>

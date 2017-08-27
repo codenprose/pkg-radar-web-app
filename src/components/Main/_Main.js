@@ -7,7 +7,7 @@ import { Home } from '../Home'
 
 class Main extends Component {
   render() {
-    const { user } = this.props
+    const { user, isUserLoading } = this.props
 
     return (
       <main>
@@ -15,7 +15,10 @@ class Main extends Component {
           <Route exact path="/" render={(props) => <Home {...props} />} />
           <Route exact path="/@:username" render={(props) => <UserProfile {...props} currentUser={user} />} />
           <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
-          <Route exact path="/:owner/:package" render={(props) => <PackageDetail {...props} />} />
+          <Route exact path="/:owner/:package" render={
+              (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
+            } 
+          />
           <Route exact path="/:owner/:package/update" render={(props) => <PackageUpdate {...props} />} />
         </Switch>
       </main>

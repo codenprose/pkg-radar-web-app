@@ -26,7 +26,7 @@ import CREATE_PACKAGE from '../../mutations/createPackage'
 
 class Header extends Component {
   static defaultProps = {
-    title: '<pkg> hunter'
+    title: '<pkg> radar'
   }
 
   state = {
@@ -82,30 +82,27 @@ class Header extends Component {
   }
 
   _handleCreatePackage = async () => {
-    console.log('creating package', this.state.createPackageURL)
+    console.log('creating package')
+    
+    const { user, history } = this.props
+    const url = this.state.createPackageURL
     this.setState({ isCreatePackageLoading: true })
 
+    const [owner, name] = url.replace('https://github.com/', '').split('/')
+    
     try {
-      const pkg = await this.props.createPackage({
-        variables: {
-          repoUrl: this.state.createPackageURL,
-          createdBy: this.props.user.id
-        }
+      await this.props.createPackage({
+        variables: { owner, name, createdBy: user.username }
       })
+
+      console.log('created package')
 
       this.setState({
         isCreatePackageModalOpen: false,
         isCreatePackageLoading: false
       })
 
-      const name = pkg.data.createPackage.name
-
-      if (name) {
-        console.info('pkg created', name)
-        this.props.history.replace(`/package/update/${name}`)
-      } else {
-        console.error('pkg name is undefined')
-      }
+      history.replace(`/${owner}/${name}`)
     } catch (e) {
       this.setState({
         isCreatePackageModalOpen: false,
@@ -189,7 +186,7 @@ class Header extends Component {
                       marginTop: '5px'
                     }}
                   >
-                    RADAR
+                    SAMPLE RADAR
                   </Link>
                 </Grid>
               </Grid>
