@@ -252,7 +252,7 @@ class PackageDetail extends Component {
     // console.log('current user', currentUser)
 
     let isPackageSaved = this._checkIfPackageIsSaved()
-    let addPackageBtnText = 'Add To Radar'
+    let addPackageBtnText = 'Save'
     let addPackageBtnColor = 'black'
     let addPackageBtnBgColor = 'white'
 
@@ -318,7 +318,7 @@ class PackageDetail extends Component {
                 }
               />
               <CardContent style={{ padding: '0 16px' }}>
-                <ul className='list pl0 dib mr4 mt0 mb0'>
+                <ul className='list pl0 dib mt0 mr3 mb0'>
                   <li>
                     <Typography type="body1">
                       <i className="fa fa-star fa-fw mr1" aria-hidden="true" />
@@ -360,7 +360,7 @@ class PackageDetail extends Component {
                   <li>
                     <Typography type="body1">
                       <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.pullRequests)} Pull Requests
+                      {Humanize.formatNumber(data.package.pullRequests)} PRs
                     </Typography>
                   </li>
                   <li>
@@ -466,6 +466,15 @@ class PackageDetail extends Component {
                   })
                 }
               </CardContent>
+              <CardActions>
+                <Link 
+                  to={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`} 
+                  className="no-underline"
+                  target="_blank"
+                >
+                  <Button dense>View Contributors</Button>
+                </Link>
+              </CardActions>
             </Card>
 
             {/* License */}
@@ -483,7 +492,13 @@ class PackageDetail extends Component {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button dense>View License</Button>
+                <Link
+                  to={`https://github.com/${data.package.ownerName}/${data.package.packageName}/blob/master/LICENSE`}
+                  className="no-underline"
+                  target="_blank"
+                >
+                  <Button dense>View License</Button>
+                </Link>
               </CardActions>
             </Card>
           </Grid>
@@ -491,7 +506,7 @@ class PackageDetail extends Component {
           {/* Tabs */}
           <Grid item xs={9} style={{ paddingLeft: '20px' }}>
             <Grid container>
-              <Grid style={{ paddingTop: 0 }} item xs={9}>
+              <Grid style={{ paddingTop: 0 }} item xs={10}>
                 <Tabs
                   value={this.state.index}
                   onChange={this.handleMainContentTabChange}
@@ -505,7 +520,7 @@ class PackageDetail extends Component {
                   <Tab label="History" />
                 </Tabs>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Button 
                   raised
                   disabled={isPackageSaved}

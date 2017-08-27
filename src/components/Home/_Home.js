@@ -25,14 +25,14 @@ class Home extends Component {
         direction="row"
         style={{ height: '100%' }}
       >
-        <Grid item xs={6} style={{ maxWidth: '585px', marginBottom: '60px' }}>
+        <Grid item xs={6} style={{ maxWidth: '585px', marginBottom: '80px' }}>
           <h2 
             style={{ 
               textAlign: 'center', 
               fontSize: '60px', 
               color: '#263238',
               marginBottom: '20px',
-              marginTop: '15%'
+              marginTop: '12%'
             }}
           >
             {title}
