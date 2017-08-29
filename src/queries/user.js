@@ -5,6 +5,9 @@ export default gql`
     user(payload: { username: $username }) {
       avatar
       bio
+      connections {
+        username
+      }
       company
       id
       kanbanBoards

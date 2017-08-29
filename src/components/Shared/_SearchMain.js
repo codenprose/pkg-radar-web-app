@@ -51,15 +51,16 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
         <div className='dib'>
           {parts.map((part, index) => {
             return part.highlight
-              ? <span key={index} style={{ background: 'yellow', fontSize: '20px', fontWeight: 300 }}>
+              ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
                   {part.text}
                 </span>
-              : <strong key={index} style={{ fontWeight: 500, fontSize: '20px' }}>
+              : <strong key={index} style={{ fontSize: '20px' }}>
                   {part.text}
                 </strong>;
           })}
           <i className="fa fa-star ml3 mr1" aria-hidden="true" />
           <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
+
           <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
           <span>{Humanize.formatNumber(suggestion._source.issues)}</span>
           
@@ -75,7 +76,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                     <li key={tag} className='dib mr2'>
                       {parts.map((part, index) => {
                         return part.highlight
-                          ? <span key={index} style={{ background: 'yellow' }}>
+                          ? <span key={index} style={{ color: '#2196F3' }}>
                               {part.text}
                             </span>
                           : <span key={index}>

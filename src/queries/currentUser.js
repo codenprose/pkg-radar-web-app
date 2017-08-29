@@ -6,6 +6,9 @@ export default gql`
       avatar
       bio
       company
+      connections {
+        username
+      }
       id
       kanbanBoards
       kanbanCardPositions {

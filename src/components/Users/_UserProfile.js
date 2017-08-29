@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
-import Grid from "material-ui/Grid";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
+
+import Grid from "material-ui/Grid";
+import Button from "material-ui/Button";
 
 import { KanbanBoardContainer } from "../Kanban";
 import { Loader } from '../Shared'
@@ -15,7 +17,7 @@ import GET_USER from '../../queries/user'
 
 const ProfileHeader = styled.div`
   position: relative;
-  z-index: -1;
+  z-index: 1;
   height: 275px;
   width: 100%;
   margin-bottom: 20px;
@@ -138,14 +140,22 @@ class UserProfile extends Component {
             <Grid item xs={6}>
               <Grid direction="row" container justify="flex-end">
                 <Grid item className="tc">
-                  <Connections>
-                    <div>{0}</div>
-                    <div>Connections</div>
-                  </Connections>
                   <Packages>
                     <div>{cards.length}</div>
                     <div>Packages</div>
                   </Packages>
+                  <Connections>
+                    <div>{user.user.connections.length}</div>
+                    <Link 
+                      className='white'
+                      to={`/@${user.user.username}/connections`}
+                    >
+                      Connections
+                    </Link>
+                  </Connections>
+                  <Button raised style={{ verticalAlign: 'text-bottom' }}>
+                    Connect
+                  </Button>}
                 </Grid>
               </Grid>
             </Grid>
