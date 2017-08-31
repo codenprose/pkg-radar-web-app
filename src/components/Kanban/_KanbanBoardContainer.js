@@ -372,9 +372,12 @@ class KanbanBoardContainer extends Component {
   };
 
   render() {
-    const { user } = this.props;
+    const { userIsCurrentUser, user } = this.props;
     const kanbanBoards = user.kanbanBoards.sort()
     const boardSelectOptions = this._formatBoardSelectItems()
+
+    let kanbanBoardWidth = 12
+    if (userIsCurrentUser) kanbanBoardWidth = 11
 
     return (
       <div>
@@ -399,27 +402,29 @@ class KanbanBoardContainer extends Component {
                   <Button raised style={{ marginRight: "10px" }}>
                     Subscribe
                   </Button>}
-                {this.state.currentBoard !== "All" &&
+                {this.state.currentBoard !== "All" && userIsCurrentUser &&
                   <Button
+                    color='primary'
                     raised
                     onClick={this._handleRemoveBoard}
                     style={{ marginRight: "10px" }}
                   >
                     Remove Board
                   </Button>}
-                <Button 
-                  color='primary'
-                  raised 
-                  onClick={this._handleAddBoardModalOpen}
-                >
-                  Add Board
-                </Button>
+                {userIsCurrentUser &&
+                  <Button 
+                    color='primary'
+                    raised 
+                    onClick={this._handleAddBoardModalOpen}
+                  >
+                    Add Board
+                  </Button>}
               </Grid>
             </Grid>
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item xs={11}>
+          <Grid item xs={kanbanBoardWidth}>
             <KanbanBoard
               cards={this.state.cards}
               cardCallbacks={{
@@ -430,17 +435,21 @@ class KanbanBoardContainer extends Component {
                 removeCard: this._handleRemovePackage
               }}
               currentBoard={this.state.currentBoard}
+              userIsCurrentUser={userIsCurrentUser}
             />
           </Grid>
         </Grid>
-        <Button
-          fab
-          color="primary"
-          style={{ position: "sticky", bottom: "20px", left: "100%" }}
-          onClick={this._handlePackageModalOpen}
-        >
-          <AddIcon />
-        </Button>
+        {
+          userIsCurrentUser &&
+          <Button
+            fab
+            color="primary"
+            style={{ position: "sticky", bottom: "20px", left: "100%" }}
+            onClick={this._handlePackageModalOpen}
+          >
+            <AddIcon />
+          </Button>
+        }
 
         {/* Add Board */}
         <Dialog

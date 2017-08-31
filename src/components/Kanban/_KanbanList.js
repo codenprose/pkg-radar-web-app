@@ -19,6 +19,7 @@ const KanbanListTitle = styled.h3`
 
 const listTargetSpec = {
   hover(props, monitor) {
+    if (!props.userIsCurrentUser) return null
     const draggedId = monitor.getItem().packageId;
     props.cardCallbacks.updateStatus(draggedId, props.id)
   }
@@ -32,7 +33,7 @@ function collect(connect, monitor) {
 
 class KanbanList extends Component {
   _renderCards() {
-    const { cards, cardCallbacks, currentBoard } = this.props
+    const { cards, cardCallbacks, currentBoard, userIsCurrentUser } = this.props
 
     return cards.map(card => {
       return (
@@ -40,6 +41,7 @@ class KanbanList extends Component {
           key={card.packageId}
           cardCallbacks={cardCallbacks}
           currentBoard={currentBoard}
+          userIsCurrentUser={userIsCurrentUser}
           {...card}
         />
       );

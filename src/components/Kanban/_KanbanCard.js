@@ -27,6 +27,9 @@ const styles = theme => ({
 })
 
 const cardDragSpec = {
+  canDrag(props, monitor) {
+    return props.userIsCurrentUser
+  },
   beginDrag(props) {
     return {
       packageId: props.packageId,
@@ -34,7 +37,8 @@ const cardDragSpec = {
     };
   },
   endDrag(props) {
-    const { packageId} = props
+    const { packageId, userIsCurrentUser } = props
+    if (!userIsCurrentUser) return null
     props.cardCallbacks.persistCardPositions()
     props.cardCallbacks.persistPackageStatus(packageId);
   }
@@ -42,6 +46,7 @@ const cardDragSpec = {
 
 const cardDropSpec = {
   hover(props, monitor) {
+    if (!props.userIsCurrentUser) return null
     const draggedId = monitor.getItem().packageId;
     props.cardCallbacks.updatePosition(draggedId, props.packageId);
   }
@@ -82,7 +87,8 @@ class KanbanCard extends Component {
       connectDragSource,
       connectDropTarget,
       classes,
-      currentBoard
+      currentBoard,
+      userIsCurrentUser
     } = this.props;
 
     const { removeCard } = this.props.cardCallbacks;
@@ -125,7 +131,15 @@ class KanbanCard extends Component {
                 <Link to={`/${ownerName}/${packageName}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
-                <Button dense onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}>Remove</Button>
+                {
+                  userIsCurrentUser &&
+                  <Button 
+                    dense 
+                    onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}
+                  >
+                    Remove
+                  </Button>
+                }
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {

@@ -169,6 +169,38 @@ class UserProfile extends Component {
     return false
   }
 
+  _renderUserConnectionBtn = () => {
+    const { currentUser, user } = this.props
+    if (currentUser.username !== user.user.username) {
+      if (this._isCurrentUserConnected()) {
+        return (
+          <Button 
+            raised
+            onClick={this._deleteUserConnection}
+            style={{ verticalAlign: 'text-bottom' }}
+          >
+            Connected
+          </Button>
+        )
+      } else {
+        return (
+          <Button 
+            raised 
+            onClick={this._createUserConnection}
+            style={{ verticalAlign: 'text-bottom' }}
+          >
+            Connect
+          </Button>
+        )
+      }
+    }
+  }
+
+  _userIsCurrentUser = () => {
+    const { currentUser, user } = this.props
+    return currentUser.username === user.user.username
+  }
+
   render() {
     const { currentUser, isCurrentUserLoading, user, userKanbanPackages } = this.props;
     if (user.loading || userKanbanPackages.loading || isCurrentUserLoading  ) return <Loader />
@@ -219,25 +251,7 @@ class UserProfile extends Component {
                       Connections
                     </Link>
                   </Connections>
-                  {
-                    this._isCurrentUserConnected() ?
-                      (<Button 
-                        raised
-                        onClick={this._deleteUserConnection}
-                        style={{ verticalAlign: 'text-bottom' }}
-                      >
-                        Connected
-                      </Button>)
-                      : (
-                        <Button 
-                          raised 
-                          onClick={this._createUserConnection}
-                          style={{ verticalAlign: 'text-bottom' }}
-                        >
-                          Connect
-                        </Button>
-                      )
-                  }
+                  {this._renderUserConnectionBtn()}
                 </Grid>
               </Grid>
             </Grid>
@@ -248,6 +262,7 @@ class UserProfile extends Component {
           cards={cards}
           currentUser={currentUser}
           user={user.user}
+          userIsCurrentUser={this._userIsCurrentUser()}
         />
       </div>
     );

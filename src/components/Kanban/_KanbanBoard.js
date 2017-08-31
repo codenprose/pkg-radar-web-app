@@ -7,7 +7,7 @@ import KanbanList from "./_KanbanList";
 
 class KanbanBoard extends Component {
   render() {
-    const { cardCallbacks, currentBoard } = this.props;
+    const { cardCallbacks, currentBoard, userIsCurrentUser } = this.props;
     let { cards } = this.props;
 
     if (currentBoard !== "All") {
@@ -23,6 +23,7 @@ class KanbanBoard extends Component {
             cards={cards.filter(card => card.status === "backlog")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
@@ -32,6 +33,7 @@ class KanbanBoard extends Component {
             cards={cards.filter(card => card.status === "trial")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
@@ -41,6 +43,7 @@ class KanbanBoard extends Component {
             cards={cards.filter(card => card.status === "production")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
@@ -50,6 +53,7 @@ class KanbanBoard extends Component {
             cards={cards.filter(card => card.status === "archive")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
       </Grid>
