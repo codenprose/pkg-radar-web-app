@@ -14,7 +14,16 @@ const KanbanListContainer = styled.div`
 const KanbanListTitle = styled.h3`
   font-size: 20px;
   font-weight: 200;
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
+`
+
+const KanbanListLabel = styled.span`
+  height: 17px;
+  width: 17px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid ${props => props.color};
+  float: right;
 `
 
 const listTargetSpec = {
@@ -49,13 +58,18 @@ class KanbanList extends Component {
   }
 
   render() {
-    const { connectDropTarget } = this.props
+    const { color, connectDropTarget, title } = this.props
 
     return connectDropTarget(
       <div>
         <KanbanListContainer>
           <KanbanListTitle>
-            {this.props.title}
+            {title}
+            <i 
+              className="fa fa-question-circle-o" 
+              aria-hidden="true"
+              style={{ color: color, float: 'right' }}
+            />
           </KanbanListTitle>
           {this._renderCards()}
         </KanbanListContainer>

@@ -14,6 +14,7 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog";
+import styled from "styled-components";
 import TextField from "material-ui/TextField";
 import moment from "moment";
 import Select from 'react-select';
@@ -31,6 +32,27 @@ import "github-markdown-css/github-markdown.css";
 
 const rst2mdown = require('rst2mdown');
 const Text = require('react-format-text');
+
+const PackageDetailHeader = styled.div`
+  position: relative;
+  z-index: 1;
+  height: 200px;
+  width: 100%;
+  margin-bottom: 20px;
+  background: #263238;
+  background-size: cover;
+
+  &:after {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .3));
+  }
+`;
+
 
 const TabContainer = props =>
   <div style={{ marginTop: "20px" }}>
@@ -245,6 +267,24 @@ class PackageDetail extends Component {
     return typeof(saved) === 'object'
   }
 
+  _renderTags = () => {
+    const { data } = this.props
+    if (data.package.tags.length) {
+      return data.package.tags.map((tag, i) => {
+        return (
+          <Link 
+            to={`/search?=${tag}`} 
+            key={i}
+            className='pointer:hover white no-underline'
+            style={{ margin: '0 10px 10px 0' }}
+          >
+            {tag}
+          </Link>
+        )
+      })
+    }
+  }
+
   render() {
     const { currentUser, data, isUserLoading } = this.props;
     if (data.loading || isUserLoading) return <Loader />
@@ -289,35 +329,12 @@ class PackageDetail extends Component {
         <Grid container>
           <Grid item xs={3}>
 
-            {/* Package Info / Stats */}
+            {/* Package Stats */}
             <Card style={styles.card}>
-              <CardHeader
-                avatar={
-                  <img
-                    alt={`${data.package.packageName}-logo`}
-                    style={{ height: "42px" }}
-                    src={data.package.ownerAvatar}
-                  />
-                }
-                title={`${data.package.ownerName}/${data.package.packageName}`}
-                subheader={
-                  <div>
-                    <div 
-                      style={{ 
-                        display: 'inline-block', 
-                        width: '15px', 
-                        height: '15px', 
-                        marginRight: '5px', 
-                        borderRadius: '50%',
-                        verticalAlign: 'sub', 
-                        backgroundColor: data.package.color
-                      }}
-                    />
-                    <span>{data.package.language}</span>
-                  </div>
-                }
-              />
-              <CardContent style={{ padding: '0 16px' }}>
+              <CardContent>
+                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                  Stats
+                </Typography>
                 <ul className='list pl0 dib mt0 mr3 mb0'>
                   <li>
                     <Typography type="body1">
@@ -371,53 +388,7 @@ class PackageDetail extends Component {
                   </li>
                 </ul>
               </CardContent>
-              <CardActions>
-                {data.package.websiteUrl &&
-                  <Link
-                    to={data.package.websiteUrl}
-                    target="_blank"
-                    className="no-underline"
-                  >
-                    <Button dense>Website</Button>
-                  </Link>}
-                <Link
-                  to={data.package.repoUrl}
-                  target="_blank"
-                  className="no-underline"
-                >
-                  <Button dense>Repo</Button>
-                </Link>
-              </CardActions>
             </Card>
-
-            {/* Tags */}
-            {/* <Card style={styles.card}>
-              <CardContent style={{ paddingBottom: 0 }}>
-                <Typography type="title" component="h2">
-                  Tags
-                </Typography>
-                <div style={{ marginTop: '20px' }}>
-                  {
-                    data.package.tags.length &&
-                    data.package.tags.map((tag, i) => {
-                      return (
-                        <Link to={`/search?=${tag}`} key={i}>
-                          <Chip
-                            label={tag}
-                            style={{
-                              display: 'inline-block',
-                              margin: '0 10px 10px 0',
-                              cursor: 'pointer',
-                              borderRadius: 0
-                            }}
-                          />
-                        </Link>
-                      )
-                    })
-                  }
-                </div>
-              </CardContent>
-            </Card> */}
 
             {/* Last Commit */}
             <Card style={styles.card}>
@@ -503,8 +474,57 @@ class PackageDetail extends Component {
             </Card>
           </Grid>
 
-          {/* Tabs */}
           <Grid item xs={9} style={{ paddingLeft: '20px' }}>
+            <PackageDetailHeader>
+              <Grid
+                container
+                direction="row"
+                align="center"
+                style={{ height: "100%", padding: "0 20px", margin: 0 }}
+              >
+                <Grid item xs={12} style={{ paddingBottom: 0 }}>
+                  <div className='mb2'>
+                    <img
+                      alt={`${data.package.packageName}-logo`}
+                      style={{ 
+                        height: "50px", 
+                        marginRight: '20px',
+                        verticalAlign: 'middle',
+                        borderRadius: '50%'
+                      }}
+                      src={data.package.ownerAvatar}
+                    />
+                    <Typography 
+                      type="headline" 
+                      gutterBottom
+                      style={{ color: 'white', display: 'inline-block' }}
+                    >
+                    {data.package.ownerName} / {data.package.packageName}
+                    </Typography>
+                  </div>
+                  <div style={{ marginLeft: '70px' }}>
+                    <Link
+                      to={data.package.websiteUrl}
+                      className='pointer:hover white no-underline mr3'
+                    >
+                      <i className="fa fa-globe mr2" aria-hidden="true" />
+                      Website
+                    </Link>
+                    <Link
+                      to={data.package.repoUrl}
+                      className='pointer:hover white no-underline mr2'
+                    >
+                      <i className="fa fa-github mr2" aria-hidden="true" />
+                      Repo
+                    </Link>
+                  </div>
+                </Grid>
+                <Grid item xs={12} style={{ paddingTop: 0, marginLeft: '70px' }}>
+                  <i className="fa fa-tags mr2 white" aria-hidden="true" />
+                  {this._renderTags()}
+                </Grid>
+              </Grid>
+            </PackageDetailHeader>
             <Grid container>
               <Grid style={{ paddingTop: 0 }} item xs={10}>
                 <Tabs

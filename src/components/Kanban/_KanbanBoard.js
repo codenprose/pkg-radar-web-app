@@ -20,6 +20,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="backlog"
             title="Backlog"
+            color='#2196F3'
             cards={cards.filter(card => card.status === "backlog")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
@@ -30,6 +31,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="trial"
             title="Trial"
+            color='lightseagreen'
             cards={cards.filter(card => card.status === "trial")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
@@ -40,6 +42,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="production"
             title="Production"
+            color='#4CAF50'
             cards={cards.filter(card => card.status === "production")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
@@ -50,6 +53,7 @@ class KanbanBoard extends Component {
           <KanbanList
             id="archive"
             title="Archive"
+            color='#F44336'
             cards={cards.filter(card => card.status === "archive")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
