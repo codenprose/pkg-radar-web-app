@@ -13,7 +13,9 @@ class Main extends Component {
       <main>
         <Switch>
           <Route exact path="/" render={(props) => <Home {...props} />} />
-          <Route exact path="/@:username" render={(props) => <UserProfile {...props} currentUser={user} />} />
+          <Route exact path="/@:username" render={
+            (props) => <UserProfile {...props} currentUser={user} isCurrentUserLoading={isUserLoading} />} 
+          />
           <Route exact path="/@:username/connections" render={
               (props) => <UserConnections {...props} currentUser={user} />
             } 

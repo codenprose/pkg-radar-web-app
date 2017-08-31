@@ -3,6 +3,7 @@ import { graphql, compose } from "react-apollo";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
+// import find from 'lodash/find'
 
 import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
@@ -12,7 +13,10 @@ import { Loader } from '../Shared'
 
 import userBgImg from "../../images/user_profile_bg.jpg"
 
-import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
+import CURRENT_USER from '../../queries/currentUser'
+import CREATE_USER_CONNECTION from '../../mutations/createUserConnection'
+import DELETE_USER_CONNECTION from '../../mutations/deleteUserConnection'
+import GET_USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 import GET_USER from '../../queries/user'
 
 const ProfileHeader = styled.div`
@@ -85,8 +89,10 @@ const Connections = styled.h5`
 `
 
 class UserProfile extends Component {
-  _formatCards = (packages) => {
+  _formatCards = () => {
+    const packages = this.props.userKanbanPackages.userKanbanPackages
     const { kanbanCardPositions } = this.props.user.user
+    
     const cards = []
     if (!packages || !packages.length) return cards
 
@@ -105,10 +111,70 @@ class UserProfile extends Component {
     return cards
   }
 
+  _createUserConnection = async () => {
+    console.log('adding connection')
+    const { currentUser, user } = this.props
+    const token = localStorage.getItem('pkgRadarToken')
+
+    try {
+      await this.props.createUserConnection({
+        variables: {
+          user: currentUser.username,
+          connection: user.user.username
+        },
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: currentUser.username, token }
+          }
+        ]
+      })
+      console.log('added connection')
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+
+  _deleteUserConnection = async () => {
+    console.log('removing connection')
+    const { currentUser, user } = this.props
+    const token = localStorage.getItem('pkgRadarToken')
+
+    try {
+      await this.props.deleteUserConnection({
+        variables: {
+          user: currentUser.username,
+          connection: user.user.username
+        },
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: currentUser.username, token }
+          }
+        ]
+      })
+      console.log('removed connection')
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+
+  _isCurrentUserConnected = () => {
+    const { currentUser, user } = this.props
+    if (!currentUser) return false
+    const index = findIndex(currentUser.connections, obj => {
+      return obj.username === user.user.username
+    })
+    if (index >= 0) return true
+    return false
+  }
+
   render() {
-    const { currentUser, user, userKanbanPackages } = this.props;
-    if (user.loading || userKanbanPackages.loading ) return <Loader />
-    const cards = this._formatCards(userKanbanPackages.userKanbanPackages)
+    const { currentUser, isCurrentUserLoading, user, userKanbanPackages } = this.props;
+    if (user.loading || userKanbanPackages.loading || isCurrentUserLoading  ) return <Loader />
+    
+    const cards = this._formatCards()
+    // console.log('props', this.props)
 
     return (
       <div>
@@ -129,12 +195,12 @@ class UserProfile extends Component {
                   @{user.user.username}
                 </UserName>
                 <Bio>{user.user.bio}</Bio>
-                <Link
+                <a
                   className="white no-underline fw3"
                   to={user.user.website}
                 >
                   {user.user.website}
-                </Link>
+                </a>
               </UserInfoContainer>
             </Grid>
             <Grid item xs={6}>
@@ -147,15 +213,31 @@ class UserProfile extends Component {
                   <Connections>
                     <div>{user.user.connections.length}</div>
                     <Link 
-                      className='white'
+                      className='white no-underline'
                       to={`/@${user.user.username}/connections`}
                     >
                       Connections
                     </Link>
                   </Connections>
-                  <Button raised style={{ verticalAlign: 'text-bottom' }}>
-                    Connect
-                  </Button>}
+                  {
+                    this._isCurrentUserConnected() ?
+                      (<Button 
+                        raised
+                        onClick={this._deleteUserConnection}
+                        style={{ verticalAlign: 'text-bottom' }}
+                      >
+                        Connected
+                      </Button>)
+                      : (
+                        <Button 
+                          raised 
+                          onClick={this._createUserConnection}
+                          style={{ verticalAlign: 'text-bottom' }}
+                        >
+                          Connect
+                        </Button>
+                      )
+                  }
                 </Grid>
               </Grid>
             </Grid>
@@ -197,6 +279,8 @@ const userKanbanOptions = {
 };
 
 export default compose(
+  graphql(CREATE_USER_CONNECTION, { name: 'createUserConnection' }),
+  graphql(DELETE_USER_CONNECTION, { name: 'deleteUserConnection' }),
   graphql(GET_USER, userOptions),
-  graphql(USER_KANBAN_PACKAGES, userKanbanOptions),
+  graphql(GET_USER_KANBAN_PACKAGES, userKanbanOptions),
 )(UserProfile)

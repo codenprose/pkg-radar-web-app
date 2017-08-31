@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { graphql, compose } from "react-apollo"
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 import find from 'lodash/find'
 
-import Button from "material-ui/Button";
+import Button from "material-ui/Button"
 import Grid from "material-ui/Grid"
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
@@ -19,7 +19,7 @@ class UserConnections extends Component {
     if (!userConnections.length) return 'No Connections'
 
     return userConnections.map(connection => {
-      let btnDisabled = false
+      // let btnDisabled = false
       let btnText = 'Connect'
 
       if (currentUser) {
@@ -27,7 +27,7 @@ class UserConnections extends Component {
           return obj.username === connection.username
         })
         if (connectedToCurrentUser) {
-          btnDisabled = true
+          // btnDisabled = true
           btnText = 'Connected'
         }
       }
@@ -56,11 +56,15 @@ class UserConnections extends Component {
                     {connection.bio}
                   </Typography>
                   <Typography type="body1" gutterBottom style={{ marginBottom: '20px' }}>
-                    @{connection.username}
+                    <Link
+                      to={`/@${connection.username}`}
+                      className='no-underline black'
+                    >
+                      @{connection.username}
+                    </Link>
                   </Typography>
                   <Button 
                     raised 
-                    disabled={btnDisabled} 
                     color='primary'
                   >
                     {btnText}
@@ -76,7 +80,7 @@ class UserConnections extends Component {
 
   render() {
     if (this.props.data.loading) return <Loader />
-    console.log('props', this.props)
+    // console.log('props', this.props)
 
     return (
       <div>

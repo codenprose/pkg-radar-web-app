@@ -407,7 +407,11 @@ class KanbanBoardContainer extends Component {
                   >
                     Remove Board
                   </Button>}
-                <Button raised onClick={this._handleAddBoardModalOpen}>
+                <Button 
+                  color='primary'
+                  raised 
+                  onClick={this._handleAddBoardModalOpen}
+                >
                   Add Board
                 </Button>
               </Grid>
