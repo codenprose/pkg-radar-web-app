@@ -165,7 +165,7 @@ class Header extends Component {
                     </Link>
                   </Typography>
                   <Link
-                    to="/"
+                    to="/languages"
                     className="no-underline"
                     style={{
                       color: 'white',
@@ -174,7 +174,7 @@ class Header extends Component {
                       marginTop: '5px'
                     }}
                   >
-                    LANGUAGES
+                    TOP LANGUAGES
                   </Link>
                   <Link
                     to="/"

@@ -4,6 +4,8 @@ import { Switch, Route } from 'react-router-dom'
 import { PackageDetail, PackageUpdate } from '../Packages'
 import { UserConnections, UserProfile, UserSettings } from '../Users'
 import { Home } from '../Home'
+import { Search } from '../Search'
+import { Languages } from '../Languages'
 
 class Main extends Component {
   render() {
@@ -26,6 +28,8 @@ class Main extends Component {
             } 
           />
           <Route exact path="/:owner/:package/update" render={(props) => <PackageUpdate {...props} />} />
+          <Route exact path="/search" component={Search} />
+          <Route exact path="/languages" component={Languages} />
         </Switch>
       </main>
     )

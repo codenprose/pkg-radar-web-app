@@ -5,12 +5,14 @@ import { Link } from "react-router-dom";
 import StarsIcon from "material-ui-icons/Stars";
 import ErrorOutlineIcon from "material-ui-icons/ErrorOutline";
 import Humanize from "humanize-plus";
+import Typography from "material-ui/Typography";
 
 class PackageCard extends Component {
   render() {
     const { 
       avatar, 
       color,
+      description,
       issues, 
       language, 
       ownerName, 
@@ -86,6 +88,12 @@ class PackageCard extends Component {
             />
             <span>{Humanize.formatNumber(issues)}</span>
           </div>
+          {
+            description &&
+            <Typography type="body1" gutterBottom style={{ marginTop: '10px' }}>
+              {description}
+            </Typography>
+          }
         </CardContent>
         <CardActions>
           <Link className="no-underline" to={`/${ownerName}/${packageName}`}>

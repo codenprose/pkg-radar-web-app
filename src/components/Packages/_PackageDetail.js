@@ -36,7 +36,7 @@ const Text = require('react-format-text');
 const PackageDetailHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: 200px;
+  height: 162px;
   width: 100%;
   margin-bottom: 20px;
   background: #263238;
@@ -273,7 +273,7 @@ class PackageDetail extends Component {
       return data.package.tags.map((tag, i) => {
         return (
           <Link 
-            to={`/search?=${tag}`} 
+            to={`/search?q=${tag}`} 
             key={i}
             className='pointer:hover white no-underline'
             style={{ margin: '0 10px 10px 0' }}
@@ -288,13 +288,13 @@ class PackageDetail extends Component {
   render() {
     const { currentUser, data, isUserLoading } = this.props;
     if (data.loading || isUserLoading) return <Loader />
-    console.log('props', this.props)
+    // console.log('props', this.props)
     // console.log('current user', currentUser)
 
     let isPackageSaved = this._checkIfPackageIsSaved()
     let addPackageBtnText = 'Save'
-    let addPackageBtnColor = 'black'
-    let addPackageBtnBgColor = 'white'
+    let addPackageBtnColor = 'white'
+    let addPackageBtnBgColor = '#1B2327'
 
     if (isPackageSaved) {
       addPackageBtnText = 'Saved'
@@ -407,6 +407,7 @@ class PackageDetail extends Component {
                   to={data.package.lastCommit.commitUrl}
                   target="_blank"
                   className="no-underline"
+                  rel="noopener noreferrer"
                 >
                   <Button dense>View Commit</Button>
                 </Link>
@@ -438,13 +439,14 @@ class PackageDetail extends Component {
                 }
               </CardContent>
               <CardActions>
-                <Link 
-                  to={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`} 
+                <a
+                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`} 
                   className="no-underline"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Button dense>View Contributors</Button>
-                </Link>
+                </a>
               </CardActions>
             </Card>
 
@@ -463,13 +465,14 @@ class PackageDetail extends Component {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Link
-                  to={`https://github.com/${data.package.ownerName}/${data.package.packageName}/blob/master/LICENSE`}
+                <a
+                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/blob/master/LICENSE`}
                   className="no-underline"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Button dense>View License</Button>
-                </Link>
+                </a>
               </CardActions>
             </Card>
           </Grid>
@@ -502,24 +505,28 @@ class PackageDetail extends Component {
                     {data.package.ownerName} / {data.package.packageName}
                     </Typography>
                   </div>
-                  <div style={{ marginLeft: '70px' }}>
-                    <Link
-                      to={data.package.websiteUrl}
+                </Grid>
+                <Grid item xs={12} style={{ paddingTop: 0 }}>
+                  <div className='mb3'>
+                    <a
+                      href={data.package.websiteUrl}
                       className='pointer:hover white no-underline mr3'
+                      target='_blank'
+                      rel="noopener noreferrer"
                     >
                       <i className="fa fa-globe mr2" aria-hidden="true" />
                       Website
-                    </Link>
-                    <Link
-                      to={data.package.repoUrl}
+                    </a>
+                    <a
+                      href={data.package.repoUrl}
                       className='pointer:hover white no-underline mr2'
+                      target='_blank'
+                      rel="noopener noreferrer"
                     >
                       <i className="fa fa-github mr2" aria-hidden="true" />
                       Repo
-                    </Link>
+                    </a>
                   </div>
-                </Grid>
-                <Grid item xs={12} style={{ paddingTop: 0, marginLeft: '70px' }}>
                   <i className="fa fa-tags mr2 white" aria-hidden="true" />
                   {this._renderTags()}
                 </Grid>

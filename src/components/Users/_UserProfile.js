@@ -3,7 +3,6 @@ import { graphql, compose } from "react-apollo";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
-// import find from 'lodash/find'
 
 import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
@@ -22,7 +21,7 @@ import GET_USER from '../../queries/user'
 const ProfileHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: 275px;
+  height: 250px;
   width: 100%;
   margin-bottom: 20px;
   background: url("${userBgImg}") no-repeat center;

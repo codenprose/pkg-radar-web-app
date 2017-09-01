@@ -17,15 +17,6 @@ const KanbanListTitle = styled.h3`
   margin: 0 0 15px 0;
 `
 
-const KanbanListLabel = styled.span`
-  height: 17px;
-  width: 17px;
-  margin-top: 2px;
-  border-radius: 50%;
-  border: 1px solid ${props => props.color};
-  float: right;
-`
-
 const listTargetSpec = {
   hover(props, monitor) {
     if (!props.userIsCurrentUser) return null
