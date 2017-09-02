@@ -387,7 +387,7 @@ class PackageDetail extends Component {
                       <li>
                         <Typography type="body1">
                           <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
-                          {Humanize.formatNumber(data.package.pullRequests)} PRs
+                          {Humanize.formatNumber(data.package.pullRequests)} Pull Requests
                         </Typography>
                       </li>
                       <li>

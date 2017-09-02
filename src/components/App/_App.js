@@ -25,7 +25,7 @@ const theme = createMuiTheme({
         backgroundColor: 'white'
       },
       colorPrimary: {
-        backgroundColor: blueGrey[900]
+        backgroundColor: '#1b2327'
       },
     },
     MuiButton: {

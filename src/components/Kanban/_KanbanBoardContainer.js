@@ -12,6 +12,7 @@ import Dialog, {
 } from "material-ui/Dialog";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
+import SwipeableViews from "react-swipeable-views";
 import TextField from 'material-ui/TextField';
 import Select from 'react-select';
 import equal from 'deep-equal'
@@ -28,6 +29,11 @@ import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
 import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 
 import 'react-select/dist/react-select.css';
+
+const TabContainer = props => 
+  <div className='tab-container'>
+    {props.children}
+  </div>;
 
 class KanbanBoardContainer extends Component {
   state = {
@@ -384,6 +390,10 @@ class KanbanBoardContainer extends Component {
     return arr;
   };
 
+  _handleSwipeChange = index => {
+    this.setState({ tabIndex: index });
+  };
+
   render() {
     const { userIsCurrentUser, user } = this.props;
     const kanbanBoards = user.kanbanBoards.sort()
@@ -417,10 +427,13 @@ class KanbanBoardContainer extends Component {
                   </Button>}
                 {this.state.currentBoard !== "All" && userIsCurrentUser &&
                   <Button
-                    color='primary'
                     raised
                     onClick={this._handleRemoveBoard}
-                    style={{ marginRight: "10px" }}
+                    style={{
+                      background: 'firebrick',
+                      color: 'white',
+                      marginRight: "10px" 
+                    }}
                   >
                     Remove Board
                   </Button>}
@@ -438,18 +451,36 @@ class KanbanBoardContainer extends Component {
         </Grid>
         <Grid container>
           <Grid item xs={kanbanBoardWidth}>
-            <KanbanBoard
-              cards={this.state.cards}
-              cardCallbacks={{
-                updateStatus: this.updateCardStatus,
-                updatePosition: throttle(this.updateCardPositions, 500),
-                persistCardPositions: this._updateKanbanCardPositions,
-                persistPackageStatus: this._updateKanbanPackageStatus,
-                removeCard: this._handleRemovePackage
-              }}
-              currentBoard={this.state.currentBoard}
-              userIsCurrentUser={userIsCurrentUser}
-            />
+            <SwipeableViews
+              index={this.state.tabIndex}
+              onChangeIndex={this._handleSwipeChange}
+              slideStyle={{ overflow: 'hidden' }}
+            >
+              {
+                kanbanBoards.map((board, i) => {
+                  let cards = this.state.cards
+                  if (i !== 0) {
+                      cards = [...cards].filter(card => card.board === this.state.currentBoard);
+                  }
+                  return (
+                    <TabContainer key={i}>
+                      <KanbanBoard
+                        cards={cards}
+                        cardCallbacks={{
+                          updateStatus: this.updateCardStatus,
+                          updatePosition: throttle(this.updateCardPositions, 500),
+                          persistCardPositions: this._updateKanbanCardPositions,
+                          persistPackageStatus: this._updateKanbanPackageStatus,
+                          removeCard: this._handleRemovePackage
+                        }}
+                        currentBoard={this.state.currentBoard}
+                        userIsCurrentUser={userIsCurrentUser}
+                      />
+                    </TabContainer>
+                  )
+                })
+              }
+            </SwipeableViews>
           </Grid>
         </Grid>
         {
