@@ -10,7 +10,6 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog";
-import Radio from "material-ui/Radio";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
@@ -44,6 +43,15 @@ class KanbanBoardContainer extends Component {
     currentBoard: "All"
   };
 
+  static defaultProps = {
+    kanbanStatusOptions: [
+      { label: 'Backlog', value: 'backlog' },
+      { label: 'Trial', value: 'trial' },
+      { label: 'Production', value: 'production' },
+      { label: 'Archive', value: 'archive' }
+    ]
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!equal(this.props.cards, nextProps.cards)) {
       this.setState({ cards: nextProps.cards })
@@ -58,12 +66,17 @@ class KanbanBoardContainer extends Component {
     this.setState({ isAddPackageModalOpen: false });
   };
 
-  _handleStatusSelection = e => {
-    this.setState({ selectedStatus: e.target.value });
+  
+  _handleBoardSelection = option => {
+    if (option) {
+      this.setState({ selectedBoard: option.value });
+    }
   };
 
-  _handleBoardSelection = option => {
-    this.setState({ selectedBoard: option.value });
+  _handleStatusSelection = option => {
+    if (option) {
+      this.setState({ selectedStatus: option.value });
+    }
   };
 
   _handlePackageSelection = (pkg) => {
@@ -490,7 +503,13 @@ class KanbanBoardContainer extends Component {
           onRequestClose={this._closePackageModal}
         >
           <DialogTitle>Add Package</DialogTitle>
-          <DialogContent style={{ width: "550px", marginBottom: "30px" }}>
+          <DialogContent 
+            style={{ 
+              width: "550px", 
+              marginBottom: "20px", 
+              overflowY: 'inherit' 
+            }}
+          >
             <Select
               options={boardSelectOptions}
               placeholder="Select Board"
@@ -499,36 +518,13 @@ class KanbanBoardContainer extends Component {
               autofocus
               style={{ marginBottom: "20px" }}
             />
-            <div style={{ marginBottom: "20px" }}>
-              <Radio
-                name="Backlog"
-                value="backlog"
-                checked={this.state.selectedStatus === "backlog"}
-                onChange={this._handleStatusSelection}
-              />
-              <label style={{ verticalAlign: 'super' }}>Backlog</label>
-              <Radio
-                name="Trial"
-                value="trial"
-                checked={this.state.selectedStatus === "trial"}
-                onChange={this._handleStatusSelection}
-              />
-              <label style={{ verticalAlign: 'super' }}>Trial</label>
-              <Radio
-                name="Production"
-                value="production"
-                checked={this.state.selectedStatus === "production"}
-                onChange={this._handleStatusSelection}
-              />
-              <label style={{ verticalAlign: 'super' }}>Production</label>
-              <Radio
-                name="Archive"
-                value="archive"
-                checked={this.state.selectedStatus === "archive"}
-                onChange={this._handleStatusSelection}
-              />
-              <label style={{ verticalAlign: 'super' }}>Archive</label>
-            </div>
+            <Select
+              options={this.props.kanbanStatusOptions}
+              placeholder="Select Status"
+              value={this.state.selectedStatus}
+              onChange={this._handleStatusSelection}
+              style={{ marginBottom: "30px" }}
+            />
             <SearchPackages
               _handlePackageSelection={this._handlePackageSelection}
               selectedBoard={this.state.selectedBoard}

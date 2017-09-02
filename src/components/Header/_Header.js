@@ -234,7 +234,7 @@ class Header extends Component {
                         onTouchTap={githubAuth}
                       >
                         <i className="fa fa-lg fa-github mr2" />
-                        Log In
+                        Login with Github
                       </Button>
                     </div>}
                   {!isUserLoading && user &&

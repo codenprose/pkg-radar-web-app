@@ -10,7 +10,8 @@ import Button from "material-ui/Button";
 import { KanbanBoardContainer } from "../Kanban";
 import { Loader } from '../Shared'
 
-import userBgImg from "../../images/user_profile_bg.jpg"
+// import userBgImg from "../../images/user_profile_bg.jpg"
+import radarBgImg from "../../images/nathan_anderson_radar.jpg"
 
 import CURRENT_USER from '../../queries/currentUser'
 import CREATE_USER_CONNECTION from '../../mutations/createUserConnection'
@@ -24,7 +25,7 @@ const ProfileHeader = styled.div`
   height: 250px;
   width: 100%;
   margin-bottom: 20px;
-  background: url("${userBgImg}") no-repeat center;
+  background: url("${radarBgImg}") no-repeat center;
   background-size: cover;
 
   &:after {

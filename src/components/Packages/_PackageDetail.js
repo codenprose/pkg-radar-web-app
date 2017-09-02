@@ -28,6 +28,8 @@ import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
 import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
 
+import radarBgImg from "../../images/nathan_anderson_radar.jpg"
+
 import "github-markdown-css/github-markdown.css";
 
 const rst2mdown = require('rst2mdown');
@@ -36,10 +38,10 @@ const Text = require('react-format-text');
 const PackageDetailHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: 162px;
+  height: 250px;
   width: 100%;
   margin-bottom: 20px;
-  background: #263238;
+  background: url("${radarBgImg}") no-repeat center;
   background-size: cover;
 
   &:after {
@@ -73,10 +75,10 @@ class PackageDetail extends Component {
 
   static defaultProps = {
     kanbanStatusOptions: [
-      { label: 'backlog', value: 'backlog' },
-      { label: 'trial', value: 'trial' },
-      { label: 'production', value: 'production' },
-      { label: 'archive', value: 'archive' }
+      { label: 'Backlog', value: 'backlog' },
+      { label: 'Trial', value: 'trial' },
+      { label: 'Production', value: 'production' },
+      { label: 'Archive', value: 'archive' }
     ]
   }
 
@@ -149,11 +151,15 @@ class PackageDetail extends Component {
   };
 
   _handleBoardSelection = option => {
-    this.setState({ selectedBoard: option.value });
+    if (option) {
+      this.setState({ selectedBoard: option.value });
+    }
   };
 
   _handleStatusSelection = option => {
-    this.setState({ selectedStatus: option.value });
+    if (option) {
+      this.setState({ selectedStatus: option.value });
+    }
   };
 
   handleMainContentTabChange = (event, index) => {
@@ -299,7 +305,7 @@ class PackageDetail extends Component {
     if (isPackageSaved) {
       addPackageBtnText = 'Saved'
       addPackageBtnColor = 'white'
-      addPackageBtnBgColor = '#009688'
+      addPackageBtnBgColor = '#4CAF50'
     }
 
     let readmeHtml = "<div>No Data Available</div>";
@@ -335,58 +341,64 @@ class PackageDetail extends Component {
                 <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
                   Stats
                 </Typography>
-                <ul className='list pl0 dib mt0 mr3 mb0'>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-star fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.stars)} Stars
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.issues)} Issues
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-plus-circle fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.commits.total)} Commits
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-tags fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.releases)} Releases
-                    </Typography>
-                  </li>
-                </ul>
-                <ul className='list pl0 dib mt0 mb0'>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-users fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.contributors.total)} Contributors
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-eye fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.watchers)} Watchers
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.pullRequests)} PRs
-                    </Typography>
-                  </li>
-                  <li>
-                    <Typography type="body1">
-                      <i className="fa fa-code-fork fa-fw mr1" aria-hidden="true" />
-                      {Humanize.formatNumber(data.package.forks)} Forks
-                    </Typography>
-                  </li>
-                </ul>
+                <Grid container>
+                  <Grid item xs={12} lg={6}>
+                    <ul className='list pl0 dib mt0 mb0'>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-star fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.stars)} Stars
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.issues)} Issues
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-plus-circle fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.commits.total)} Commits
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-tags fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.releases)} Releases
+                        </Typography>
+                      </li>
+                    </ul>
+                  </Grid>
+                  <Grid item xs={12} lg={6}>
+                    <ul className='list pl0 dib mt0 mb0'>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-users fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.contributors.total)} Contributors
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-eye fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.watchers)} Watchers
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.pullRequests)} PRs
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography type="body1">
+                          <i className="fa fa-code-fork fa-fw mr1" aria-hidden="true" />
+                          {Humanize.formatNumber(data.package.forks)} Forks
+                        </Typography>
+                      </li>
+                    </ul>
+                  </Grid>
+                </Grid>
               </CardContent>
             </Card>
 
@@ -492,7 +504,6 @@ class PackageDetail extends Component {
                       style={{ 
                         height: "50px", 
                         marginRight: '20px',
-                        verticalAlign: 'middle',
                         borderRadius: '50%'
                       }}
                       src={data.package.ownerAvatar}
@@ -503,6 +514,9 @@ class PackageDetail extends Component {
                       style={{ color: 'white', display: 'inline-block' }}
                     >
                     {data.package.ownerName} / {data.package.packageName}
+                    <div style={{ fontSize: '16px' }}>
+                      {data.package.description}
+                    </div>
                     </Typography>
                   </div>
                 </Grid>

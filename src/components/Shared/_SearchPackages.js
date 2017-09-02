@@ -24,8 +24,8 @@ function renderInput(inputProps) {
       className={classes.textField}
       value={value}
       inputProps={{
-        'aria-label': 'Select Package',
-        'placeholder': 'Select Package'
+        'aria-label': 'Search for Package',
+        'placeholder': 'Search for Package'
       }}
       { ...other}
     />

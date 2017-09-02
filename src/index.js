@@ -7,6 +7,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import registerServiceWorker from './utils/registerServiceWorker'
 
 import { App } from './components/App'
+// import { ScrollToTop } from './components/Shared'
 
 import './index.css'
 
