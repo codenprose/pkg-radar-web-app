@@ -19,6 +19,7 @@ import TextField from "material-ui/TextField";
 import moment from "moment";
 import Select from 'react-select';
 import find from 'lodash/find'
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
 
 import { Loader } from '../Shared'
 
@@ -55,7 +56,6 @@ const PackageDetailHeader = styled.div`
   }
 `;
 
-
 const TabContainer = props =>
   <div style={{ marginTop: "20px" }}>
     {props.children}
@@ -79,6 +79,16 @@ class PackageDetail extends Component {
       { label: 'Trial', value: 'trial' },
       { label: 'Production', value: 'production' },
       { label: 'Archive', value: 'archive' }
+    ],
+    packageHistory: [
+      { month: 'January', backlog: 15, trial: 72, production: 3, archive: 0 },
+      { month: 'February', backlog: 30, trial: 57, production: 10, archive: 3 },
+      { month: 'March', backlog: 52, trial: 22, production: 21, archive: 5 },
+      { month: 'April', backlog: 55, trial: 15, production: 25, archive: 5 },
+      { month: 'May', backlog: 42, trial: 17, production: 33, archive: 8 },
+      { month: 'June', backlog: 26, trial: 14, production: 51, archive: 9 },
+      { month: 'July', backlog: 26, trial: 14, production: 51, archive: 9 },
+      { month: 'August', backlog: 26, trial: 14, production: 51, archive: 9 },
     ]
   }
 
@@ -342,7 +352,7 @@ class PackageDetail extends Component {
                   Stats
                 </Typography>
                 <Grid container>
-                  <Grid item xs={12} lg={6}>
+                  <Grid item xs={12} xl={6}>
                     <ul className='list pl0 dib mt0 mb0'>
                       <li>
                         <Typography type="body1">
@@ -370,7 +380,7 @@ class PackageDetail extends Component {
                       </li>
                     </ul>
                   </Grid>
-                  <Grid item xs={12} lg={6}>
+                  <Grid item xs={12} xl={6}>
                     <ul className='list pl0 dib mt0 mb0'>
                       <li>
                         <Typography type="body1">
@@ -558,7 +568,7 @@ class PackageDetail extends Component {
                   <Tab label="Readme" />
                   <Tab label="Latest Release" />
                   <Tab label="Recommendations" />
-                  <Tab label="History" />
+                  <Tab label="Radar" />
                 </Tabs>
               </Grid>
               <Grid item xs={2}>
@@ -569,7 +579,8 @@ class PackageDetail extends Component {
                   style={{ 
                     color: addPackageBtnColor,
                     backgroundColor: addPackageBtnBgColor,
-                    marginRight: "10px" 
+                    marginRight: "10px",
+                    float: 'right'
                   }}
                 >
                   {addPackageBtnText}
@@ -658,9 +669,35 @@ class PackageDetail extends Component {
                 </Grid>
               </TabContainer>
 
-              {/* <TabContainer>
-                {"Analytics"}
-              </TabContainer> */}
+              <TabContainer>
+                <div style={{ width: '100%', height: '500px' }}>
+                  {/* <Typography
+                    style={{ marginBottom: "10px", textAlign: 'center' }}
+                    type="title"
+                  >
+                    User Adoption Percentages
+                  </Typography> */}
+                  {
+                    this.state.index === 3 &&
+                    <ResponsiveContainer>
+                      <LineChart 
+                        data={this.props.packageHistory}
+                        margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                      >
+                        <XAxis dataKey="month"/>
+                        <YAxis label={{ value: 'Percentage of Users', angle: -90, dx: -20 }} />
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <Tooltip/>
+                        <Legend verticalAlign='bottom' wrapperStyle={{ bottom: '-10px' }} />
+                        <Line type="monotone" dataKey="backlog" stroke="#2196F3" activeDot={{r: 6}}/>
+                        <Line type="monotone" dataKey="trial" stroke="lightseagreen" activeDot={{r: 6}} />
+                        <Line type="monotone" dataKey="production" stroke="#4CAF50" activeDot={{r: 6}} />
+                        <Line type="monotone" dataKey="archive" stroke="#F44336" activeDot={{r: 6}} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  }
+                </div>
+              </TabContainer>
             </SwipeableViews>
           </Grid>
         </Grid>

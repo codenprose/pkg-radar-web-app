@@ -38,9 +38,7 @@ const Language = ({ icon, name, tag }) => {
             className='no-underline'
             to={`/search?q=${tag}`}
           >
-            <Button raised>
-              View
-            </Button>
+            <Button>View</Button>
           </Link>
         </div>
       </Paper>

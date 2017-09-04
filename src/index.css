@@ -112,3 +112,8 @@ div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
     background: #b7cfe0;
     cursor: pointer;
 }
+
+/* Recharts */
+.recharts-yAxis .recharts-cartesian-axis-tick:first-child .recharts-cartesian-axis-tick-value {
+    display: none;
+}
