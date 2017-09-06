@@ -670,7 +670,7 @@ class PackageDetail extends Component {
               </TabContainer>
 
               <TabContainer>
-                <div style={{ width: '100%', height: '500px' }}>
+                <div style={{ width: '100%', height: '450px' }}>
                   {/* <Typography
                     style={{ marginBottom: "10px", textAlign: 'center' }}
                     type="title"

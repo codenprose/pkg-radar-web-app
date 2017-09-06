@@ -6,7 +6,7 @@ import elasticsearch from 'elasticsearch'
 import { PackageCard } from '../Packages'
 
 const client = new elasticsearch.Client({
-  host: 'https://search-pkg-radar-dev-packages-bfnemqricttw7m2gal2aecwqze.us-east-1.es.amazonaws.com'
+  host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
 });
 
 class Search extends Component {
@@ -24,8 +24,7 @@ class Search extends Component {
   _handleSearch = (query) => {
     query = query.toLowerCase();
     client.search({
-      index: 'packages',
-      type: 'package-details',
+      index: 'pkg-radar-dev',
       body: {
         query: {
           query_string: {

@@ -11,7 +11,7 @@ import elasticsearch from 'elasticsearch'
 import Humanize from "humanize-plus";
 
 const client = new elasticsearch.Client({
-  host: 'https://search-pkg-radar-dev-packages-bfnemqricttw7m2gal2aecwqze.us-east-1.es.amazonaws.com'
+  host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
 });
 
 function renderInput(inputProps) {
@@ -61,30 +61,34 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
           <i className="fa fa-star ml3 mr1" aria-hidden="true" />
           <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
 
-          <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
-          <span>{Humanize.formatNumber(suggestion._source.issues)}</span>
+          {/* <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
+          <span>{Humanize.formatNumber(suggestion._source.issues)}</span> */}
           
           <div style={{ lineHeight: '16px' }}>
             <span>tags: </span>
             <ul className='list dib pa0'>
               {
-                suggestion._source.tags.map(tag => {
-                  const matches = match(tag, query);
-                  const parts = parse(tag, matches);
+                suggestion._source.tags &&
+                suggestion._source.tags.map((tag, i) => {
+                  if (i < 5) {
+                    const matches = match(tag, query);
+                    const parts = parse(tag, matches);
 
-                  return ( 
-                    <li key={tag} className='dib mr2'>
-                      {parts.map((part, index) => {
-                        return part.highlight
-                          ? <span key={index} style={{ color: '#2196F3' }}>
-                              {part.text}
-                            </span>
-                          : <span key={index}>
-                              {part.text}
-                            </span>;
-                      })}
-                    </li> 
-                  )
+                    return ( 
+                      <li key={tag} className='dib mr2'>
+                        {parts.map((part, index) => {
+                          return part.highlight
+                            ? <span key={index} style={{ color: '#2196F3' }}>
+                                {part.text}
+                              </span>
+                            : <span key={index}>
+                                {part.text}
+                              </span>;
+                        })}
+                      </li> 
+                    )
+                  }
+                  return ''
                 })
               }
             </ul>
@@ -148,8 +152,7 @@ class SearchMain extends Component {
   handleSuggestionsFetchRequested = ({ value }) => {
     const inputValue = value.trim().toLowerCase();
     client.search({
-      index: 'packages',
-      type: 'package-details',
+      index: 'pkg-radar-dev',
       body: {
         query: {
           query_string: {
