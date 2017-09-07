@@ -188,6 +188,18 @@ class Header extends Component {
                   >
                     SAMPLE RADAR
                   </Link>
+                  <Link
+                    to="/discovery"
+                    className="no-underline"
+                    style={{
+                      color: 'white',
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      marginTop: '5px'
+                    }}
+                  >
+                    DISCOVERY
+                  </Link>
                 </Grid>
               </Grid>
               {isSearchVisible &&

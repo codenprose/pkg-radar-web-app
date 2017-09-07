@@ -6,6 +6,7 @@ import { UserConnections, UserProfile, UserSettings } from '../Users'
 import { Home } from '../Home'
 import { Search } from '../Search'
 import { Languages } from '../Languages'
+import { Discovery } from '../Discovery'
 
 class Main extends Component {
   render() {
@@ -30,6 +31,7 @@ class Main extends Component {
           <Route exact path="/:owner/:package/update" render={(props) => <PackageUpdate {...props} />} />
           <Route exact path="/search" component={Search} />
           <Route exact path="/languages" component={Languages} />
+          <Route exact path="/discovery" component={Discovery} />
         </Switch>
       </main>
     )

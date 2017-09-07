@@ -139,10 +139,10 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                 <li>
                   {partsName.map((part, index) => {
                     return part.highlight
-                      ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
+                      ? <span key={index} style={{ color: '#2196F3' }}>
                           {part.text}
                         </span>
-                      : <span key={index} style={{ fontSize: '20px' }}>
+                      : <span key={index}>
                           {part.text}
                         </span>;
                   })}
@@ -221,6 +221,7 @@ class SearchMain extends Component {
       body: {
         query: {
           query_string: {
+            default_operator: 'AND',
             query: `${inputValue}*`
           },
         }
