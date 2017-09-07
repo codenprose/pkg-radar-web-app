@@ -43,6 +43,16 @@ main {
   color: white;
 }
 
+#SearchMain ul[role='listbox'] {
+    max-height: 340px;
+    overflow-y: scroll;
+}
+
+#SearchPackages ul[role='listbox'] {
+    max-height: 340px;
+    overflow-y: scroll;
+}
+
 /* React Select */
 .Select-menu-outer { z-index: 10; }
 

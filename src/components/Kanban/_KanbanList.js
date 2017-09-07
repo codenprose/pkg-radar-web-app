@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import styled from 'styled-components'
 import { DropTarget } from 'react-dnd';
+import ReactTooltip from 'react-tooltip'
 
 import constants from '../../constants';
 import KanbanCard from "./_KanbanCard";
@@ -48,19 +49,37 @@ class KanbanList extends Component {
     });
   }
 
+  _renderHelpText = () => {
+    const { currentBoard, color, helpText, id, title} = this.props
+    let tooltipPosition = 'bottom'
+    let tooltipId = `${currentBoard}-${id}`
+    if (title === 'Archive') tooltipPosition = 'left'
+
+    if (this.props.currentBoard === 'All') {
+      return (
+        <div style={{ float: 'right' }}>
+          <i 
+            className="fa fa-question-circle-o" 
+            aria-hidden="true"
+            style={{ color: color }}
+            data-tip={helpText}
+            data-for={tooltipId}
+          />
+          <ReactTooltip id={tooltipId} place={tooltipPosition} />
+        </div>
+      )
+    }
+  }
+
   render() {
-    const { color, connectDropTarget, title } = this.props
+    const { connectDropTarget, title } = this.props
 
     return connectDropTarget(
       <div>
         <KanbanListContainer>
           <KanbanListTitle>
             {title}
-            <i 
-              className="fa fa-question-circle-o" 
-              aria-hidden="true"
-              style={{ color: color, float: 'right' }}
-            />
+            {this._renderHelpText()}
           </KanbanListTitle>
           {this._renderCards()}
         </KanbanListContainer>

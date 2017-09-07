@@ -88,7 +88,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                       </li> 
                     )
                   }
-                  return ''
+                  return <span style={{ display: 'none' }}></span>
                 })
               }
             </ul>
@@ -151,26 +151,28 @@ class SearchMain extends Component {
 
   handleSuggestionsFetchRequested = ({ value }) => {
     const inputValue = value.trim().toLowerCase();
-    client.search({
-      index: 'pkg-radar-dev',
-      body: {
-        query: {
-          query_string: {
-            query: `${inputValue}*`
-          },
+    if (inputValue.length > 2) {
+      client.search({
+        index: 'pkg-radar-dev',
+        body: {
+          query: {
+            query_string: {
+              query: `${inputValue}*`
+            },
+          }
         }
-      }
-    }).then(body => {
-      const hits = body.hits.hits
-      // console.log('hits', hits)
-      if (hits.length) {
-        this.setState({ suggestions: hits })
-      } else {
-        this.setState({ suggestions: [] })
-      }
-    }, error => {
-      console.trace(error.message);
-    })
+      }).then(body => {
+        const hits = body.hits.hits
+        // console.log('hits', hits)
+        if (hits.length) {
+          this.setState({ suggestions: hits })
+        } else {
+          this.setState({ suggestions: [] })
+        }
+      }, error => {
+        console.trace(error.message);
+      })
+    }
   };
 
   handleSuggestionsClearRequested = () => {
@@ -213,6 +215,7 @@ class SearchMain extends Component {
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
+          shouldRenderSuggestions={(val) => val.length > 2}
           inputProps={{
             autoFocus: true,
             placeholder: placeholder ? placeholder : '',
