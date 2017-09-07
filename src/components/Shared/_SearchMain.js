@@ -28,75 +28,132 @@ function renderInput(inputProps) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion._source.package_name, query);
-  const parts = parse(suggestion._source.package_name, matches);
-
-  return (
-    <MenuItem 
-      selected={isHighlighted}
-      style={{ height: 'auto' }}
-      component="div"
-    >
-      <div>
-        <img
-          src={suggestion._source.owner_avatar}
-          style={{
-            height: '40px',
-            marginRight: '10px',
-            width: '40px',
-            verticalAlign: 'text-bottom'
-          }}
-          alt="search-result"
-        />
-        <div className='dib'>
-          {parts.map((part, index) => {
-            return part.highlight
-              ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
-                  {part.text}
-                </span>
-              : <strong key={index} style={{ fontSize: '20px' }}>
-                  {part.text}
-                </strong>;
-          })}
-          <i className="fa fa-star ml3 mr1" aria-hidden="true" />
-          <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
-
-          {/* <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
-          <span>{Humanize.formatNumber(suggestion._source.issues)}</span> */}
-          
-          <div style={{ lineHeight: '16px' }}>
-            <span>tags: </span>
-            <ul className='list dib pa0'>
-              {
-                suggestion._source.tags &&
-                suggestion._source.tags.map((tag, i) => {
-                  if (i < 5) {
-                    const matches = match(tag, query);
-                    const parts = parse(tag, matches);
-
-                    return ( 
-                      <li key={tag} className='dib mr2'>
-                        {parts.map((part, index) => {
-                          return part.highlight
-                            ? <span key={index} style={{ color: '#2196F3' }}>
-                                {part.text}
-                              </span>
-                            : <span key={index}>
-                                {part.text}
-                              </span>;
-                        })}
-                      </li> 
-                    )
-                  }
-                  return <span style={{ display: 'none' }}></span>
-                })
-              }
-            </ul>
+  if (suggestion._type === 'packages') {
+    const matches = match(suggestion._source.package_name, query);
+    const parts = parse(suggestion._source.package_name, matches);
+  
+    return (
+      <MenuItem 
+        selected={isHighlighted}
+        style={{ height: 'auto' }}
+        component="div"
+      >
+        <div>
+          <img
+            src={suggestion._source.owner_avatar}
+            style={{
+              height: '40px',
+              marginRight: '10px',
+              width: '40px',
+              verticalAlign: 'text-bottom'
+            }}
+            alt="search-result"
+          />
+          <div className='dib'>
+            {parts.map((part, index) => {
+              return part.highlight
+                ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
+                    {part.text}
+                  </span>
+                : <strong key={index} style={{ fontSize: '20px' }}>
+                    {part.text}
+                  </strong>;
+            })}
+            <i className="fa fa-star ml3 mr1" aria-hidden="true" />
+            <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
+  
+            {/* <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
+            <span>{Humanize.formatNumber(suggestion._source.issues)}</span> */}
+            
+            <div style={{ lineHeight: '16px' }}>
+              <span>tags: </span>
+              <ul className='list dib pa0'>
+                {
+                  suggestion._source.tags &&
+                  suggestion._source.tags.map((tag, i) => {
+                    if (i < 5) {
+                      const matches = match(tag, query);
+                      const parts = parse(tag, matches);
+  
+                      return ( 
+                        <li key={tag} className='dib mr2'>
+                          {parts.map((part, index) => {
+                            return part.highlight
+                              ? <span key={index} style={{ color: '#2196F3' }}>
+                                  {part.text}
+                                </span>
+                              : <span key={index}>
+                                  {part.text}
+                                </span>;
+                          })}
+                        </li> 
+                      )
+                    }
+                    return <span key={i} style={{ display: 'none' }}></span>
+                  })
+                }
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    </MenuItem>
-  );
+      </MenuItem>
+    );
+  } else if (suggestion._type === 'users') {
+    const matchesUsername = match(suggestion._source.username, query);
+    const partsUsername = parse(suggestion._source.username, matchesUsername);
+
+    const matchesName = match(suggestion._source.name, query);
+    const partsName = parse(suggestion._source.name, matchesName);
+  
+    return (
+      <MenuItem 
+        selected={isHighlighted}
+        style={{ height: 'auto' }}
+        component="div"
+      >
+        <div>
+          <img
+            src={suggestion._source.avatar}
+            style={{
+              height: '40px',
+              marginRight: '10px',
+              width: '40px',
+              verticalAlign: 'text-bottom'
+            }}
+            alt="search-result"
+          />
+          <div className='dib'>
+            <strong style={{ fontSize: '20px' }}>@</strong>
+            {partsUsername.map((part, index) => {
+              return part.highlight
+                ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
+                    {part.text}
+                  </span>
+                : <strong key={index} style={{ fontSize: '20px' }}>
+                    {part.text}
+                  </strong>;
+            })}
+            <div style={{ lineHeight: '16px' }}>
+              <span>name: </span>
+              <ul className='list dib pa0'>
+                <li>
+                  {partsName.map((part, index) => {
+                    return part.highlight
+                      ? <span key={index} style={{ fontSize: '20px', color: '#2196F3' }}>
+                          {part.text}
+                        </span>
+                      : <span key={index} style={{ fontSize: '20px' }}>
+                          {part.text}
+                        </span>;
+                  })}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </MenuItem>
+    );
+  }
 }
 
 function renderSuggestionsContainer(options) {
@@ -109,7 +166,13 @@ function renderSuggestionsContainer(options) {
   );
 }
 
-const getSuggestionValue = suggestion => suggestion._source.package_name
+const getSuggestionValue = suggestion => {
+  if (suggestion._type === 'packages') {
+    return suggestion._source.package_name
+  } else if (suggestion._type === 'users') {
+    return suggestion._source.username
+  }
+}
 
 const styles = theme => ({
   container: {
@@ -146,33 +209,33 @@ const styles = theme => ({
 class SearchMain extends Component {
   state = {
     value: '',
-    suggestions: [],
+    suggestions: ['hello'],
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
+    if (!value || value.length <= 2) return
+
     const inputValue = value.trim().toLowerCase();
-    if (inputValue.length > 2) {
-      client.search({
-        index: 'pkg-radar-dev',
-        body: {
-          query: {
-            query_string: {
-              query: `${inputValue}*`
-            },
-          }
+    client.search({
+      index: 'pkg-radar-dev',
+      body: {
+        query: {
+          query_string: {
+            query: `${inputValue}*`
+          },
         }
-      }).then(body => {
-        const hits = body.hits.hits
-        // console.log('hits', hits)
-        if (hits.length) {
-          this.setState({ suggestions: hits })
-        } else {
-          this.setState({ suggestions: [] })
-        }
-      }, error => {
-        console.trace(error.message);
-      })
-    }
+      }
+    }).then(body => {
+      const hits = body.hits.hits
+      // console.log('hits', hits)
+      if (hits.length) {
+        this.setState({ suggestions: hits })
+      } else {
+        this.setState({ suggestions: [] })
+      }
+    }, error => {
+      console.trace(error.message);
+    })
   };
 
   handleSuggestionsClearRequested = () => {
@@ -182,8 +245,13 @@ class SearchMain extends Component {
   };
 
   handleSuggestionSelected = (event, response) => {
-    const { package_name, owner_name } = response.suggestion._source
-    this.props.history.push(`/${owner_name}/${package_name}`)
+    if (response.suggestion._type === 'packages') {
+      const { package_name, owner_name } = response.suggestion._source
+      this.props.history.push(`/${owner_name}/${package_name}`)
+    } else if (response.suggestion._type === 'users') {
+      const { username } = response.suggestion._source
+      this.props.history.push(`/@${username}`)
+    }
   }
 
   handleChange = (event, { newValue }) => {
@@ -215,7 +283,7 @@ class SearchMain extends Component {
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
-          shouldRenderSuggestions={(val) => val.length > 2}
+          alwaysRenderSuggestions={true}
           inputProps={{
             autoFocus: true,
             placeholder: placeholder ? placeholder : '',
