@@ -19,6 +19,7 @@ import TextField from "material-ui/TextField";
 import moment from "moment";
 import Select from 'react-select';
 import find from 'lodash/find'
+import truncate from 'lodash/truncate'
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
 
 import { Loader } from '../Shared'
@@ -511,29 +512,33 @@ class PackageDetail extends Component {
                 style={{ height: "100%", padding: "0 20px", margin: 0 }}
               >
                 <Grid item xs={12} style={{ paddingBottom: 0 }}>
-                  <div className='mb2'>
-                    <img
-                      alt={`${data.package.packageName}-logo`}
-                      style={{ 
-                        height: "50px", 
-                        marginRight: '20px',
-                        borderRadius: '50%'
-                      }}
-                      src={data.package.ownerAvatar}
-                    />
-                    <Typography 
-                      type="headline" 
-                      gutterBottom
-                      style={{ color: 'white', display: 'inline-block' }}
-                    >
-                    {data.package.ownerName} / {data.package.packageName}
-                    <div style={{ fontSize: '16px' }}>
-                      {data.package.description}
-                    </div>
-                    </Typography>
-                  </div>
+                  <Grid container>
+                    <Grid item>
+                      <img
+                        alt={`${data.package.packageName}-logo`}
+                        style={{ 
+                          height: "50px", 
+                          marginRight: '20px',
+                          borderRadius: '50%'
+                        }}
+                        src={data.package.ownerAvatar}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Typography 
+                        type="headline" 
+                        gutterBottom
+                        style={{ color: 'white', display: 'inline-block' }}
+                      >
+                      {data.package.ownerName} / {data.package.packageName}
+                      <div style={{ fontSize: '16px' }}>
+                        {truncate(data.package.description, { length: 102 })}
+                      </div>
+                      </Typography>
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} style={{ paddingTop: 0 }}>
+                <Grid item xs={12}>
                   <div className='mb3'>
                     <a
                       href={data.package.websiteUrl}

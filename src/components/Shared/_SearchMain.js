@@ -221,10 +221,14 @@ class SearchMain extends Component {
       body: {
         query: {
           query_string: {
+            fields : ["package_name^2", "owner_name", "tags.keyword", "username", "name"],
             default_operator: 'AND',
             query: `${inputValue}*`
           },
-        }
+        },
+        sort : [
+          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+       ]
       }
     }).then(body => {
       const hits = body.hits.hits

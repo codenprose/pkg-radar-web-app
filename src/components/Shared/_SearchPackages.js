@@ -119,9 +119,13 @@ class SearchPackages extends Component {
       body: {
         query: {
           query_string: {
+            fields : ["package_name^2", "owner_name", "tags.keyword", "username", "name"],
             query: `${inputValue}*`
           },
-        }
+        },
+        sort : [
+          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+       ]
       }
     }).then(body => {
       const hits = body.hits.hits
