@@ -16,7 +16,13 @@ class KanbanBoard extends Component {
   }
 
   render() {
-    const { cards, cardCallbacks, currentBoard, helpText, userIsCurrentUser } = this.props;
+    const { cardCallbacks, currentBoard, helpText, userIsCurrentUser } = this.props;
+    let { cards } = this.props
+
+
+    if (currentBoard !== "All") {
+      cards = [...cards].filter(card => card.board === currentBoard)
+    }
 
     return (
       <Grid container>

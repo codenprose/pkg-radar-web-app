@@ -9,7 +9,9 @@ import KanbanCard from "./_KanbanCard";
 const KanbanListContainer = styled.div`
   padding: 10px;
   background-color: #ECEFF1;
-  min-height: 195px;
+  height: 95vh;
+  overflow: auto;
+  border-radius: 3px;
 `
 
 const KanbanListTitle = styled.h3`
@@ -36,10 +38,10 @@ class KanbanList extends Component {
   _renderCards() {
     const { cards, cardCallbacks, currentBoard, userIsCurrentUser } = this.props
 
-    return cards.map(card => {
+    return cards.map((card, i) => {
       return (
         <KanbanCard
-          key={card.packageId}
+          key={i}
           cardCallbacks={cardCallbacks}
           currentBoard={currentBoard}
           userIsCurrentUser={userIsCurrentUser}

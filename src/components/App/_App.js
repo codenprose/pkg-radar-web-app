@@ -3,7 +3,6 @@ import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
 // import PropTypes from 'prop-types'
 import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
-import createPalette from 'material-ui/styles/palette'
 import { blueGrey } from 'material-ui/colors'
 import { Route } from 'react-router-dom'
 
@@ -16,9 +15,9 @@ import { GithubAuth } from '../Users'
 import CURRENT_USER from '../../queries/currentUser'
 
 const theme = createMuiTheme({
-  palette: createPalette({
+  palette: {
     primary: blueGrey,
-  }),
+  },
   overrides: {
     MuiAppBar: {
       colorDefault: {

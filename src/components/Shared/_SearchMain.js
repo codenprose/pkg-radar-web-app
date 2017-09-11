@@ -213,7 +213,7 @@ class SearchMain extends Component {
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
-    if (!value || value.length <= 2) return
+    // if (!value || value.length <= 2) return
 
     const inputValue = value.trim().toLowerCase();
     client.search({
@@ -284,7 +284,7 @@ class SearchMain extends Component {
           renderSuggestionsContainer={renderSuggestionsContainer}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
-          alwaysRenderSuggestions={true}
+          focusInputOnSuggestionClick={false}
           inputProps={{
             autoFocus: true,
             placeholder: placeholder ? placeholder : '',

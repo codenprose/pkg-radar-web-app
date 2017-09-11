@@ -12,7 +12,7 @@ import Dialog, {
 } from "material-ui/Dialog";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
-import SwipeableViews from "react-swipeable-views";
+
 import TextField from 'material-ui/TextField';
 import Select from 'react-select';
 import equal from 'deep-equal'
@@ -28,12 +28,7 @@ import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositi
 import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
 import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 
-import 'react-select/dist/react-select.css';
-
-const TabContainer = props => 
-  <div className='tab-container'>
-    {props.children}
-  </div>;
+import 'react-select/dist/react-select.css'
 
 class KanbanBoardContainer extends Component {
   state = {
@@ -92,14 +87,31 @@ class KanbanBoardContainer extends Component {
   _handleAddPackage = async () => {
     const { user } = this.props
     const { selectedStatus, selectedBoard, selectedPackage } = this.state
+    const { owner_name, package_name } = selectedPackage._source
+
+    let isPkgOnBoard = {
+      name: '',
+      board: ''
+    }
+
+    this.state.cards.forEach(card => {
+      if (card.packageName === package_name && card.ownerName === owner_name) {
+        isPkgOnBoard.packageName = card.packageName
+        isPkgOnBoard.board = card.board
+      }
+    })
+
+    if (isPkgOnBoard.packageName) {
+      return alert('Please first remove package from board')
+    }
 
     try {
       console.log('adding package')
       await this.props.createUserKanbanPackage({
         variables: {
-          ownerName: selectedPackage._source.owner_name,
+          ownerName: owner_name,
           packageId: selectedPackage._id,
-          packageName: selectedPackage._source.package_name,
+          packageName: package_name,
           status: selectedStatus,
           username: user.username
         },
@@ -286,7 +298,7 @@ class KanbanBoardContainer extends Component {
 
   _handleTabChange = (event, tabIndex) => {
     const { user } = this.props
-    const kanbanBoards = user.kanbanBoards.sort()
+    const kanbanBoards = user.kanbanBoards
     const currentBoard = kanbanBoards[tabIndex];
 
     this.setState({ tabIndex, currentBoard });
@@ -396,7 +408,7 @@ class KanbanBoardContainer extends Component {
 
   render() {
     const { userIsCurrentUser, user } = this.props;
-    const kanbanBoards = user.kanbanBoards.sort()
+    const kanbanBoards = user.kanbanBoards
     const boardSelectOptions = this._formatBoardSelectItems()
 
     let kanbanBoardWidth = 12
@@ -451,36 +463,18 @@ class KanbanBoardContainer extends Component {
         </Grid>
         <Grid container>
           <Grid item xs={kanbanBoardWidth}>
-            <SwipeableViews
-              index={this.state.tabIndex}
-              onChangeIndex={this._handleSwipeChange}
-              slideStyle={{ overflow: 'hidden' }}
-            >
-              {
-                kanbanBoards.map((board, i) => {
-                  let cards = this.state.cards
-                  if (i !== 0) {
-                      cards = [...cards].filter(card => card.board === this.state.currentBoard);
-                  }
-                  return (
-                    <TabContainer key={i}>
-                      <KanbanBoard
-                        cards={cards}
-                        cardCallbacks={{
-                          updateStatus: this.updateCardStatus,
-                          updatePosition: throttle(this.updateCardPositions, 500),
-                          persistCardPositions: this._updateKanbanCardPositions,
-                          persistPackageStatus: this._updateKanbanPackageStatus,
-                          removeCard: this._handleRemovePackage
-                        }}
-                        currentBoard={this.state.currentBoard}
-                        userIsCurrentUser={userIsCurrentUser}
-                      />
-                    </TabContainer>
-                  )
-                })
-              }
-            </SwipeableViews>
+            <KanbanBoard
+              cards={this.state.cards}
+              cardCallbacks={{
+                updateStatus: this.updateCardStatus,
+                updatePosition: throttle(this.updateCardPositions, 500),
+                persistCardPositions: this._updateKanbanCardPositions,
+                persistPackageStatus: this._updateKanbanPackageStatus,
+                removeCard: this._handleRemovePackage
+              }}
+              currentBoard={this.state.currentBoard}
+              userIsCurrentUser={userIsCurrentUser}
+            />
           </Grid>
         </Grid>
         {
@@ -513,7 +507,7 @@ class KanbanBoardContainer extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className="mr3" onTouchTap={this._handleAddBoardModalClose}>
+            <Button className="mr3" onClick={this._handleAddBoardModalClose}>
               Cancel
             </Button>
             <Button
@@ -521,7 +515,7 @@ class KanbanBoardContainer extends Component {
               raised
               color="primary"
               disabled={!this.state.addBoardName}
-              onTouchTap={this._handleAddBoard}
+              onClick={this._handleAddBoard}
             >
               Submit
             </Button>
@@ -562,8 +556,8 @@ class KanbanBoardContainer extends Component {
               selectedStatus={this.state.selectedStatus}
             />
           </DialogContent>
-          <DialogActions>
-            <Button className="mr3" onTouchTap={this._closePackageModal}>
+          <DialogActions style={{ position: 'relative', zIndex: 1 }}>
+            <Button className="mr3" onClick={this._closePackageModal}>
               Cancel
             </Button>
             <Button
@@ -574,7 +568,7 @@ class KanbanBoardContainer extends Component {
                   !this.state.selectedBoard ||
                     !Object.keys(this.state.selectedPackage).length
               }
-              onTouchTap={this._handleAddPackage}
+              onClick={this._handleAddPackage}
             >
               Submit
             </Button>

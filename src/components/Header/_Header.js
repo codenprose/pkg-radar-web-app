@@ -99,14 +99,16 @@ class Header extends Component {
 
       this.setState({
         isCreatePackageModalOpen: false,
-        isCreatePackageLoading: false
+        isCreatePackageLoading: false,
+        createPackageURL: ''
       })
 
       history.replace(`/${owner}/${name}`)
     } catch (e) {
       this.setState({
         isCreatePackageModalOpen: false,
-        isCreatePackageLoading: false
+        isCreatePackageLoading: false,
+        createPackageURL: ''
       })
       console.error(e)
     }
@@ -116,7 +118,7 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 8, isSearchVisible = false
+    let userSectionWidth = 7, isSearchVisible = false
 
     if (location.pathname !== '/') {
       isSearchVisible = true
@@ -143,7 +145,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={4} style={{ height: '100%' }}>
+              <Grid item xs={5}  style={{ height: '100%' }}>
                 <Grid container align='center'>
                   <Typography
                     type="title"
@@ -205,7 +207,7 @@ class Header extends Component {
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={6}
+                  xs={5}
                   style={{
                     borderRadius: '2px',
                     height: '42px',
@@ -234,7 +236,7 @@ class Header extends Component {
                   {!isUserLoading && !user &&
                     <div>
                       {/* <Button
-                        onTouchTap={githubAuth}
+                        onClick={githubAuth}
                         style={{ marginRight: '10px', color: 'white' }}
                       >
                         Log In
@@ -243,7 +245,7 @@ class Header extends Component {
                         raised
                         color="default"
                         style={{ marginTop: '5px'}}
-                        onTouchTap={githubAuth}
+                        onClick={githubAuth}
                       >
                         <i className="fa fa-lg fa-github mr2" />
                         Login with Github
@@ -252,7 +254,7 @@ class Header extends Component {
                   {!isUserLoading && user &&
                     <div>
                       <IconButton
-                        onTouchTap={this._handleModalOpen}
+                        onClick={this._handleModalOpen}
                         className="v-mid"
                       >
                         <Add style={{ color: 'white' }} />
@@ -326,7 +328,7 @@ class Header extends Component {
             <Button
               className="mr3"
               disabled={this.state.isCreatePackageLoading}
-              onTouchTap={this._handleModalClose}
+              onClick={this._handleModalClose}
             >
               Cancel
             </Button>
@@ -337,7 +339,7 @@ class Header extends Component {
                 !this.state.isCreatePackageURLValid ||
                 this.state.isCreatePackageLoading
               }
-              onTouchTap={this._handleCreatePackage}
+              onClick={this._handleCreatePackage}
             >
               {this.state.isCreatePackageLoading &&
                 <i className="fa fa-spinner fa-spin mr1" />}

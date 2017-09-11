@@ -113,28 +113,26 @@ class SearchPackages extends Component {
 
   handleSuggestionsFetchRequested = ({ value }) => {
     const inputValue = value.trim().toLowerCase();
-    if (inputValue.length > 2) {
-      client.search({
-        index: 'pkg-radar-dev',
-        type: 'packages',
-        body: {
-          query: {
-            query_string: {
-              query: `${inputValue}*`
-            },
-          }
+    client.search({
+      index: 'pkg-radar-dev',
+      type: 'packages',
+      body: {
+        query: {
+          query_string: {
+            query: `${inputValue}*`
+          },
         }
-      }).then(body => {
-        const hits = body.hits.hits
-        if (hits.length) {
-          this.setState({ suggestions: hits })
-        } else {
-          this.setState({ suggestions: [] })
-        }
-      }, error => {
-        console.trace(error.message);
-      })
-    }
+      }
+    }).then(body => {
+      const hits = body.hits.hits
+      if (hits.length) {
+        this.setState({ suggestions: hits })
+      } else {
+        this.setState({ suggestions: [] })
+      }
+    }, error => {
+      console.trace(error.message);
+    })
   };
 
   handleSuggestionsClearRequested = () => {

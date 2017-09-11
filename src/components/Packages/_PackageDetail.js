@@ -277,8 +277,11 @@ class PackageDetail extends Component {
     if (!currentUser) return false
     
     const saved = find(currentUser.kanbanCardPositions, (card) => {
-      return card.ownerName === data.package.ownerName &&
-        card.packageName === data.package.packageName
+      if (card && data.package) {
+        return card.ownerName === data.package.ownerName &&
+          card.packageName === data.package.packageName
+      }
+      return false
     })
     return typeof(saved) === 'object'
   }
@@ -303,7 +306,7 @@ class PackageDetail extends Component {
 
   render() {
     const { currentUser, data, isUserLoading } = this.props;
-    if (data.loading || isUserLoading) return <Loader />
+    if (data.loading || isUserLoading || !data.package) return <Loader />
     // console.log('props', this.props)
     // console.log('current user', currentUser)
 
@@ -710,7 +713,13 @@ class PackageDetail extends Component {
               onRequestClose={this._closePackageModal}
             >
               <DialogTitle>Add Package</DialogTitle>
-              <DialogContent style={{ width: "550px", marginBottom: "30px" }}>
+              <DialogContent 
+                style={{ 
+                  width: "550px", 
+                  marginBottom: "30px",
+                  overflowY: 'inherit'
+                }}
+              >
                 <Select
                   options={this._formatBoardSelectItems()}
                   placeholder="Select Board"
@@ -728,7 +737,7 @@ class PackageDetail extends Component {
                 />
               </DialogContent>
               <DialogActions>
-                <Button className="mr3" onTouchTap={this._closePackageModal}>
+                <Button className="mr3" onClick={this._closePackageModal}>
                   Cancel
                 </Button>
                 <Button
@@ -739,7 +748,7 @@ class PackageDetail extends Component {
                       !this.state.selectedBoard ||
                         this.state.isAddPackageLoading
                   }
-                  onTouchTap={this._handleAddPackage}
+                  onClick={this._handleAddPackage}
                 >
                   {
                     this.state.isAddPackageLoading &&
@@ -768,13 +777,13 @@ class PackageDetail extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className="mr3" onTouchTap={this._handleModalClose}>
+            <Button className="mr3" onClick={this._handleModalClose}>
               Cancel
             </Button>
             <Button
               raised
               color="primary"
-              onTouchTap={this._handleAddRecommendation}
+              onClick={this._handleAddRecommendation}
             >
               Submit
             </Button>
