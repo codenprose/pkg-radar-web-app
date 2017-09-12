@@ -45,7 +45,7 @@ class PackageCard extends Component {
           }
           title={
             <span style={{ fontSize: '20px' }}>
-              {ownerName}/{packageName}
+              {packageName}
             </span>
           }
           subheader={

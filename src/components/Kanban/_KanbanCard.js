@@ -31,16 +31,18 @@ const cardDragSpec = {
     return props.userIsCurrentUser
   },
   beginDrag(props) {
+    console.log('begin drag props', props)
     return {
       packageId: props.packageId,
       status: props.status
     };
   },
   endDrag(props) {
-    const { packageId, userIsCurrentUser } = props
+    console.log('end drag props', props)
+    const { userIsCurrentUser, packageId } = props
     if (!userIsCurrentUser) return null
     props.cardCallbacks.persistCardPositions()
-    props.cardCallbacks.persistPackageStatus(packageId);
+    props.cardCallbacks.persistPackageStatus(packageId)
   }
 };
 

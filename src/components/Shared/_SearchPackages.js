@@ -67,7 +67,11 @@ function renderSuggestionsContainer(options) {
   const { containerProps, children } = options;
 
   return (
-    <Paper {...containerProps} square>
+    <Paper 
+      {...containerProps} 
+      square
+      style={{ position: 'absolute', zIndex: '100' }}
+    >
       {children}
     </Paper>
   );
@@ -180,7 +184,6 @@ class SearchPackages extends Component {
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
           focusInputOnSuggestionClick={false}
-          shouldRenderSuggestions={(val) => val.length > 2}
           inputProps={{
             autoFocus: false,
             classes,

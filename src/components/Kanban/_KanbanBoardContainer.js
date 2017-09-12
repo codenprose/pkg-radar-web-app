@@ -89,10 +89,7 @@ class KanbanBoardContainer extends Component {
     const { selectedStatus, selectedBoard, selectedPackage } = this.state
     const { owner_name, package_name } = selectedPackage._source
 
-    let isPkgOnBoard = {
-      name: '',
-      board: ''
-    }
+    let isPkgOnBoard = { name: '', board: '' }
 
     this.state.cards.forEach(card => {
       if (card.packageName === package_name && card.ownerName === owner_name) {
@@ -203,24 +200,13 @@ class KanbanBoardContainer extends Component {
   };
 
   _updateKanbanCardPositions = async () => {
-    const { user } = this.props
+    const { currentUser } = this.props
     try {
       console.log('updating kanban board layouts')
       await this.props.updateKanbanCardPositions({
         variables: { 
-          username: user.username, 
+          username: currentUser.username, 
           kanbanCardPositions: this._formatKanbanCardPositions()
-        },
-        update: (store, { data: { updatUser } }) => {
-          const token = localStorage.getItem('pkgRadarToken')
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ 
-            query: CURRENT_USER,
-            variables: { username: user.username, token }
-          });
-          data.currentUser.kanbanCardPositions = this._formatKanbanCardPositions('addTypename')
-          // Write our data back to the cache.
-          store.writeQuery({ query: CURRENT_USER, data });
         },
       });
       console.log('updated kanban board layouts')
@@ -251,24 +237,14 @@ class KanbanBoardContainer extends Component {
   };
 
   _updateKanbanPackageStatus = async (packageId) => {
-    const { user } = this.props
+    const { currentUser } = this.props
     const cardIndex = this.state.cards.findIndex(card => card.packageId === packageId)
     const status = this.state.cards[cardIndex].status
     
     try {
       console.log('updating package status')
       await this.props.updateKanbanPackageStatus({
-        variables: { packageId, status, username: user.username },
-        update: (store, { data: { getUserKanbanPackages} }) => {
-          let data = store.readQuery({ 
-            query: USER_KANBAN_PACKAGES,
-            variables: { username: user.username }
-          });
-
-          const pkgIndex = data.userKanbanPackages.findIndex(pkg => pkg.packageId === packageId)
-          data.userKanbanPackages[pkgIndex].status = status
-          store.writeQuery({ query: USER_KANBAN_PACKAGES, data });
-        }
+        variables: { username: currentUser.username, packageId, status }
       });
       console.log('updated package status')
     } catch (e) {
@@ -408,11 +384,17 @@ class KanbanBoardContainer extends Component {
 
   render() {
     const { userIsCurrentUser, user } = this.props;
+    let { cards, currentBoard } = this.state
+
     const kanbanBoards = user.kanbanBoards
     const boardSelectOptions = this._formatBoardSelectItems()
 
     let kanbanBoardWidth = 12
     if (userIsCurrentUser) kanbanBoardWidth = 11
+
+    if (currentBoard !== "All") {
+      cards = [...cards].filter(card => card.board === currentBoard)
+    }
 
     return (
       <div>
@@ -464,7 +446,7 @@ class KanbanBoardContainer extends Component {
         <Grid container>
           <Grid item xs={kanbanBoardWidth}>
             <KanbanBoard
-              cards={this.state.cards}
+              cards={cards}
               cardCallbacks={{
                 updateStatus: this.updateCardStatus,
                 updatePosition: throttle(this.updateCardPositions, 500),
@@ -484,6 +466,7 @@ class KanbanBoardContainer extends Component {
             color="primary"
             style={{ position: "sticky", bottom: "20px", left: "100%" }}
             onClick={this._handlePackageModalOpen}
+            autoFocus={false}
           >
             <AddIcon />
           </Button>

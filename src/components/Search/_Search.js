@@ -4,6 +4,7 @@ import queryString from 'query-string'
 import elasticsearch from 'elasticsearch'
 
 import { PackageCard } from '../Packages'
+import { Loader } from '../Shared'
 
 const client = new elasticsearch.Client({
   host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
@@ -11,6 +12,7 @@ const client = new elasticsearch.Client({
 
 class Search extends Component {
   state = {
+    isLoading: false,
     results: []
   }
 
@@ -22,13 +24,16 @@ class Search extends Component {
   }
 
   _handleSearch = (query) => {
+    this.setState({ isLoading: true })
+
     query = query.toLowerCase();
     client.search({
       index: 'pkg-radar-dev',
+      type: 'packages',
       body: {
         query: {
           query_string: {
-            query: `${query}*`
+            query: `${query}`
           },
         }
       }
@@ -36,18 +41,20 @@ class Search extends Component {
       const hits = body.hits.hits
       // console.log('hits', hits)
       if (hits.length) {
-        this.setState({ results: hits })
+        this.setState({ results: hits, isLoading: false })
       } else {
-        this.setState({ suggestions: [] })
+        this.setState({ suggestions: [], isLoading: false })
       }
     }, error => {
+      this.setState({ isLoading: false })
       console.trace(error.message);
     })
   };
 
   render() {
     const { results } = this.state
-    // console.log(results)
+    if (this.state.isLoading) return <Loader />
+    if (!results.length) return <h2>No Results</h2>
     
     return (
       <div>
@@ -57,7 +64,7 @@ class Search extends Component {
             results.map(item => {
               const pkg = item._source
               return (
-                <Grid item xs={3} key={item._id}>
+                <Grid item xs={12} md={6} xl={4} key={item._id}>
                   <PackageCard 
                     avatar={pkg.owner_avatar}
                     color={pkg.color}
