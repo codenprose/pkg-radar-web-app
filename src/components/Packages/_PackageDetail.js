@@ -27,7 +27,7 @@ import { Loader } from '../Shared'
 import CURRENT_USER from '../../queries/currentUser'
 import GET_PACKAGE from '../../queries/package'
 import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
-import UPDATE_KANBAN_CARD_POSITIONS from '../../mutations/updateKanbanCardPositions';
+import UPDATE_KANBAN_CARDS from '../../mutations/updateKanbanCards';
 import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
 
 import radarBgImg from "../../images/nathan_anderson_radar.jpg"
@@ -93,12 +93,12 @@ class PackageDetail extends Component {
     ]
   }
 
-  _formatKanbanCardPositions = () => {
-    const kanbanCardPositions = this.props.currentUser.kanbanCardPositions
+  _formatKanbanCards = () => {
+    const kanbanCards = this.props.currentUser.kanbanCards
     let cards = []
 
-    for (let item in kanbanCardPositions) {
-      const card = kanbanCardPositions[item]
+    for (let item in kanbanCards) {
+      const card = kanbanCards[item]
       const { board, ownerName, packageName } = card
       cards.push({ board, ownerName, packageName })
     }
@@ -128,26 +128,26 @@ class PackageDetail extends Component {
       });
       console.log('added package')
 
-      console.log('updating card positions')
+      console.log('updating cards')
       const token = localStorage.getItem('pkgRadarToken')
-      const kanbanCardPositions = this._formatKanbanCardPositions()
+      const kanbanCards = this._formatKanbanCards()
       const card = { 
         board: selectedBoard, 
         ownerName: data.package.ownerName,
         packageName: data.package.packageName,
       }
 
-      await this.props.updateKanbanCardPositions({
+      await this.props.updateKanbanCards({
         variables: { 
           username: currentUser.username, 
-          kanbanCardPositions: [...kanbanCardPositions, card]
+          kanbanCards: [...kanbanCards, card]
         },
         refetchQueries: [{
           query: CURRENT_USER,
           variables: { username: currentUser.username, token }
         }]
       });
-      console.log('updated card positions')
+      console.log('updated cards')
       this.setState({ 
         isAddPackageLoading: false, 
         isAddPackageModalOpen: false 
@@ -204,8 +204,7 @@ class PackageDetail extends Component {
 
     console.log("adding recommendation");
 
-    this.props
-      .updatePackageRecommendations({ variables })
+    this.props.updatePackageRecommendations({ variables })
       .then(response => {
         console.log(response);
       })
@@ -277,7 +276,7 @@ class PackageDetail extends Component {
     const { currentUser, data } = this.props
     if (!currentUser) return false
     
-    const saved = find(currentUser.kanbanCardPositions, (card) => {
+    const saved = find(currentUser.kanbanCards, (card) => {
       if (card && data.package) {
         return card.ownerName === data.package.ownerName &&
           card.packageName === data.package.packageName
@@ -812,6 +811,6 @@ const packageOptions = {
 
 export default compose(
   graphql(CREATE_USER_KANBAN_PACKAGE, { name: 'createUserKanbanPackage' }),
-  graphql(UPDATE_KANBAN_CARD_POSITIONS, { name: "updateKanbanCardPositions" }),
+  graphql(UPDATE_KANBAN_CARDS, { name: "updateKanbanCards" }),
   graphql(GET_PACKAGE, packageOptions),
 )(PackageDetail);

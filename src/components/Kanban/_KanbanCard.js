@@ -31,18 +31,10 @@ const cardDragSpec = {
     return props.userIsCurrentUser
   },
   beginDrag(props) {
-    console.log('begin drag props', props)
     return {
       packageId: props.packageId,
       status: props.status
     };
-  },
-  endDrag(props) {
-    console.log('end drag props', props)
-    const { userIsCurrentUser, packageId } = props
-    if (!userIsCurrentUser) return null
-    props.cardCallbacks.persistCardPositions()
-    props.cardCallbacks.persistPackageStatus(packageId)
   }
 };
 
@@ -51,6 +43,11 @@ const cardDropSpec = {
     if (!props.userIsCurrentUser) return null
     const draggedId = monitor.getItem().packageId;
     props.cardCallbacks.updatePosition(draggedId, props.packageId);
+  },
+  drop(props, monitor, component) {
+    const { packageId } = props
+    props.cardCallbacks.persistCardPositions()
+    props.cardCallbacks.persistPackageStatus(packageId)
   }
 };
 
@@ -135,8 +132,8 @@ class KanbanCard extends Component {
                 </Link>
                 {
                   userIsCurrentUser &&
-                  <Button 
-                    dense 
+                  <Button
+                    dense
                     onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}
                   >
                     Remove

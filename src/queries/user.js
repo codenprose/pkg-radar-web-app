@@ -11,7 +11,7 @@ export default gql`
       company
       id
       kanbanBoards
-      kanbanCardPositions {
+      kanbanCards {
         board
         ownerName
         packageName

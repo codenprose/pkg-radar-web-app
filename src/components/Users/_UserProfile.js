@@ -91,13 +91,13 @@ const Connections = styled.h5`
 class UserProfile extends Component {
   _formatCards = () => {
     const packages = this.props.userKanbanPackages.userKanbanPackages
-    const { kanbanCardPositions } = this.props.user.user
+    const { kanbanCards } = this.props.user.user
     
     const cards = []
     if (!packages || !packages.length) return cards
 
-    for (let i in kanbanCardPositions) {
-      const layout = kanbanCardPositions[i]
+    for (let i in kanbanCards) {
+      const layout = kanbanCards[i]
       const pkgIndex = findIndex(packages, (o) => {
         return o.ownerName === layout.ownerName && o.packageName === layout.packageName
       });
