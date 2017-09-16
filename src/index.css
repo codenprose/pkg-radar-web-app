@@ -37,19 +37,16 @@ main {
 }
 
 /* Search Components */
+#SearchMain ul[role='listbox'], 
+#SearchPackages ul[role='listbox'], 
+#SearchMain--header  ul[role='listbox'] {
+    max-height: 340px;
+    overflow-y: auto;
+}
+
 #SearchMain--header input {
   margin-left: 40px;
   color: white;
-}
-
-#SearchMain ul[role='listbox'] {
-    max-height: 340px;
-    overflow-y: auto;
-}
-
-#SearchPackages ul[role='listbox'] {
-    max-height: 340px;
-    overflow-y: auto;
 }
 
 /* React Select */
