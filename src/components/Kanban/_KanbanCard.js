@@ -10,15 +10,10 @@ import Humanize from "humanize-plus";
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 import Collapse from "material-ui/transitions/Collapse";
 import classNames from 'classnames';
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import { Link } from 'react-router-dom'
 
-const styleSheet = createStyleSheet('KanbanCard', theme => ({
-  MuiCardContent: {
-    root: {
-      paddingBottom: 0
-    }
-  },
+const styles = theme => ({
   expand: {
     transform: 'rotate(0deg)',
     transition: theme.transitions.create('transform', {
@@ -29,24 +24,30 @@ const styleSheet = createStyleSheet('KanbanCard', theme => ({
     transform: 'rotate(180deg)',
   },
   flexGrow: { flex: '1 1 auto' },
-}));
+})
 
 const cardDragSpec = {
+  canDrag(props, monitor) {
+    return props.userIsCurrentUser
+  },
   beginDrag(props) {
     return {
-      id: props.id,
-      list: props.list
+      packageId: props.packageId,
+      status: props.status
     };
-  },
-  endDrag(props) {
-    props.cardCallbacks.persistCardDrag();
   }
 };
 
 const cardDropSpec = {
   hover(props, monitor) {
-    const draggedId = monitor.getItem().id;
-    props.cardCallbacks.updatePosition(draggedId, props.id);
+    if (!props.userIsCurrentUser) return null
+    const draggedId = monitor.getItem().packageId;
+    props.cardCallbacks.updatePosition(draggedId, props.packageId);
+  },
+  drop(props, monitor, component) {
+    const { packageId } = props
+    props.cardCallbacks.persistCardPositions()
+    props.cardCallbacks.persistPackageStatus(packageId)
   }
 };
 
@@ -75,16 +76,18 @@ class KanbanCard extends Component {
 
   render() {
     const {
-      id,
-      name,
-      list,
+      packageId,
+      ownerName,
+      packageName,
+      status,
       stars,
       description,
-      avatar,
+      ownerAvatar,
       connectDragSource,
       connectDropTarget,
       classes,
-      currentBoard
+      currentBoard,
+      userIsCurrentUser
     } = this.props;
 
     const { removeCard } = this.props.cardCallbacks;
@@ -101,14 +104,14 @@ class KanbanCard extends Component {
           <KanbanCardContainer>
             <Card style={styles.card}>
               <CardHeader
-                title={name}
+                title={packageName}
                 style={{ paddingBottom: 0 }}
                 subheader={`stars: ${Humanize.formatNumber(stars)}`}
                 avatar={
                   <img
-                    alt={`${name}-logo`}
+                    alt={`${packageName}-logo`}
                     style={{ height: "40px" }}
-                    src={avatar}
+                    src={ownerAvatar}
                   />
                 }
               />
@@ -124,10 +127,18 @@ class KanbanCard extends Component {
                 </CardContent>
               </Collapse>
               <CardActions>
-                <Link to={`/package/${name}`} className='no-underline'>
+                <Link to={`/${ownerName}/${packageName}`} className='no-underline'>
                   <Button dense style={{ paddingLeft: 0 }}>View</Button>
                 </Link>
-                <Button dense onClick={() => removeCard(id, name, currentBoard, list)}>Remove</Button>
+                {
+                  userIsCurrentUser &&
+                  <Button
+                    dense
+                    onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}
+                  >
+                    Remove
+                  </Button>
+                }
                 <div className={classes.flexGrow} />
                 <IconButton
                   className={classNames(classes.expand, {
@@ -156,4 +167,4 @@ const dragDropHighOrderCard = DropTarget(
   collectDrop
 )(dragHighOrderCard);
 
-export default  withStyles(styleSheet)(dragDropHighOrderCard);
+export default withStyles(styles)(dragDropHighOrderCard);

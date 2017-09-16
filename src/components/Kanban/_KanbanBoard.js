@@ -6,15 +6,17 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import KanbanList from "./_KanbanList";
 
 class KanbanBoard extends Component {
-  render() {
-    const { cardCallbacks, currentBoard } = this.props;
-    let { cards } = this.props;
-
-    if (currentBoard !== "All") {
-      cards = [...cards].filter(card => {
-        return card.board === currentBoard;
-      });
+  static defaultProps = {
+    helpText: {
+      backlog: "I've heard of them, but haven't played yet.",
+      trial: "Taking them for a spin.",
+      production: "Currently using in a Production environment.",
+      archive: "Been there. Done that. Moved on."
     }
+  }
+
+  render() {
+    const { cards, cardCallbacks, currentBoard, helpText, userIsCurrentUser } = this.props
 
     return (
       <Grid container>
@@ -22,36 +24,48 @@ class KanbanBoard extends Component {
           <KanbanList
             id="backlog"
             title="Backlog"
-            cards={cards.filter(card => card.list === "backlog")}
+            color='#2196F3'
+            cards={cards.filter(card => card.status === "backlog")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            helpText={helpText.backlog}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
           <KanbanList
-            id="staging"
-            title="Staging"
-            cards={cards.filter(card => card.list === "staging")}
+            id="trial"
+            title="Trial"
+            color='lightseagreen'
+            cards={cards.filter(card => card.status === "trial")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            helpText={helpText.trial}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
           <KanbanList
             id="production"
             title="Production"
-            cards={cards.filter(card => card.list === "production")}
+            color='#4CAF50'
+            cards={cards.filter(card => card.status === "production")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            helpText={helpText.production}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
         <Grid item xs={3}>
           <KanbanList
             id="archive"
             title="Archive"
-            cards={cards.filter(card => card.list === "archive")}
+            color='#F44336'
+            cards={cards.filter(card => card.status === "archive")}
             cardCallbacks={cardCallbacks}
             currentBoard={currentBoard}
+            helpText={helpText.archive}
+            userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
       </Grid>

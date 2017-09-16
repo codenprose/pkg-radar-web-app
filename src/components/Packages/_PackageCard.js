@@ -5,14 +5,24 @@ import { Link } from "react-router-dom";
 import StarsIcon from "material-ui-icons/Stars";
 import ErrorOutlineIcon from "material-ui-icons/ErrorOutline";
 import Humanize from "humanize-plus";
+import Typography from "material-ui/Typography";
 
 class PackageCard extends Component {
   render() {
-    const { avatar, name, primaryLanguage, issues, stars } = this.props.pkg;
+    const { 
+      avatar, 
+      color,
+      description,
+      issues, 
+      language, 
+      ownerName, 
+      packageName, 
+      stars 
+    } = this.props
 
     const styles = {
       root: {
-        boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
+        // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
       },
       header: {
         paddingBottom: '10px'
@@ -28,12 +38,16 @@ class PackageCard extends Component {
           style={styles.header}
           avatar={
             <img
-              alt={`${name}-logo`}
+              alt={`${packageName}-logo`}
               style={{ height: "42px" }}
               src={avatar}
             />
           }
-          title={<span style={{ fontSize: '20px' }}>{name}</span>}
+          title={
+            <span style={{ fontSize: '20px' }}>
+              {packageName}
+            </span>
+          }
           subheader={
             <div>
               <div
@@ -44,10 +58,10 @@ class PackageCard extends Component {
                   marginRight: "5px",
                   borderRadius: "50%",
                   verticalAlign: "sub",
-                  backgroundColor: `${primaryLanguage.color}`
+                  backgroundColor: `${color}`
                 }}
               />
-              <span>{primaryLanguage.name}</span>
+              <span>{language}</span>
             </div>
           }
         />
@@ -74,9 +88,15 @@ class PackageCard extends Component {
             />
             <span>{Humanize.formatNumber(issues)}</span>
           </div>
+          {
+            description &&
+            <Typography type="body1" gutterBottom style={{ marginTop: '10px' }}>
+              {description}
+            </Typography>
+          }
         </CardContent>
         <CardActions>
-          <Link className="no-underline" to={`/package/${name}`}>
+          <Link className="no-underline" to={`/${ownerName}/${packageName}`}>
             <Button dense>View Package</Button>
           </Link>
         </CardActions>

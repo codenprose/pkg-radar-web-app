@@ -1,19 +1,30 @@
 import React, { Component } from "react";
-import Grid from "material-ui/Grid";
+import { graphql, compose } from "react-apollo";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
 
+import Grid from "material-ui/Grid";
+import Button from "material-ui/Button";
+
 import { KanbanBoardContainer } from "../Kanban";
-import userBgImg from "../../images/user_profile_bg.jpg"
+import { Loader } from '../Shared'
+
+import radarBgImg from "../../images/nathan_anderson_radar.jpg"
+
+import CURRENT_USER from '../../queries/currentUser'
+import CREATE_USER_CONNECTION from '../../mutations/createUserConnection'
+import DELETE_USER_CONNECTION from '../../mutations/deleteUserConnection'
+import GET_USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
+import GET_USER from '../../queries/user'
 
 const ProfileHeader = styled.div`
   position: relative;
-  z-index: -1;
-  height: 275px;
+  z-index: 1;
+  height: 250px;
   width: 100%;
   margin-bottom: 20px;
-  background: url("${userBgImg}") no-repeat center;
+  background: url("${radarBgImg}") no-repeat center;
   background-size: cover;
 
   &:after {
@@ -68,7 +79,7 @@ const Packages = styled.h5`
   font-weight: normal;
 `
 
-const Subscriptions = styled.h5`
+const Connections = styled.h5`
   display: inline-block;  
   margin-right: 20px;
   color: white;
@@ -77,29 +88,126 @@ const Subscriptions = styled.h5`
 `
 
 class UserProfile extends Component {
-  _formatCards = (packages) => {
-    const { kanbanLayouts } = this.props.user
+  _formatCards = () => {
+    const packages = this.props.userKanbanPackages.userKanbanPackages
+    const { kanbanCards } = this.props.user.user
+    
     const cards = []
-
     if (!packages || !packages.length) return cards
 
-    for (let i in kanbanLayouts) {
-      const layout = kanbanLayouts[i]
-      const pkgIndex = findIndex(packages, (o) => o.name === layout.name );
+    for (let i in kanbanCards) {
+      const layout = kanbanCards[i]
+      const pkgIndex = findIndex(packages, (o) => {
+        return o.ownerName === layout.ownerName && o.packageName === layout.packageName
+      });
       let pkg = packages[pkgIndex]
-
+      
       if (pkg) {
         pkg.board = layout.board
-        pkg.list = layout.list
         cards.push(pkg)
       }
     }
     return cards
   }
 
+  _createUserConnection = async () => {
+    const { currentUser, user } = this.props
+    if (!currentUser) return alert('Please login first')
+    
+    const token = localStorage.getItem('pkgRadarToken')
+    console.log('adding connection')
+
+    try {
+      await this.props.createUserConnection({
+        variables: {
+          user: currentUser.username,
+          connection: user.user.username
+        },
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: currentUser.username, token }
+          }
+        ]
+      })
+      console.log('added connection')
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+
+  _deleteUserConnection = async () => {
+    console.log('removing connection')
+    const { currentUser, user } = this.props
+    const token = localStorage.getItem('pkgRadarToken')
+
+    try {
+      await this.props.deleteUserConnection({
+        variables: {
+          user: currentUser.username,
+          connection: user.user.username
+        },
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: currentUser.username, token }
+          }
+        ]
+      })
+      console.log('removed connection')
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+
+  _isCurrentUserConnected = () => {
+    const { currentUser, user } = this.props
+    if (!currentUser) return false
+    const index = findIndex(currentUser.connections, obj => {
+      return obj.username === user.user.username
+    })
+    if (index >= 0) return true
+    return false
+  }
+
+  _renderUserConnectionBtn = () => {
+    const { currentUser, user } = this.props
+    if (currentUser.username !== user.user.username) {
+      if (this._isCurrentUserConnected()) {
+        return (
+          <Button 
+            raised
+            onClick={this._deleteUserConnection}
+            style={{ verticalAlign: 'text-bottom' }}
+          >
+            Connected
+          </Button>
+        )
+      } else {
+        return (
+          <Button 
+            raised 
+            onClick={this._createUserConnection}
+            style={{ verticalAlign: 'text-bottom' }}
+          >
+            Connect
+          </Button>
+        )
+      }
+    }
+  }
+
+  _userIsCurrentUser = () => {
+    const { currentUser, user } = this.props
+    return currentUser.username === user.user.username
+  }
+
   render() {
-    const { user } = this.props;
-    const packages = this._formatCards(user.packages)
+    const { currentUser, isCurrentUserLoading, user, userKanbanPackages } = this.props;
+    if (user.loading || userKanbanPackages.loading || isCurrentUserLoading  ) return <Loader />
+    
+    const cards = this._formatCards()
+    // console.log('props', this.props)
 
     return (
       <div>
@@ -108,52 +216,87 @@ class UserProfile extends Component {
             container
             direction="row"
             align="center"
-            style={{ height: "100%", padding: "0 40px", margin: 0 }}
+            style={{ height: "100%", padding: "0 80px", margin: 0 }}
           >
             <Grid item xs={6}>
-              <ProfileImage src={user.avatar} />
+              <ProfileImage src={user.user.avatar} />
               <UserInfoContainer>
                 <Name>
-                  {user.name}
+                  {user.user.name}
                 </Name>
                 <UserName>
-                  @{user.username}
+                  @{user.user.username}
                 </UserName>
-                <Bio>developer, designer, entrepreneur</Bio>
-                <Link
+                <Bio>{user.user.bio}</Bio>
+                <a
                   className="white no-underline fw3"
-                  to={`danielkhunter.com`}
+                  to={user.user.website}
                 >
-                  danielkhunter.com
-                </Link>
+                  {user.user.website}
+                </a>
               </UserInfoContainer>
             </Grid>
             <Grid item xs={6}>
               <Grid direction="row" container justify="flex-end">
                 <Grid item className="tc">
                   <Packages>
-                    <div>
-                      {packages ? packages.length : 0}
-                    </div>
+                    <div>{cards.length}</div>
                     <div>Packages</div>
                   </Packages>
-                  <Subscriptions>
-                    <div>{user.subscriptions ? user.subscriptions.length : 0}</div>
-                    <div>Subscriptions</div>
-                  </Subscriptions>
+                  <Connections>
+                    <div>{user.user.connections.length}</div>
+                    <Link 
+                      className='white no-underline'
+                      to={`/@${user.user.username}/connections`}
+                    >
+                      Connections
+                    </Link>
+                  </Connections>
+                  {this._renderUserConnectionBtn()}
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </ProfileHeader>
-
+        
         <KanbanBoardContainer
-          cards={packages}
-          user={user}
+          cards={cards}
+          currentUser={currentUser}
+          user={user.user}
+          userIsCurrentUser={this._userIsCurrentUser()}
         />
       </div>
     );
   }
 }
 
-export default UserProfile;
+const userOptions = {
+  name: 'user',
+  options: props => {
+    return {
+      fetchPolicy: 'network-only',
+      variables: { 
+        username: props.match.params.username
+      }
+    };
+  }
+}
+
+const userKanbanOptions = {
+  name: 'userKanbanPackages',
+  options: props => {
+    return {
+      fetchPolicy: 'network-only',
+      variables: { 
+        username: props.match.params.username
+      }
+    };
+  }
+};
+
+export default compose(
+  graphql(CREATE_USER_CONNECTION, { name: 'createUserConnection' }),
+  graphql(DELETE_USER_CONNECTION, { name: 'deleteUserConnection' }),
+  graphql(GET_USER, userOptions),
+  graphql(GET_USER_KANBAN_PACKAGES, userKanbanOptions),
+)(UserProfile)

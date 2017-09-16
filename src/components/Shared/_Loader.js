@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import loading from './_loading.svg'
+import loading from '../../images/loading.svg'
 
 class Loader extends Component {
   render() {
@@ -13,7 +13,7 @@ class Loader extends Component {
       bottom: 0,
       left: 0,
       right: 0,
-      backgroundColor: 'white',
+      backgroundColor: 'inherit',
     }
 
     return (

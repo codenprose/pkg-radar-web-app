@@ -2,7 +2,15 @@ body {
   min-width: 1200px;
   height: 100vh;
   font-family: 'roboto';
-  background-color: white;
+  background-color: #F7F7F7;
+}
+
+main {
+  position: relative;
+  max-width: 1600px;
+  height: 88vh;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 /* Colors */
@@ -13,9 +21,13 @@ body {
 
 /* Markdown CSS */
 .markdown-body {
+  display: block;
+  margin: 0 auto;
   box-sizing: border-box;
   min-width: 200px;
   max-width: 980px;
+  padding: 40px;
+  background: white;
 }
 
 /* Header Component */
@@ -24,165 +36,23 @@ body {
   font-weight: 300;
 }
 
-/* React Bootstrap Typeahead */
-#Header .bootstrap-tokenizer-input,
-#Header .bootstrap-typeahead-input {
-  margin: 10px 0 0 55px;
+/* Search Components */
+#SearchMain ul[role='listbox'], 
+#SearchPackages ul[role='listbox'], 
+#SearchMain--header  ul[role='listbox'] {
+    max-height: 340px;
+    overflow-y: auto;
 }
 
-.bootstrap-typeahead-input-main { 
-  width: 100%;
-  background-color: inherit;
-  border: none;
-  outline: none;
-}
-
-#Header .bootstrap-typeahead-input-main {
+#SearchMain--header input {
+  margin-left: 40px;
   color: white;
-}
-
-#SearchPackages .bootstrap-typeahead-input-main {
-  border-bottom: 2px solid #263238;
-}
-
-#SearchPackages .bootstrap-typeahead-input-main:disabled {
-  border-bottom: 1px dashed lightgray;
-}
-
-#SearchPackages .bootstrap-typeahead.open {
-  position: fixed !important;
-  width: 452px;
-  z-index: 1;
-}
-
-#SearchPackages .bootstrap-typeahead-menu.dropdown-menu {
-  margin-top: initial;
-}
-
-.bootstrap-typeahead-input-hint {
-  background-color: inherit;
-  border: none;
-  outline: none;
-}
-
-.bootstrap-typeahead-menu.dropdown-menu {
-  position: relative;
-  z-index: 1;
-  margin-top: 17px;
-  padding: 10px 0;
-  color: black;
-  background-color: white;
-  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.24);
-}
-
-.bootstrap-typeahead-menu.dropdown-menu li {
-  list-style: none;
-  padding: 5px 0 5px 15px;
-  cursor: pointer;
-}
-
-.token-removeable:first-of-type {
-  margin-left: 55px;
-}
-
-.token-removeable {
-  display: inline-block;
-  margin-right: 10px;
-  background: white;
-  min-width: 60px;
-  color: black;
-  padding: 5px 7px;
-  border-radius: 2px;
-}
-
-.token-removeable .close-button {
-  margin-left: 5px;
-  cursor: pointer;
-}
-
-.bootstrap-typeahead-clear-button {
-  position: absolute;
-  top: -3px;
-  right: 10px;
-  cursor: pointer;
-}
-
-.dropdown-menu>li:focus,
-.dropdown-menu>li:hover {
-  text-decoration: none;
-  background-color: lightgray;
-}
-
-.dropdown-menu>li.active {
-  background-color: lightgray;
 }
 
 /* React Select */
 .Select-menu-outer { z-index: 10; }
 
-/* Example Styles for React Tags*/
-div.ReactTags__tags {
-    position: relative;
-    margin: 0 5px 10px;
-}
-
-/* Styles for the input */
-div.ReactTags__tagInput {
-    width: 200px;
-    border-radius: 2px;
-    display: inline-block;
-}
-div.ReactTags__tagInput input.ReactTags__tagInputField,
-div.ReactTags__tagInput input.ReactTags__tagInputField:focus {
-    height: 31px;
-    margin: 0;
-    font-size: 12px;
-    width: 100%;
-    border: 1px solid #eee;
-    padding-left: 10px;
-    outline: none;
-}
-
-/* Styles for selected tags */
-div.ReactTags__selected span.ReactTags__tag {
-    border: 1px solid #ddd;
-    background: #eee;
-    font-size: 12px;
-    display: inline-block;
-    padding: 5px;
-    margin: 0 5px 10px;
-    cursor: move;
-    border-radius: 2px;
-}
-div.ReactTags__selected a.ReactTags__remove {
-    color: #aaa;
-    margin-left: 5px;
-    cursor: pointer;
-}
-
-/* Styles for suggestions */
-div.ReactTags__suggestions {
-    position: fixed;
-}
-div.ReactTags__suggestions ul {
-    list-style-type: none;
-    box-shadow: .05em .01em .5em rgba(0,0,0,.2);
-    background: white;
-    width: 200px;
-    padding-left: 0;
-    margin-top: 0;
-}
-div.ReactTags__suggestions li {
-    border-bottom: 1px solid #ddd;
-    padding: 5px 10px;
-    margin: 0;
-}
-div.ReactTags__suggestions li mark {
-    text-decoration: underline;
-    background: none;
-    font-weight: 600;
-}
-div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
-    background: #b7cfe0;
-    cursor: pointer;
+/* Recharts */
+.recharts-yAxis .recharts-cartesian-axis-tick:first-child .recharts-cartesian-axis-tick-value {
+    display: none;
 }

@@ -10,37 +10,54 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog";
-import { LabelRadio } from "material-ui/Radio";
 import Grid from "material-ui/Grid";
 import Tabs, { Tab } from 'material-ui/Tabs';
+
 import TextField from 'material-ui/TextField';
 import Select from 'react-select';
+import equal from 'deep-equal'
 
 import KanbanBoard from "./_KanbanBoard";
-import SearchPackages from "./_SearchPackages";
+import { SearchPackages } from '../Shared'
 
-import ADD_USER_TO_PACKAGE from "../../mutations/addUserToPackage";
-import REMOVE_USER_FROM_PACKAGE from "../../mutations/removeUserFromPackage";
-import UPDATE_USER_KANBAN_LAYOUTS from '../../mutations/updateUserKanbanLayouts';
+import CURRENT_USER from '../../queries/currentUser'
+import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
+import DELETE_USER_KANBAN_PACKAGE from '../../mutations/deleteUserKanbanPackage'
+import UPDATE_KANBAN_PACKAGE_STATUS from '../../mutations/updateKanbanPackageStatus'
+import UPDATE_KANBAN_CARDS from '../../mutations/updateKanbanCards';
 import UPDATE_USER_KANBAN_BOARDS from "../../mutations/updateUserKanbanBoards";
-import FETCH_CURRENT_USER from '../../queries/user';
+import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
 
-import 'react-select/dist/react-select.css';
+import 'react-select/dist/react-select.css'
 
 class KanbanBoardContainer extends Component {
   state = {
     cards: this.props.cards,
     kanbanBoards: this.props.user.kanbanBoards,
-    kanbanLayouts: this.props.user.kanbanLayouts,
     isAddPackageModalOpen: false,
     isAddBoardModalOpen: false,
     addBoardName: "",
-    selectedList: "",
+    selectedStatus: "",
     selectedBoard: "",
     selectedPackage: {},
     tabIndex: 0,
     currentBoard: "All"
   };
+
+  static defaultProps = {
+    kanbanStatusOptions: [
+      { label: 'Backlog', value: 'backlog' },
+      { label: 'Trial', value: 'trial' },
+      { label: 'Production', value: 'production' },
+      { label: 'Archive', value: 'archive' }
+    ]
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!equal(this.props.cards, nextProps.cards)) {
+      this.setState({ cards: nextProps.cards })
+    }
+  }
 
   _handlePackageModalOpen = () => {
     this.setState({ isAddPackageModalOpen: true });
@@ -50,12 +67,17 @@ class KanbanBoardContainer extends Component {
     this.setState({ isAddPackageModalOpen: false });
   };
 
-  _handleListSelection = e => {
-    this.setState({ selectedList: e.target.value });
-  };
 
   _handleBoardSelection = option => {
-    this.setState({ selectedBoard: option.value });
+    if (option) {
+      this.setState({ selectedBoard: option.value });
+    }
+  };
+
+  _handleStatusSelection = option => {
+    if (option) {
+      this.setState({ selectedStatus: option.value });
+    }
   };
 
   _handlePackageSelection = (pkg) => {
@@ -63,65 +85,129 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddPackage = async () => {
-    let { cards, selectedList, selectedBoard } = this.state
-    let pkg = this.state.selectedPackage
+    const { user } = this.props
+    const { selectedStatus, selectedBoard, selectedPackage } = this.state
+    const { owner_name, package_name } = selectedPackage._source
+
+    let isPkgOnBoard = { name: '', board: '' }
+
+    this.state.cards.forEach(card => {
+      if (card.packageName === package_name && card.ownerName === owner_name) {
+        isPkgOnBoard.packageName = card.packageName
+        isPkgOnBoard.board = card.board
+      }
+    })
+
+    if (isPkgOnBoard.packageName) {
+      return alert('Please first remove package from board')
+    }
 
     try {
-      await this.props.addUserToPackage({
+      console.log('adding package')
+      await this.props.createUserKanbanPackage({
         variables: {
-          userId: this.props.user.id,
-          packageId: pkg.id,
+          ownerName: owner_name,
+          packageId: selectedPackage._id,
+          packageName: package_name,
+          status: selectedStatus,
+          username: user.username
         },
+        refetchQueries: [{
+          query: USER_KANBAN_PACKAGES,
+          variables: { username: user.username }
+        }]
       });
+      console.log('added package')
 
-      pkg.board = selectedBoard
-      pkg.list = selectedList
+      console.log('updating card positions')
+      const token = localStorage.getItem('pkgRadarToken')
+      const kanbanCards = this._formatKanbanCards()
+      const card = {
+        board: selectedBoard,
+        ownerName: selectedPackage._source.owner_name,
+        packageName: selectedPackage._source.package_name,
+      }
 
-      cards = [...cards, pkg]
-      this.setState({ cards }, this._updateUserKanbanLayouts)
+      await this.props.updateKanbanCards({
+        variables: {
+          username: user.username,
+          kanbanCards: [...kanbanCards, card]
+        },
+        refetchQueries: [{
+          query: CURRENT_USER,
+          variables: { username: user.username, token }
+        }]
+      });
+      console.log('updated card positions')
+      this._closePackageModal()
     } catch (e) {
       console.error(e.message);
+      this._closePackageModal()
     }
   };
 
-  _handleRemovePackage = async (pkgId, pkgName, pkgBoard) => {
-    let { cards } = this.state
+  _handleRemovePackage = async (pkgId, packageName, currentBoard, status, ownerName) => {
+    const { user } = this.props
+    const token = localStorage.getItem('pkgRadarToken')
 
     try {
-      await this.props.removeUserFromPackage({
+      console.log('updating card positions')
+      let kanbanCards = this._formatKanbanCards()
+      kanbanCards = kanbanCards.filter(card => {
+        return ownerName !== card.ownerName && packageName !== card.packageName
+      })
+
+      await this.props.updateKanbanCards({
         variables: {
-          userId: this.props.user.id,
+          username: user.username,
+          kanbanCards
+        },
+        refetchQueries: [{
+          query: CURRENT_USER,
+          variables: { username: user.username, token }
+        }]
+      });
+      console.log('updated card positions')
+
+      console.log('removing package')
+      await this.props.deleteUserKanbanPackage({
+        variables: {
+          username: user.username,
           packageId: pkgId
         },
-      });
-
-      cards = [...cards].filter(card => card.id !== pkgId)
-      this.setState({ cards }, this._updateUserKanbanLayouts)
+        refetchQueries: [{
+          query: USER_KANBAN_PACKAGES,
+          variables: { username: user.username }
+        }]
+      })
+      console.log('removed package')
     } catch (e) {
       console.error(e.message);
     }
   };
 
-  _formatKanbanLayouts = (useState) => {
+  _formatKanbanCards = (addTypename) => {
     const { cards } = this.state;
     let kanbanLayouts = [];
 
     for (let index in cards) {
-      const { name, board, list } = cards[index];
-      kanbanLayouts.push({ name, board, list });
+      const { board, ownerName, packageName } = cards[index];
+      const card = { board, ownerName, packageName }
+      if (addTypename) card.__typename = 'KanbanCard'
+      kanbanLayouts.push(card);
     }
     return kanbanLayouts;
   };
 
-  _updateUserKanbanLayouts = async () => {
-    console.log('updating kanban board layouts')
+  _updateKanbanCards = async () => {
+    const { currentUser } = this.props
     try {
-      await this.props.updateUserKanbanLayouts({
-        variables: { 
-          id: this.props.user.id, 
-          kanbanLayouts: this._formatKanbanLayouts()
+      console.log('updating kanban board layouts')
+      await this.props.updateKanbanCards({
+        variables: {
+          username: currentUser.username,
+          kanbanCards: this._formatKanbanCards()
         },
-        refetchQueries: [{ query: FETCH_CURRENT_USER }]
       });
       console.log('updated kanban board layouts')
       this._closePackageModal()
@@ -130,35 +216,15 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  updateCardList = (cardId, listId) => {
-    // Find the index of the card
-    let cardIndex = this.state.cards.findIndex(card => card.id === cardId);
-    // Get the current card
-    let card = this.state.cards[cardIndex];
-    // Only proceed if hovering over a different list
-    if (card.list !== listId) {
-      // set the component state to the mutated object
-      this.setState(
-        update(this.state, {
-          cards: {
-            [cardIndex]: {
-              list: { $set: listId }
-            }
-          }
-        })
-      );
-    }
-  };
-
-  updateCardPosition = (cardId, afterId) => {
+  updateCardPositions = (cardId, afterId) => {
     // Only proceed if hovering over a different card
     if (cardId !== afterId) {
       // Find the index of the card
-      let cardIndex = this.state.cards.findIndex(card => card.id === cardId);
+      let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
       // Get the current card
       let card = this.state.cards[cardIndex];
       // Find the index of the card the user is hovering over
-      let afterIndex = this.state.cards.findIndex(card => card.id === afterId);
+      let afterIndex = this.state.cards.findIndex(card => card.packageId === afterId);
       // Use splice to remove the card and reinsert it a the new index
       this.setState(
         update(this.state, {
@@ -170,11 +236,48 @@ class KanbanBoardContainer extends Component {
     }
   };
 
-  _handleTabChange = (event, tabIndex) => {
-    const currentBoard = this.props.user.kanbanBoards[tabIndex];
-    const cards = this.props.cards;
+  _updateKanbanPackageStatus = async (packageId) => {
+    const { currentUser } = this.props
+    const cardIndex = this.state.cards.findIndex(card => card.packageId === packageId)
+    const status = this.state.cards[cardIndex].status
 
-    this.setState({ tabIndex, currentBoard, cards });
+    try {
+      console.log('updating package status')
+      await this.props.updateKanbanPackageStatus({
+        variables: { username: currentUser.username, packageId, status }
+      });
+      console.log('updated package status')
+    } catch (e) {
+      console.error(e.message);
+    }
+  }
+
+  updateCardStatus = (cardId, statusId) => {
+    // Find the index of the card
+    let cardIndex = this.state.cards.findIndex(card => card.packageId === cardId);
+    // Get the current card
+    let card = this.state.cards[cardIndex];
+    // Only proceed if hovering over a different status
+    if (card.status !== statusId) {
+      // set the component state to the mutated object
+      this.setState(
+        update(this.state, {
+          cards: {
+            [cardIndex]: {
+              status: { $set: statusId }
+            }
+          }
+        })
+      );
+    }
+  };
+
+  _handleTabChange = (event, tabIndex) => {
+    const { user } = this.props
+    const kanbanBoards = user.kanbanBoards
+    const currentBoard = kanbanBoards[tabIndex];
+
+    this.setState({ tabIndex, currentBoard });
   };
 
   _handleAddBoardModalOpen = () => {
@@ -190,38 +293,39 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddBoard = async () => {
-    const { user, updateUserKanbanBoards } = this.props;
     console.log(`adding ${this.state.addBoardName} to user boards`);
 
-    try {
-      const response = await updateUserKanbanBoards({
-        variables: {
-          id: user.id,
-          kanbanBoards: [...user.kanbanBoards, this.state.addBoardName]
-        },
-        update: (store, { data: { updateUser } }) => {
-          const kanbanBoards = updateUser.kanbanBoards;
-          store.writeQuery({
-            query: FETCH_CURRENT_USER,
-            data: { 
-              user: {
-                ...user, kanbanBoards
-              }
-             }
-          });
-        }
-      });
-      
-      const boards = response.data.updateUser.kanbanBoards;
-      const tabIndex = boards.length - 1;
-      const currentBoard = boards[tabIndex];
+    const { user, updateUserKanbanBoards } = this.props;
+    const kanbanBoards = [...user.kanbanBoards, this.state.addBoardName]
 
-      this.setState({ 
-        tabIndex, 
-        currentBoard, 
-        addBoardName: "", 
-        isAddBoardModalOpen: false 
+    try {
+      await updateUserKanbanBoards({
+        variables: { username: user.username, kanbanBoards },
+        update: (store, { data: { updateUser } }) => {
+          const token = localStorage.getItem('pkgRadarToken')
+          // Read the data from our cache for this query.
+          const data = store.readQuery({
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
+          });
+          // Add our comment from the mutation to the end.
+          data.currentUser.kanbanBoards = updateUser.user.kanbanBoards;
+          console.log('data', data)
+          // Write our data back to the cache.
+          store.writeQuery({ query: CURRENT_USER, data });
+        },
       });
+
+      const tabIndex = kanbanBoards.length - 1;
+      const currentBoard = kanbanBoards[tabIndex];
+
+      this.setState({
+        tabIndex,
+        currentBoard,
+        addBoardName: "",
+        isAddBoardModalOpen: false
+      });
+      console.log('updated user kanban boards')
     } catch (e) {
       console.error(e.message);
       this.setState({ addBoardName: "", isAddBoardModalOpen: false });
@@ -229,31 +333,34 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleRemoveBoard = async () => {
+    console.log('removing kanban board')
+    const { user } = this.props
     const currentBoard = this.state.currentBoard;
-    const boardNotEmpty = find(this.state.cards, { board: currentBoard })
-    if (boardNotEmpty) return  alert('Remove packages from board')
+    const packagesOnBoard = find(this.state.cards, { board: currentBoard })
+    if (packagesOnBoard) return  alert('Remove packages from current board')
+
+    const kanbanBoards = [...user.kanbanBoards].filter(board => {
+      return board !== currentBoard;
+    })
 
     try {
       await this.props.updateUserKanbanBoards({
-        variables: {
-          id: this.props.user.id,
-          kanbanBoards: [...this.props.user.kanbanBoards].filter(board => {
-            return board !== currentBoard;
-          })
-        },
+        variables: { username: user.username, kanbanBoards },
         update: (store, { data: { updateUser } }) => {
-          const kanbanBoards = updateUser.kanbanBoards;
-          store.writeQuery({
-            query: FETCH_CURRENT_USER,
-            data: { 
-              user: {
-                ...this.props.user, kanbanBoards
-              }
-             }
+          const token = localStorage.getItem('pkgRadarToken')
+          // Read the data from our cache for this query.
+          const data = store.readQuery({
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
           });
-        }
+          // Add our comment from the mutation to the end.
+          data.currentUser.kanbanBoards = updateUser.user.kanbanBoards;
+          // Write our data back to the cache.
+          store.writeQuery({ query: CURRENT_USER, data });
+        },
       });
       this.setState({ tabIndex: 0, currentBoard: "All" });
+      console.log('removed kanban board')
     } catch (e) {
       console.error(e.message);
       this.setState({ tabIndex: 0, currentBoard: "All" });
@@ -271,16 +378,30 @@ class KanbanBoardContainer extends Component {
     return arr;
   };
 
+  _handleSwipeChange = index => {
+    this.setState({ tabIndex: index });
+  };
+
   render() {
-    const { user } = this.props;
-    const boardSelectOptions = this._formatBoardSelectItems();
+    const { userIsCurrentUser, user } = this.props;
+    let { cards, currentBoard } = this.state
+
+    const kanbanBoards = user.kanbanBoards
+    const boardSelectOptions = this._formatBoardSelectItems()
+
+    let kanbanBoardWidth = 12
+    if (userIsCurrentUser) kanbanBoardWidth = 11
+
+    if (currentBoard !== "All") {
+      cards = [...cards].filter(card => card.board === currentBoard)
+    }
 
     return (
-      <div>
+      <div style={{ position: 'relative' }}>
         <Grid container>
           <Grid item xs={9} style={{ paddingTop: 0 }}>
             <Tabs
-              index={this.state.tabIndex}
+              value={this.state.tabIndex}
               onChange={this._handleTabChange}
               indicatorColor="primary"
               textColor="primary"
@@ -288,9 +409,7 @@ class KanbanBoardContainer extends Component {
               scrollButtons="auto"
               style={{ marginBottom: "20px" }}
             >
-              {user.kanbanBoards.map(board => {
-                return <Tab key={board} label={board} />;
-              })}
+              {kanbanBoards.map(board => <Tab key={board} label={board} /> )}
             </Tabs>
           </Grid>
           <Grid item xs={3}>
@@ -300,39 +419,58 @@ class KanbanBoardContainer extends Component {
                   <Button raised style={{ marginRight: "10px" }}>
                     Subscribe
                   </Button>}
-                {this.state.currentBoard !== "All" &&
+                {this.state.currentBoard !== "All" && userIsCurrentUser &&
                   <Button
                     raised
                     onClick={this._handleRemoveBoard}
-                    style={{ marginRight: "10px" }}
+                    style={{
+                      background: 'firebrick',
+                      color: 'white',
+                      marginRight: "10px"
+                    }}
                   >
                     Remove Board
                   </Button>}
-                <Button raised onClick={this._handleAddBoardModalOpen}>
-                  Add Board
-                </Button>
+                {userIsCurrentUser &&
+                  <Button
+                    color='primary'
+                    raised
+                    onClick={this._handleAddBoardModalOpen}
+                  >
+                    Add Board
+                  </Button>}
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <KanbanBoard
-          cards={this.state.cards}
-          cardCallbacks={{
-            updateStatus: throttle(this.updateCardList),
-            updatePosition: throttle(this.updateCardPosition, 500),
-            persistCardDrag: this._updateUserKanbanLayouts,
-            removeCard: this._handleRemovePackage
-          }}
-          currentBoard={this.state.currentBoard}
-        />
-        <Button
-          fab
-          color="primary"
-          style={{ position: "fixed", bottom: "20px", right: "20px" }}
-          onClick={this._handlePackageModalOpen}
-        >
-          <AddIcon />
-        </Button>
+        <Grid container>
+          <Grid item xs={kanbanBoardWidth}>
+            <KanbanBoard
+              cards={cards}
+              cardCallbacks={{
+                updateStatus: this.updateCardStatus,
+                updatePosition: throttle(this.updateCardPositions, 500),
+                persistCardPositions: this._updateKanbanCards,
+                persistPackageStatus: this._updateKanbanPackageStatus,
+                removeCard: this._handleRemovePackage
+              }}
+              currentBoard={this.state.currentBoard}
+              userIsCurrentUser={userIsCurrentUser}
+            />
+          </Grid>
+        </Grid>
+        {
+          userIsCurrentUser &&
+          <Button
+            fab
+            color="primary"
+            style={{ position: "absolute", top: "75px", right: 0 }}
+            onClick={this._handlePackageModalOpen}
+            autoFocus={false}
+          >
+            <AddIcon />
+          </Button>
+        }
 
         {/* Add Board */}
         <Dialog
@@ -352,7 +490,7 @@ class KanbanBoardContainer extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className="mr3" onTouchTap={this._handleAddBoardModalClose}>
+            <Button className="mr3" onClick={this._handleAddBoardModalClose}>
               Cancel
             </Button>
             <Button
@@ -360,7 +498,7 @@ class KanbanBoardContainer extends Component {
               raised
               color="primary"
               disabled={!this.state.addBoardName}
-              onTouchTap={this._handleAddBoard}
+              onClick={this._handleAddBoard}
             >
               Submit
             </Button>
@@ -370,10 +508,16 @@ class KanbanBoardContainer extends Component {
         {/* Add Package */}
         <Dialog
           open={this.state.isAddPackageModalOpen}
-          onRequestClose={this._handlePackageModal}
+          onRequestClose={this._closePackageModal}
         >
           <DialogTitle>Add Package</DialogTitle>
-          <DialogContent style={{ width: "500px", marginBottom: "30px" }}>
+          <DialogContent
+            style={{
+              width: "550px",
+              marginBottom: "20px",
+              overflowY: 'inherit'
+            }}
+          >
             <Select
               options={boardSelectOptions}
               placeholder="Select Board"
@@ -382,51 +526,32 @@ class KanbanBoardContainer extends Component {
               autofocus
               style={{ marginBottom: "20px" }}
             />
-            <div style={{ marginBottom: "20px" }}>
-              <LabelRadio
-                label="Backlog"
-                value="backlog"
-                checked={this.state.selectedList === "backlog"}
-                onChange={this._handleListSelection}
-              />
-              <LabelRadio
-                label="Staging"
-                value="staging"
-                checked={this.state.selectedList === "staging"}
-                onChange={this._handleListSelection}
-              />
-              <LabelRadio
-                label="Production"
-                value="production"
-                checked={this.state.selectedList === "production"}
-                onChange={this._handleListSelection}
-              />
-              <LabelRadio
-                label="Archive"
-                value="archive"
-                checked={this.state.selectedList === "archive"}
-                onChange={this._handleListSelection}
-              />
-            </div>
+            <Select
+              options={this.props.kanbanStatusOptions}
+              placeholder="Select Status"
+              value={this.state.selectedStatus}
+              onChange={this._handleStatusSelection}
+              style={{ marginBottom: "30px" }}
+            />
             <SearchPackages
               _handlePackageSelection={this._handlePackageSelection}
               selectedBoard={this.state.selectedBoard}
-              selectedList={this.state.selectedList}
+              selectedStatus={this.state.selectedStatus}
             />
           </DialogContent>
-          <DialogActions>
-            <Button className="mr3" onTouchTap={this._closePackageModal}>
+          <DialogActions style={{ position: 'relative', zIndex: 1 }}>
+            <Button className="mr3" onClick={this._closePackageModal}>
               Cancel
             </Button>
             <Button
               raised
               color="primary"
               disabled={
-                !this.state.selectedList || 
+                !this.state.selectedStatus ||
                   !this.state.selectedBoard ||
                     !Object.keys(this.state.selectedPackage).length
               }
-              onTouchTap={this._handleAddPackage}
+              onClick={this._handleAddPackage}
             >
               Submit
             </Button>
@@ -438,8 +563,9 @@ class KanbanBoardContainer extends Component {
 }
 
 export default compose(
-  graphql(ADD_USER_TO_PACKAGE, { name: "addUserToPackage" }),
-  graphql(REMOVE_USER_FROM_PACKAGE, { name: "removeUserFromPackage" }),
-  graphql(UPDATE_USER_KANBAN_LAYOUTS, { name: "updateUserKanbanLayouts" }),
+  graphql(CREATE_USER_KANBAN_PACKAGE, { name: 'createUserKanbanPackage' }),
+  graphql(DELETE_USER_KANBAN_PACKAGE, { name: "deleteUserKanbanPackage" }),
+  graphql(UPDATE_KANBAN_PACKAGE_STATUS, { name: "updateKanbanPackageStatus" }),
+  graphql(UPDATE_KANBAN_CARDS, { name: "updateKanbanCards" }),
   graphql(UPDATE_USER_KANBAN_BOARDS, { name: "updateUserKanbanBoards" })
 )(KanbanBoardContainer)

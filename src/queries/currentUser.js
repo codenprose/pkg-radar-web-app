@@ -1,14 +1,14 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  query getUser($username: String!) {
-    user(payload: { username: $username }) {
+  query getCurrentUser($username: String!, $token: String!) {
+    currentUser(payload: { username: $username, token: $token }) {
       avatar
       bio
+      company
       connections {
         username
       }
-      company
       id
       kanbanBoards
       kanbanCards {

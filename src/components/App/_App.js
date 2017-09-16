@@ -1,31 +1,30 @@
 import React, { Component } from 'react'
-import { graphql, compose } from 'react-apollo'
 import { MuiThemeProvider, createMuiTheme  } from 'material-ui/styles'
-import PropTypes from 'prop-types'
-import Auth0Lock from 'auth0-lock'
+// import PropTypes from 'prop-types'
+import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
-import createPalette from 'material-ui/styles/palette'
-import { blueGrey } from 'material-ui/styles/colors'
+import { blueGrey } from 'material-ui/colors'
+import { Route } from 'react-router-dom'
 
 import { Header } from '../Header'
 import { Main } from '../Main'
-import Loader from './_Loader'
+import { GithubAuth } from '../Users'
+// import { Footer } from '../Footer'
+// import { Loader } from '../Shared'
 
-import CreateUserMutation from '../../mutations/createUser'
-import SignInMutation from '../../mutations/signinUser'
-import UserQuery from '../../queries/user'
+import CURRENT_USER from '../../queries/currentUser'
 
 const theme = createMuiTheme({
-  palette: createPalette({
+  palette: {
     primary: blueGrey,
-  }),
+  },
   overrides: {
     MuiAppBar: {
       colorDefault: {
         backgroundColor: 'white'
       },
       colorPrimary: {
-        backgroundColor: blueGrey[900]
+        backgroundColor: '#1b2327'
       },
     },
     MuiButton: {
@@ -41,118 +40,62 @@ const theme = createMuiTheme({
 
 
 class App extends Component {
-
-  static propTypes = {
-    data: PropTypes.object.isRequired
-  }
-
   state = {
     isLoading: false
-  }
+  };
 
-  constructor (props) {
-    super(props)
-
-    this.auth = new Auth0Lock('3EcDQT2bQj5591sVy1UZ9Ahc4CEirOuT', 'dkh215.auth0.com')
-  }
-
-  componentWillMount() {
-    this.auth.on('authenticated', (authResult) => {
-      console.log('authenticated')
-      this.setState({ isLoading: true })
-
-      const accessToken = window.localStorage.getItem('accessToken');
-      if (accessToken) {
-        window.localStorage.setItem('auth0IdToken', authResult.idToken)
-        this._siginInUser(authResult.idToken)
-      } else {
-        window.localStorage.setItem('accessToken', authResult.accessToken)
-        window.localStorage.setItem('auth0IdToken', authResult.idToken)
-
-        this.auth.getUserInfo(authResult.accessToken, (error, profile) => {
-          if (error) {
-            // Handle error
-            console.error(error)
-            return;
-          }
-
-          console.log(profile)
-          this._createUser(authResult.idToken, profile)
-        })
-      }
-
-    })
-  }
-
-  _siginInUser = async (idToken) => {
-    try {
-      await this.props.signinUser({
-        variables: { idToken },
-        update: (store, { data: { signinUser } }) => {
-          // Triggers component re-render
-          store.writeQuery({ 
-            query: UserQuery,
-            data: {
-              user: signinUser.user
-            }
-          })
-        }
-      });
-      this.setState({ isLoading: false })
-    } catch (e) {
-      console.error(e);
-      this.setState({ isLoading: false })
-    }
-  }
-
-  _createUser = (idToken, profile) => {
-    console.log('create user')
-
-    this.props.createUser({ 
-      variables: {
-        idToken: idToken,
-        name: profile.name,
-        username: profile.nickname,
-        email: profile.email,
-        avatar: profile.picture,
-        github: profile
-      }
-    })
-    .then((response) => {
-      console.log('create user response', response)
-      this.setState({ isLoading: false })
-
-      // route user to profile
-      const username = response.data.createUser.username
-      this.props.history.replace(`/profile/${username}`)
-    }).catch((e) => {
-      console.error(e.message)
-
-      if (e.message.includes('User already exists')) {
-        this.props.data.refetch()
-      }
-
-      this.setState({ isLoading: false })
-    })
+  githubAuth = () => {
+    const clientId = '1050d5bcb642ab0beb2e'
+    window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`
   }
 
   render() {
-    const { data } = this.props
-    if (data.loading || this.state.isLoading) return <Loader />
+    const { data, location } = this.props;
+    const isUserAuthenticating = location.pathname.includes('github')
+    let currentUser = '', isUserLoading = false
+    
+    if (data) { 
+      currentUser =  data.currentUser
+      isUserLoading = data.loading
+    }
 
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          <Header user={data.user} auth={this.auth} />
-          <Main user={data.user} auth={this.auth} />
+          {
+            !isUserAuthenticating &&
+            <div>
+              <Header
+                user={currentUser}
+                isUserLoading={isUserLoading}
+                githubAuth={this.githubAuth}
+              />
+              <Main 
+                isUserLoading={isUserLoading}
+                user={currentUser} 
+              />
+            </div>
+          }
+          <Route exact path="/github/auth" component={GithubAuth} />
         </div>
       </MuiThemeProvider>
-    )
+    );
   }
 }
 
+const getCurrentUserOptions = {
+  options: (props) => {
+    return {
+      skip: !localStorage.getItem('pkgRadarToken'),
+      fetchPolicy: 'network-only',
+      variables: {
+        username: localStorage.getItem('pkgRadarUsername'),
+        token: localStorage.getItem('pkgRadarToken')
+      }
+    };
+  }
+};
+
 export default compose(
-  graphql(UserQuery, { options: {fetchPolicy: 'network-only'}} ),
-  graphql(CreateUserMutation, {name: 'createUser'} ),
-  graphql(SignInMutation, {name: 'signinUser'} )
-)(withRouter(App))
+  graphql(CURRENT_USER, getCurrentUserOptions),
+)(withRouter(App));

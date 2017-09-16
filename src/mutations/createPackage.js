@@ -1,10 +1,12 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  mutation CreatePackageMutation($repoUrl: String!, $createdBy: String!) {
-    createPackage(repoUrl: $repoUrl, createdBy: $createdBy) {
-      id,
-      name
+  mutation createPackage($owner: String!, $name: String!, $createdBy: String!) {
+    createPackage(owner: $owner, name: $name, createdBy: $createdBy) {
+      package {
+        ownerName
+        packageName
+      }
     }
   }
 `

@@ -71,7 +71,7 @@ class UserSettings extends Component {
               </TableRowColumn>
               <TableRowColumn style={{ textAlign: 'center' }}>
                 <IconButton
-                  onTouchTap={() => this.handleRemovePackage('123')}
+                  onClick={() => this.handleRemovePackage('123')}
                 >
                   <Delete />
                 </IconButton>

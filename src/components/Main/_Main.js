@@ -1,28 +1,36 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import { PackageDetail, PackageIndex, PackageUpdate } from '../Packages'
-import { UserProfile, UserSettings } from '../Users'
-
+import { PackageDetail } from '../Packages'
+import { UserConnections, UserProfile, UserSettings } from '../Users'
+import { Home } from '../Home'
+import { SearchResults } from '../SearchResults'
+import { Languages } from '../Languages'
+import { Discovery } from '../Discovery'
 
 class Main extends Component {
   render() {
-    const { user } = this.props
+    const { user, isUserLoading } = this.props
 
     return (
-      <main 
-        style={{ 
-          maxWidth: '1600px', 
-          margin: '0 auto',
-          padding: '20px'
-        }}
-      >
+      <main>
         <Switch>
-          <Route exact path="/" render={(props) => <PackageIndex {...props} />} />
-          <Route exact path="/package/:name" render={(props) => <PackageDetail {...props} />} />
-          <Route exact path="/package/update/:name" render={(props) => <PackageUpdate {...props} />} />
-          <Route exact path="/profile/:username" render={(props) => <UserProfile {...props} user={user} />} />
-          <Route exact path="/settings" render={(props) => <UserSettings {...props} user={user} />} />
+          <Route exact path="/" render={(props) => <Home {...props} />} />
+          <Route exact path="/@:username" render={
+            (props) => <UserProfile {...props} currentUser={user} isCurrentUserLoading={isUserLoading} />} 
+          />
+          <Route exact path="/@:username/connections" render={
+              (props) => <UserConnections {...props} currentUser={user} />
+            } 
+          />
+          <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
+          <Route exact path="/:owner/:package" render={
+              (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
+            } 
+          />
+          <Route exact path="/search" component={SearchResults} />
+          <Route exact path="/languages" component={Languages} />
+          <Route exact path="/discovery" component={Discovery} />
         </Switch>
       </main>
     )
