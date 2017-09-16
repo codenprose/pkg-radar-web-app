@@ -66,7 +66,7 @@ class PackageDetail extends Component {
   state = {
     index: 0,
     isAddPackageModalOpen: false,
-    isModalOpen: false,
+    isRecommendationModalOpen: false,
     isAddPackageLoading: false,
     recommendationSearch: "",
     recommendationSelection: {},
@@ -181,12 +181,18 @@ class PackageDetail extends Component {
     this.setState({ index });
   };
 
-  _handleModalOpen = () => {
-    this.setState({ isModalOpen: true });
+  // Recommendations Modal
+  _openRecommendationModal = () => {
+    if (!this.props.currentUser) {
+      return alert('Please login to add recommendations')
+    }
+
+    this.setState({ isRecommendationModalOpen: true });
   };
 
-  _handleModalClose = () => {
-    this.setState({ isModalOpen: false });
+  // Recommendations Modal
+  _closeRecommendationModal = () => {
+    this.setState({ isRecommendationModalOpen: false });
   };
 
   _handleRecommendationSearch = pkg => {
@@ -254,6 +260,9 @@ class PackageDetail extends Component {
   };
 
   _openPackageModal = () => {
+    if (!this.props.currentUser) {
+      return alert('Please login to save packages')
+    }
     this.setState({ isAddPackageModalOpen: true });
   };
 
@@ -666,7 +675,7 @@ class PackageDetail extends Component {
                       style={{ height: "100%" }}
                     >
                       <Grid item>
-                        <Button raised onClick={() => this._handleModalOpen()}>
+                        <Button raised onClick={() => this._openRecommendationModal()}>
                           Add Recommendation
                         </Button>
                       </Grid>
@@ -767,8 +776,8 @@ class PackageDetail extends Component {
         {/* Recommendation */}
         <Dialog
           style={{ width: "100%" }}
-          open={this.state.isModalOpen}
-          onRequestClose={this._handleModalClose}
+          open={this.state.isRecommendationModalOpen}
+          onRequestClose={this._closeRecommendationModal}
         >
           <DialogTitle>Add New Package</DialogTitle>
           <DialogContent style={{ width: "500px" }}>
@@ -781,7 +790,7 @@ class PackageDetail extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className="mr3" onClick={this._handleModalClose}>
+            <Button className="mr3" onClick={this._closeRecommendationModal}>
               Cancel
             </Button>
             <Button

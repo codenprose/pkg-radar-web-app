@@ -52,10 +52,13 @@ class App extends Component {
   render() {
     const { data, location } = this.props;
     const isUserAuthenticating = location.pathname.includes('github')
-
-    const currentUser = data.currentUser
-    const isUserLoading = data.loading
+    let currentUser = '', isUserLoading = false
     
+    if (data) { 
+      currentUser =  data.currentUser
+      isUserLoading = data.loading
+    }
+
     return (
       <MuiThemeProvider theme={theme}>
         <div>
@@ -83,6 +86,7 @@ class App extends Component {
 const getCurrentUserOptions = {
   options: (props) => {
     return {
+      skip: !localStorage.getItem('pkgRadarToken'),
       fetchPolicy: 'network-only',
       variables: {
         username: localStorage.getItem('pkgRadarUsername'),

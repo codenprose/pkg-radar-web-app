@@ -28,6 +28,22 @@ function renderInput(inputProps) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
+  if (suggestion.inputValue) {
+    return (
+      <MenuItem 
+        selected={isHighlighted} 
+        style={{ height: 'auto' }} 
+        component="div"
+      >
+        <div>
+          <span style={{ fontSize: '20px', color: '#2196F3' }}>
+            {suggestion.inputValue}
+          </span>
+        </div>
+      </MenuItem>
+    )
+  }
+
   if (suggestion._type === 'packages') {
     const matches = match(suggestion._source.package_name, query);
     const parts = parse(suggestion._source.package_name, matches);
@@ -172,6 +188,7 @@ const getSuggestionValue = suggestion => {
   } else if (suggestion._type === 'users') {
     return suggestion._source.username
   }
+  return suggestion.inputValue
 }
 
 const styles = theme => ({
@@ -209,7 +226,7 @@ const styles = theme => ({
 class SearchMain extends Component {
   state = {
     value: '',
-    suggestions: ['hello'],
+    suggestions: [],
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
@@ -234,9 +251,9 @@ class SearchMain extends Component {
       const hits = body.hits.hits
       // console.log('hits', hits)
       if (hits.length) {
-        this.setState({ suggestions: hits })
+        this.setState({ suggestions: [{ inputValue }, ...hits] })
       } else {
-        this.setState({ suggestions: [] })
+        this.setState({ suggestions: [{ inputValue }] })
       }
     }, error => {
       console.trace(error.message);
@@ -256,6 +273,9 @@ class SearchMain extends Component {
     } else if (response.suggestion._type === 'users') {
       const { username } = response.suggestion._source
       this.props.history.push(`/@${username}`)
+    } else {
+      const query = response.suggestion.inputValue.replace(/\s/g, '+')
+      this.props.history.push(`/search?q=${query}`)
     }
   }
 
@@ -289,6 +309,7 @@ class SearchMain extends Component {
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
           focusInputOnSuggestionClick={false}
+          highlightFirstSuggestion
           inputProps={{
             autoFocus: true,
             placeholder: placeholder ? placeholder : '',

@@ -16,8 +16,15 @@ class SearchResults extends Component {
   }
 
   componentWillMount() {
-    const search = this.props.location.search
-    const params = queryString.parse(search)
+    const query = this.props.location.search
+    const params = queryString.parse(query)
+    
+    this._handleSearch(params.q)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const query = nextProps.location.search
+    const params = queryString.parse(query)
     
     this._handleSearch(params.q)
   }

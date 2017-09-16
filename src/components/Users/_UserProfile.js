@@ -10,7 +10,6 @@ import Button from "material-ui/Button";
 import { KanbanBoardContainer } from "../Kanban";
 import { Loader } from '../Shared'
 
-// import userBgImg from "../../images/user_profile_bg.jpg"
 import radarBgImg from "../../images/nathan_anderson_radar.jpg"
 
 import CURRENT_USER from '../../queries/currentUser'
@@ -112,9 +111,11 @@ class UserProfile extends Component {
   }
 
   _createUserConnection = async () => {
-    console.log('adding connection')
     const { currentUser, user } = this.props
+    if (!currentUser) return alert('Please login first')
+    
     const token = localStorage.getItem('pkgRadarToken')
+    console.log('adding connection')
 
     try {
       await this.props.createUserConnection({

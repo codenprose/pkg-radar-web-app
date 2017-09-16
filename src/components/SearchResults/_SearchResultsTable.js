@@ -6,7 +6,6 @@ import Button from "material-ui/Button";
 import Humanize from "humanize-plus";
 
 const SearchResultsTable = ({ data }) => {
-  console.log(data);
   if (!data.length) {
     return <h3>No Results Found</h3>;
   }

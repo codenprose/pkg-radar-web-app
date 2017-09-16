@@ -179,7 +179,7 @@ class Header extends Component {
                     TOP LANGUAGES
                   </Link>
                   <Link
-                    to="/"
+                    to="/@dkh215"
                     className="no-underline"
                     style={{
                       color: 'white',
@@ -248,7 +248,7 @@ class Header extends Component {
                         onClick={githubAuth}
                       >
                         <i className="fa fa-lg fa-github mr2" />
-                        Login with Github
+                        Login / Sign Up
                       </Button>
                     </div>}
                   {!isUserLoading && user &&
