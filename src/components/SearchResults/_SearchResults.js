@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
-import Grid from 'material-ui/Grid'
 import queryString from 'query-string'
 import elasticsearch from 'elasticsearch'
 
-import { PackageCard } from '../Packages'
+import SearchResultsTable from './_SearchResultsTable'
 import { Loader } from '../Shared'
 
 const client = new elasticsearch.Client({
   host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
 });
 
-class Search extends Component {
+class SearchResults extends Component {
   state = {
     isLoading: false,
     results: []
@@ -29,13 +28,17 @@ class Search extends Component {
     query = query.toLowerCase();
     client.search({
       index: 'pkg-radar-dev',
-      type: 'packages',
       body: {
         query: {
           query_string: {
+            fields : ["package_name^2", "owner_name", "tags.keyword", "username", "name"],
+            default_operator: 'AND',
             query: `${query}`
           },
-        }
+        },
+        sort: [
+          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+       ]
       }
     }).then(body => {
       const hits = body.hits.hits
@@ -43,7 +46,7 @@ class Search extends Component {
       if (hits.length) {
         this.setState({ results: hits, isLoading: false })
       } else {
-        this.setState({ suggestions: [], isLoading: false })
+        this.setState({ results: [], isLoading: false })
       }
     }, error => {
       this.setState({ isLoading: false })
@@ -56,33 +59,8 @@ class Search extends Component {
     if (this.state.isLoading) return <Loader />
     if (!results.length) return <h2>No Results</h2>
     
-    return (
-      <div>
-        <Grid container direction="row">
-          {
-            results.length &&
-            results.map(item => {
-              const pkg = item._source
-              return (
-                <Grid item xs={12} md={6} xl={4} key={item._id}>
-                  <PackageCard 
-                    avatar={pkg.owner_avatar}
-                    color={pkg.color}
-                    description={pkg.description}
-                    issues={pkg.issues}
-                    language={pkg.language}
-                    ownerName={pkg.owner_name}
-                    packageName={pkg.package_name}
-                    stars={pkg.stars}
-                  />
-                </Grid>
-              )
-            })
-          }
-        </Grid>
-      </div>
-    )
+    return <SearchResultsTable data={results} />
   }
 }
 
-export default Search
+export default SearchResults

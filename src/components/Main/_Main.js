@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import { PackageDetail, PackageUpdate } from '../Packages'
+import { PackageDetail } from '../Packages'
 import { UserConnections, UserProfile, UserSettings } from '../Users'
 import { Home } from '../Home'
-import { Search } from '../Search'
+import { SearchResults } from '../SearchResults'
 import { Languages } from '../Languages'
 import { Discovery } from '../Discovery'
 
@@ -28,8 +28,7 @@ class Main extends Component {
               (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
             } 
           />
-          <Route exact path="/:owner/:package/update" render={(props) => <PackageUpdate {...props} />} />
-          <Route exact path="/search" component={Search} />
+          <Route exact path="/search" component={SearchResults} />
           <Route exact path="/languages" component={Languages} />
           <Route exact path="/discovery" component={Discovery} />
         </Switch>

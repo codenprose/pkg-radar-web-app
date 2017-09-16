@@ -397,7 +397,7 @@ class KanbanBoardContainer extends Component {
     }
 
     return (
-      <div>
+      <div style={{ position: 'relative' }}>
         <Grid container>
           <Grid item xs={9} style={{ paddingTop: 0 }}>
             <Tabs
@@ -464,7 +464,7 @@ class KanbanBoardContainer extends Component {
           <Button
             fab
             color="primary"
-            style={{ position: "sticky", bottom: "20px", left: "100%" }}
+            style={{ position: "absolute", top: "75px", right: 0 }}
             onClick={this._handlePackageModalOpen}
             autoFocus={false}
           >

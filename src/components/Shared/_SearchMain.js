@@ -226,7 +226,7 @@ class SearchMain extends Component {
             query: `${inputValue}*`
           },
         },
-        sort : [
+        sort: [
           {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
        ]
       }
