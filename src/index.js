@@ -26,7 +26,6 @@ networkInterface.use([{
       req.options.headers = {}
     }
 
-    // get the authentication token from local storage if it exists
     const token = localStorage.getItem('pkgRadarToken')
     if (token) {
       req.options.headers.authorization = `Bearer ${token}`

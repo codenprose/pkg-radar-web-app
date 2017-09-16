@@ -58,7 +58,7 @@ const PackageDetailHeader = styled.div`
 `;
 
 const TabContainer = props =>
-  <div style={{ marginTop: "20px" }}>
+  <div style={{ position: "relative", marginTop: "20px" }}>
     {props.children}
   </div>;
 
@@ -686,13 +686,20 @@ class PackageDetail extends Component {
               </TabContainer>
 
               <TabContainer>
-                <div style={{ width: '100%', height: '450px' }}>
-                  {/* <Typography
-                    style={{ marginBottom: "10px", textAlign: 'center' }}
-                    type="title"
+                <div style={{ position: 'relative', width: '100%', height: '450px' }}>
+                  <h4 
+                    style={{ 
+                      position: 'absolute',
+                      zIndex: 1,
+                      right: '60px',
+                      borderRadius: '2px',
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, .5)',
+                      color: 'white'
+                    }}
                   >
-                    User Adoption Percentages
-                  </Typography> */}
+                    Coming Soon
+                  </h4>
                   {
                     this.state.index === 3 &&
                     <ResponsiveContainer>
