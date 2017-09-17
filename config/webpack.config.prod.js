@@ -247,7 +247,9 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': 'production',
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
     }),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({

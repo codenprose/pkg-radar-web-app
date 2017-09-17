@@ -14,10 +14,9 @@ import './index.css'
 // Needed for onTouchTap mobile event
 // http://stackoverflow.com/a/34015469/988941
 // injectTapEventPlugin()
-
+console.log('endpoint', process.env.GRAPHQL_ENDPOINT)
 const networkInterface = createNetworkInterface({
-  // uri: process.env.GRAPHQL_ENDPOINT,
-  uri: 'https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql'
+  uri: process.env.GRAPHQL_ENDPOINT,
 })
 
 networkInterface.use([{
