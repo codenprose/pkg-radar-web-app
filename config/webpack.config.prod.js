@@ -248,7 +248,8 @@ module.exports = {
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
+        NODE_ENV: JSON.stringify('production'),
+        GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT
       }
     }),
     // Minify the code.
