@@ -17,7 +17,7 @@ import './index.css'
 
 const networkInterface = createNetworkInterface({
   // uri: process.env.GRAPHQL_ENDPOINT,
-  uri: 'http://localhost:8000/graphql'
+  uri: 'https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql'
 })
 
 networkInterface.use([{
@@ -28,7 +28,7 @@ networkInterface.use([{
 
     const token = localStorage.getItem('pkgRadarToken')
     if (token) {
-      req.options.headers.authorization = `Bearer ${token}`
+      req.options.headers.authorization = `bearer ${token}`
     }
     next()
   },
