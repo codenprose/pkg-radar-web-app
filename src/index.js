@@ -11,10 +11,6 @@ import { App } from './components/App'
 
 import './index.css'
 
-// Needed for onTouchTap mobile event
-// http://stackoverflow.com/a/34015469/988941
-// injectTapEventPlugin()
-
 const networkInterface = createNetworkInterface({
   // uri: process.env.GRAPHQL_ENDPOINT,
   uri: 'http://localhost:8000/graphql'
@@ -28,7 +24,7 @@ networkInterface.use([{
 
     const token = localStorage.getItem('pkgRadarToken')
     if (token) {
-      req.options.headers.authorization = `Bearer ${token}`
+      req.options.headers.authorization = `bearer ${token}`
     }
     next()
   },

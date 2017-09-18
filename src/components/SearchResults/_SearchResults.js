@@ -6,7 +6,7 @@ import SearchResultsTable from './_SearchResultsTable'
 import { Loader } from '../Shared'
 
 const client = new elasticsearch.Client({
-  host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
+  host: process.env.ELASTIC_SEARCH_ENDPOINT
 });
 
 class SearchResults extends Component {
@@ -18,14 +18,12 @@ class SearchResults extends Component {
   componentWillMount() {
     const query = this.props.location.search
     const params = queryString.parse(query)
-    
     this._handleSearch(params.q)
   }
 
   componentWillReceiveProps(nextProps) {
     const query = nextProps.location.search
     const params = queryString.parse(query)
-    
     this._handleSearch(params.q)
   }
 
@@ -65,7 +63,6 @@ class SearchResults extends Component {
     const { results } = this.state
     if (this.state.isLoading) return <Loader />
     if (!results.length) return <h2>No Results</h2>
-    
     return <SearchResultsTable data={results} />
   }
 }

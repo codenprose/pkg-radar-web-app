@@ -11,7 +11,7 @@ import elasticsearch from 'elasticsearch'
 import Humanize from "humanize-plus";
 
 const client = new elasticsearch.Client({
-  host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
+  host: process.env.ELASTIC_SEARCH_ENDPOINT
 });
 
 function renderInput(inputProps) {
@@ -30,9 +30,9 @@ function renderInput(inputProps) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   if (suggestion.inputValue) {
     return (
-      <MenuItem 
-        selected={isHighlighted} 
-        style={{ height: 'auto' }} 
+      <MenuItem
+        selected={isHighlighted}
+        style={{ height: 'auto' }}
         component="div"
       >
         <div>
@@ -47,9 +47,9 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   if (suggestion._type === 'packages') {
     const matches = match(suggestion._source.package_name, query);
     const parts = parse(suggestion._source.package_name, matches);
-  
+
     return (
-      <MenuItem 
+      <MenuItem
         selected={isHighlighted}
         style={{ height: 'auto' }}
         component="div"
@@ -77,10 +77,10 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             })}
             <i className="fa fa-star ml3 mr1" aria-hidden="true" />
             <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
-  
+
             {/* <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
             <span>{Humanize.formatNumber(suggestion._source.issues)}</span> */}
-            
+
             <div style={{ lineHeight: '16px' }}>
               <span>tags: </span>
               <ul className='list dib pa0'>
@@ -90,8 +90,8 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                     if (i < 4) {
                       const matches = match(tag, query);
                       const parts = parse(tag, matches);
-  
-                      return ( 
+
+                      return (
                         <li key={tag} className='dib mr2'>
                           {parts.map((part, index) => {
                             return part.highlight
@@ -102,7 +102,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                                   {part.text}
                                 </span>;
                           })}
-                        </li> 
+                        </li>
                       )
                     }
                     return <span key={i} style={{ display: 'none' }}></span>
@@ -120,9 +120,9 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
 
     const matchesName = match(suggestion._source.name, query);
     const partsName = parse(suggestion._source.name, matchesName);
-  
+
     return (
-      <MenuItem 
+      <MenuItem
         selected={isHighlighted}
         style={{ height: 'auto' }}
         component="div"
@@ -281,7 +281,7 @@ class SearchMain extends Component {
 
   handleChange = (event, { newValue }) => {
     this.setState({
-      value: newValue,  
+      value: newValue,
     });
   };
 
@@ -289,7 +289,7 @@ class SearchMain extends Component {
     const { classes, id, placeholder } = this.props;
 
     return (
-      <div 
+      <div
         id={id}
         style={{ height: '100%' }}
       >
