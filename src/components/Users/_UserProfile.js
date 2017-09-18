@@ -103,7 +103,7 @@ class UserProfile extends Component {
       let pkg = packages[pkgIndex]
       
       if (pkg) {
-        pkg.board = layout.board
+        pkg = {...pkg, board: layout.board }
         cards.push(pkg)
       }
     }
