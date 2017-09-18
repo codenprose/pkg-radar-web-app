@@ -127,6 +127,10 @@ class UserProfile extends Component {
           {
             query: CURRENT_USER,
             variables: { username: currentUser.username, token }
+          },
+          {
+            query: GET_USER,
+            variables: { username: user.user.username }
           }
         ]
       })
@@ -151,6 +155,10 @@ class UserProfile extends Component {
           {
             query: CURRENT_USER,
             variables: { username: currentUser.username, token }
+          },
+          {
+            query: GET_USER,
+            variables: { username: user.user.username }
           }
         ]
       })

@@ -287,7 +287,7 @@ class Header extends Component {
                             Profile
                           </Link>
                         </MenuItem>
-                        <MenuItem onClick={this._handleUserMenuClose}>
+                        {/* <MenuItem onClick={this._handleUserMenuClose}>
                           <Link
                             to={`/settings`}
                             className="no-underline fw4"
@@ -295,7 +295,7 @@ class Header extends Component {
                           >
                             Settings
                           </Link>
-                        </MenuItem>
+                        </MenuItem> */}
                         <MenuItem onClick={() => this._logout()}>
                           Logout
                         </MenuItem>

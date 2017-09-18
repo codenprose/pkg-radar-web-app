@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { graphql, compose } from "react-apollo"
 import { Link } from "react-router-dom"
-import find from 'lodash/find'
 
 import Button from "material-ui/Button"
 import Grid from "material-ui/Grid"
@@ -19,17 +18,12 @@ class UserConnections extends Component {
     if (!userConnections.length) return 'No Connections'
 
     return userConnections.map(connection => {
-      // let btnDisabled = false
+      let btnDisabled = false
       let btnText = 'Connect'
 
-      if (currentUser) {
-        const connectedToCurrentUser = find(currentUser.connections, (obj) => { 
-          return obj.username === connection.username
-        })
-        if (connectedToCurrentUser) {
-          // btnDisabled = true
-          btnText = 'Connected'
-        }
+      if (currentUser && connection.username === currentUser.username) {
+        btnDisabled = true
+        btnText = 'Connected'
       }
 
       return (
@@ -64,7 +58,8 @@ class UserConnections extends Component {
                     </Link>
                   </Typography>
                   <Button 
-                    raised 
+                    raised
+                    disabled={btnDisabled} 
                     color='primary'
                   >
                     {btnText}
