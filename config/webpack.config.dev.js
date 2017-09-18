@@ -86,7 +86,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     extensions: ['.js', '.json', '.jsx'],
     alias: {
-      
+
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -116,7 +116,7 @@ module.exports = {
           {
             options: {
               formatter: eslintFormatter,
-              
+
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -165,7 +165,7 @@ module.exports = {
         include: paths.appSrc,
         loader: require.resolve('babel-loader'),
         options: {
-          
+
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/babel-loader/
           // directory for faster rebuilds.
@@ -225,8 +225,12 @@ module.exports = {
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': env.stringified,
-      'process.env.GRAPHQL_ENDPOINT': JSON.stringify('https://api.graph.cool/simple/v1/cj4de7is0kt0j01722tiovqqa')
+      'process.env': {
+        NODE_ENV: JSON.stringify('development'),
+        PUBLIC_URL: JSON.stringify(''),
+        GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT),
+        ELASTIC_SEARCH_ENDPOINT: JSON.stringify(process.env.ELASTIC_SEARCH_ENDPOINT)
+      }
     }),
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),

@@ -12,7 +12,7 @@ import Input from 'material-ui/Input/Input';
 import { MenuItem } from 'material-ui/Menu';
 
 const client = new elasticsearch.Client({
-  host: 'https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com'
+  host: process.env.ELASTIC_SEARCH_ENDPOINT
 });
 
 function renderInput(inputProps) {
@@ -67,8 +67,8 @@ function renderSuggestionsContainer(options) {
   const { containerProps, children } = options;
 
   return (
-    <Paper 
-      {...containerProps} 
+    <Paper
+      {...containerProps}
       square
       style={{ position: 'absolute', zIndex: '100' }}
     >
@@ -156,7 +156,7 @@ class SearchPackages extends Component {
 
   handleChange = (event, { newValue }) => {
     this.setState({
-      value: newValue,  
+      value: newValue,
     });
   };
 
@@ -164,7 +164,7 @@ class SearchPackages extends Component {
     const { classes, id } = this.props;
 
     return (
-      <div 
+      <div
         id={id}
         style={{ height: '100%' }}
       >

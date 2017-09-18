@@ -3,18 +3,12 @@ import { BrowserRouter } from 'react-router-dom'
 import ReactDOM from 'react-dom'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
-// import injectTapEventPlugin from 'react-tap-event-plugin
 import registerServiceWorker from './utils/registerServiceWorker'
 
 import { App } from './components/App'
-// import { ScrollToTop } from './components/Shared'
 
 import './index.css'
 
-// Needed for onTouchTap mobile event
-// http://stackoverflow.com/a/34015469/988941
-// injectTapEventPlugin()
-console.log('endpoint', process.env.GRAPHQL_ENDPOINT)
 const networkInterface = createNetworkInterface({
   uri: process.env.GRAPHQL_ENDPOINT,
 })

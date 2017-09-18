@@ -250,7 +250,8 @@ module.exports = {
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
         PUBLIC_URL: JSON.stringify(''),
-        GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT)
+        GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT),
+        ELASTIC_SEARCH_ENDPOINT: JSON.stringify(process.env.ELASTIC_SEARCH_ENDPOINT)
       }
     }),
     // Minify the code.
