@@ -1,5 +1,7 @@
 # pkg radar
 
+[DEMO]('https://pkgradar.netlify.com')
+
 ## The Stack
 - React
 - GraphQL (Apollo)
