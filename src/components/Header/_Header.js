@@ -118,7 +118,7 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 7, isSearchVisible = false
+    let userSectionWidth = 9, isSearchVisible = false
 
     if (location.pathname !== '/') {
       isSearchVisible = true
@@ -145,7 +145,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={5}  style={{ height: '100%' }}>
+              <Grid item xs={3}  style={{ height: '100%' }}>
                 <Grid container align='center'>
                   <Typography
                     type="title"
@@ -166,7 +166,7 @@ class Header extends Component {
                       {title}
                     </Link>
                   </Typography>
-                  <Link
+                  {/* <Link
                     to="/languages"
                     className="no-underline"
                     style={{
@@ -177,7 +177,7 @@ class Header extends Component {
                     }}
                   >
                     TOP LANGUAGES
-                  </Link>
+                  </Link> */}
                   <Link
                     to="/@dkh215"
                     className="no-underline"
@@ -188,9 +188,9 @@ class Header extends Component {
                       marginTop: '5px'
                     }}
                   >
-                    SAMPLE RADAR
+                    DEMO PROFILE
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/discovery"
                     className="no-underline"
                     style={{
@@ -201,13 +201,13 @@ class Header extends Component {
                     }}
                   >
                     DISCOVERY
-                  </Link>
+                  </Link> */}
                 </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={5}
+                  xs={7}
                   style={{
                     borderRadius: '2px',
                     height: '42px',
