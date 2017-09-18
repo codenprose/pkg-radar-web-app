@@ -249,7 +249,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
-        GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT
+        GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT)
       }
     }),
     // Minify the code.
