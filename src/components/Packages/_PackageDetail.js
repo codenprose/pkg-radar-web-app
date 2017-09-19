@@ -243,7 +243,6 @@ class PackageDetail extends Component {
     const { areRecommendationsLoading, recommendations } = this.state;
     
     if (areRecommendationsLoading) return
-    console.log(recommendations.length)
 
     if (!recommendations.length) {
       return (
@@ -256,7 +255,7 @@ class PackageDetail extends Component {
     return recommendations.map((item, i) => {
         const pkg = item._source
         return (
-          <Grid item xs={12} md={6} lg={6} xl={4} key={i}>
+          <Grid item xs={12} md={6} xl={4} key={i}>
             <Card
               style={{
                 marginBottom: "15px",
