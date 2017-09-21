@@ -12,13 +12,12 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
-import { Add } from 'material-ui-icons'
+import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
-import SearchIcon from 'material-ui-icons/Search'
 
 import { SearchMain } from '../Shared'
 
@@ -217,13 +216,15 @@ class Header extends Component {
                   }}
                 >
                   <div style={{ height: '100%' }}>
-                    <SearchIcon
+                    <Icon
                       style={{
                         position: 'absolute',
                         margin: '0 10px 0 15px',
                         top: '21px'
                       }}
-                    />
+                    >
+                      search
+                    </Icon>
                     <SearchMain
                       id='SearchMain--header'
                       placeholder='Search'
@@ -257,7 +258,9 @@ class Header extends Component {
                         onClick={this._handleModalOpen}
                         className="v-mid"
                       >
-                        <Add style={{ color: 'white' }} />
+                        <Icon style={{ color: 'white' }}>
+                          add
+                        </Icon>
                       </IconButton>
                       <Avatar
                         src={user.avatar}

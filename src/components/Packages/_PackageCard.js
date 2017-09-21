@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import Card, { CardHeader, CardContent, CardActions } from "material-ui/Card";
 import Button from "material-ui/Button";
 import { Link } from "react-router-dom";
-import StarsIcon from "material-ui-icons/Stars";
-import ErrorOutlineIcon from "material-ui-icons/ErrorOutline";
+import Icon from 'material-ui/Icon';
 import Humanize from "humanize-plus";
 import Typography from "material-ui/Typography";
 
@@ -67,26 +66,30 @@ class PackageCard extends Component {
         />
         <CardContent style={styles.content}>
           <div className="mb1 mr2 dib">
-            <StarsIcon
+            <Icon
               style={{
                 verticalAlign: "sub",
                 height: "18px",
                 width: "18px",
-                marginRight: "5px"
+                marginRight: "10px"
               }}
-            />
-            <span>{Humanize.formatNumber(stars)}</span>
+            >
+              stars
+            </Icon>
+            <span style={{ verticalAlign: 'text-top' }}>{Humanize.formatNumber(stars)}</span>
           </div>
           <div className="dib">
-            <ErrorOutlineIcon
+            <Icon
               style={{
                 verticalAlign: "sub",
                 height: "18px",
                 width: "18px",
-                marginRight: "5px"
+                marginRight: "10px"
               }}
-            />
-            <span>{Humanize.formatNumber(issues)}</span>
+            >
+              error_outline
+            </Icon>
+            <span style={{ verticalAlign: 'text-top' }}>{Humanize.formatNumber(issues)}</span>
           </div>
           {
             description &&

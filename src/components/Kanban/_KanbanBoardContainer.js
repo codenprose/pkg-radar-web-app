@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import update from "immutability-helper";
 import { graphql, compose } from "react-apollo";
 import Button from "material-ui/Button";
-import AddIcon from "material-ui-icons/Add";
+import Icon from 'material-ui/Icon';
 import throttle from "lodash/throttle";
 import find from "lodash/find"
 import Dialog, {
@@ -468,7 +468,7 @@ class KanbanBoardContainer extends Component {
             onClick={this._handlePackageModalOpen}
             autoFocus={false}
           >
-            <AddIcon />
+            <Icon>add</Icon>
           </Button>
         }
 

@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
-import IconButton from 'material-ui/IconButton'
-import { Delete } from 'material-ui-icons'
-import Button from 'material-ui/Button'
-import { 
-  Table, 
-  TableBody, 
-  TableHeader, 
-  TableHeaderColumn, 
-  TableRow, 
-  TableRowColumn 
-} from 'material-ui/Table'
-import Switch from 'material-ui/Switch'
+// import IconButton from 'material-ui/IconButton'
+// import Icon from 'material-ui/Icon';
+// import Button from 'material-ui/Button'
+// import { 
+//   Table, 
+//   TableBody, 
+//   TableHeader, 
+//   TableHeaderColumn, 
+//   TableRow, 
+//   TableRowColumn 
+// } from 'material-ui/Table'
+// import Switch from 'material-ui/Switch'
 
 
 class UserSettings extends Component {
@@ -28,7 +28,7 @@ class UserSettings extends Component {
     return (
       <div>
         <h2>Settings</h2>
-         <Table selectable={false}>
+         {/* <Table selectable={false}>
           <TableHeader 
             displaySelectAll={false}
             adjustForCheckbox={false}
@@ -78,7 +78,7 @@ class UserSettings extends Component {
               </TableRowColumn>
             </TableRow>
           </TableBody>
-         </Table>
+         </Table> */}
       </div>
     )
   }

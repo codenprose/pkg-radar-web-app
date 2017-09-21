@@ -7,7 +7,7 @@ import { DragSource, DropTarget } from "react-dnd";
 import constants from "../../constants";
 import styled from "styled-components";
 import Humanize from "humanize-plus";
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
+import Icon from 'material-ui/Icon';
 import Collapse from "material-ui/transitions/Collapse";
 import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
@@ -148,7 +148,7 @@ class KanbanCard extends Component {
                   aria-expanded={this.state.isContentVisible}
                   aria-label="Show more"
                 >
-                  <ExpandMoreIcon />
+                  <Icon>expand_more</Icon>
                 </IconButton>
               </CardActions>
             </Card>
