@@ -123,6 +123,7 @@ class Header extends Component {
     let headerFontColor = 'black';
     let appBarBoxShadow = 'none';
     let loginBtnBgColor = 'primary';
+    let avatarBorder = '1px solid black';
 
     if (location.pathname !== '/') {
       isSearchVisible = true;
@@ -131,6 +132,7 @@ class Header extends Component {
       headerFontColor = 'white';
       appBarBoxShadow = '';
       loginBtnBgColor = 'default';
+      avatarBorder = '1px solid white';
     }
 
     return (
@@ -275,7 +277,7 @@ class Header extends Component {
                           display: 'inline-block',
                           verticalAlign: 'middle',
                           cursor: 'pointer',
-                          border: '1px solid white',
+                          border: avatarBorder,
                           borderRadius: '0'
                         }}
                         onClick={this._handleUserMenuClick}

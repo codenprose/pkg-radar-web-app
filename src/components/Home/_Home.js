@@ -5,7 +5,7 @@ import Paper from 'material-ui/Paper'
 // import Typography from 'material-ui/Typography';
 // import Divider from 'material-ui/Divider';
 
-import { PackageCard } from '../Packages'
+// import { PackageCard } from '../Packages'
 import { SearchMain } from '../Shared'
 // import { Footer } from '../Footer'
 
@@ -23,7 +23,8 @@ class Home extends Component {
         align="center"
         justify="center"
         direction="row"
-        style={{ height: '100%' }}
+        id='Home'
+        style={{ height: '80%' }}
       >
         <Grid item xs={6} style={{ maxWidth: '585px', marginBottom: '80px' }}>
           <h2 
@@ -32,7 +33,7 @@ class Home extends Component {
               fontSize: '60px', 
               color: '#263238',
               marginBottom: '20px',
-              marginTop: '12%'
+              marginTop: 0
             }}
           >
             {title}
@@ -51,7 +52,7 @@ class Home extends Component {
             Search and Discover. Evaluate and Save.
           </p>
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Grid container>
             <Grid item xs={3}>
               <PackageCard
@@ -98,7 +99,7 @@ class Home extends Component {
               />
             </Grid>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
     );
   }
