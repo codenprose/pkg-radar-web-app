@@ -117,11 +117,20 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 9, isSearchVisible = false
+    let userSectionWidth = 9;
+    let isSearchVisible = false;
+    let headerBgColor = '#F7F7F7';
+    let headerFontColor = 'black';
+    let appBarBoxShadow = 'none';
+    let loginBtnBgColor = 'primary';
 
     if (location.pathname !== '/') {
-      isSearchVisible = true
-      userSectionWidth = 2
+      isSearchVisible = true;
+      userSectionWidth = 2;
+      headerBgColor = '#1B2327';
+      headerFontColor = 'white';
+      appBarBoxShadow = '';
+      loginBtnBgColor = 'default';
     }
 
     return (
@@ -129,7 +138,10 @@ class Header extends Component {
         <AppBar
           id="Header"
           position="static"
-          color='primary'
+          style={{ 
+            background: headerBgColor,
+            boxShadow: appBarBoxShadow 
+          }}
         >
           <Toolbar
             style={{
@@ -160,7 +172,7 @@ class Header extends Component {
                     <Link
                       to="/"
                       className="no-underline"
-                      style={{ color: 'white' }}
+                      style={{ color: headerFontColor }}
                     >
                       {title}
                     </Link>
@@ -181,7 +193,7 @@ class Header extends Component {
                     to="/@dkh215"
                     className="no-underline"
                     style={{
-                      color: 'white',
+                      color: headerFontColor,
                       fontSize: '12px',
                       padding: '0 10px',
                       marginTop: '5px'
@@ -236,15 +248,9 @@ class Header extends Component {
                 <div className="tr">
                   {!isUserLoading && !user &&
                     <div>
-                      {/* <Button
-                        onClick={githubAuth}
-                        style={{ marginRight: '10px', color: 'white' }}
-                      >
-                        Log In
-                      </Button> */}
                       <Button
                         raised
-                        color="default"
+                        color={loginBtnBgColor}
                         style={{ marginTop: '5px'}}
                         onClick={githubAuth}
                       >
@@ -258,7 +264,7 @@ class Header extends Component {
                         onClick={this._handleModalOpen}
                         className="v-mid"
                       >
-                        <Icon style={{ color: 'white' }}>
+                        <Icon style={{ color: headerFontColor }}>
                           add
                         </Icon>
                       </IconButton>
