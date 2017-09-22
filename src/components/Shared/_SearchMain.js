@@ -234,7 +234,7 @@ class SearchMain extends Component {
 
     const inputValue = value.trim().toLowerCase();
     client.search({
-      index: prcoess.env.ELASTIC_SEARCH_INDEX,
+      index: process.env.ELASTIC_SEARCH_INDEX,
       body: {
         query: {
           query_string: {
