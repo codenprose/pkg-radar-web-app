@@ -56,3 +56,8 @@ main {
 .recharts-yAxis .recharts-cartesian-axis-tick:first-child .recharts-cartesian-axis-tick-value {
     display: none;
 }
+
+/* Image Styles */
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
