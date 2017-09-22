@@ -28,6 +28,7 @@ class GithubAuth extends Component {
         return response.json()
       })
       .then(json => {
+        console.log('profile', json)
         const { profile, token } = json.body
 
         // save profile data to dynamo via graphql mutation
