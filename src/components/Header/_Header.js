@@ -158,8 +158,12 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={3}  style={{ height: '100%' }}>
-                <Grid container align='center'>
+              <Grid item xs={3}>
+                <Grid 
+                  container 
+                  align='center'
+                  style={{ height: '100%' }}
+                >
                   <Typography
                     type="title"
                     component="h1"
