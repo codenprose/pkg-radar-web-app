@@ -202,7 +202,7 @@ class PackageDetail extends Component {
     const formattedTags = this._formatTagsForQuery();
 
     esClient.search({
-      index: 'pkg-radar-dev',
+      index: process.env.ELASTIC_SEARCH_INDEX,
       body: {
         "query": {
           "bool": {
