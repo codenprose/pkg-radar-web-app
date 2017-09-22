@@ -118,7 +118,7 @@ class SearchPackages extends Component {
   handleSuggestionsFetchRequested = ({ value }) => {
     const inputValue = value.trim().toLowerCase();
     client.search({
-      index: 'pkg-radar-dev',
+      index: process.env.ELASTIC_SEARCH_INDEX,
       type: 'packages',
       body: {
         query: {

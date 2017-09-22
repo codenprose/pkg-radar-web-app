@@ -13,18 +13,21 @@
 [context.production.environment]
   GRAPHQL_ENDPOINT = "https://jgycwnw9jf.execute-api.us-east-1.amazonaws.com/prod/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
+  ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview.environment]
   GRAPHQL_ENDPOINT = "https://jgycwnw9jf.execute-api.us-east-1.amazonaws.com/prod/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
+  ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
 
 # Branch Deploy context: All deploys that are not in
 # an active Deploy Preview will inherit these settings.
 [context.branch-deploy.environment]
   GRAPHQL_ENDPOINT = "https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com"
+  ELASTIC_SEARCH_INDEX = "pkg-radar-dev"
   
 
 # Specific branch context: Deploys from this branch
@@ -33,3 +36,4 @@
 [context.feature.environment]
   GRAPHQL_ENDPOINT = "https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-dev-mmb7kjm5g3r3erpsymjj7wcwvy.us-east-1.es.amazonaws.com"
+  ELASTIC_SEARCH_INDEX = "pkg-radar-dev"

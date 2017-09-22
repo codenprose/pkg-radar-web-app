@@ -252,7 +252,8 @@ module.exports = {
         NODE_ENV: JSON.stringify('production'),
         PUBLIC_URL: JSON.stringify(''),
         GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT),
-        ELASTIC_SEARCH_ENDPOINT: JSON.stringify(process.env.ELASTIC_SEARCH_ENDPOINT)
+        ELASTIC_SEARCH_ENDPOINT: JSON.stringify(process.env.ELASTIC_SEARCH_ENDPOINT),
+        ELASTIC_SEARCH_INDEX: JSON.stringify(process.env.ELASTIC_SEARCH_INDEX)
       }
     }),
     // Minify the code.

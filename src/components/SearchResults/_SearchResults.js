@@ -32,7 +32,7 @@ class SearchResults extends Component {
 
     query = query.toLowerCase();
     client.search({
-      index: 'pkg-radar-dev',
+      index: process.env.ELASTIC_SEARCH_INDEX,
       body: {
         query: {
           query_string: {
