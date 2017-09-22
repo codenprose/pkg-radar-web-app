@@ -5,7 +5,7 @@ import List, {
   ListSubheader,
   ListItemText,
 } from 'material-ui/List';
-import InboxIcon from 'material-ui-icons/Inbox';
+import Icon from 'material-ui/Icon';
 
 class PackageIndexCategories extends Component {
   static defaultProps = {
@@ -23,7 +23,7 @@ class PackageIndexCategories extends Component {
           </ListSubheader>
           <ListItem button style={{ backgroundColor: 'rgba(0, 0, 0, 0.12)'}}>
             <ListItemIcon>
-              <InboxIcon />
+              <Icon>inbox</Icon>
             </ListItemIcon>
             <ListItemText
               primary="All"

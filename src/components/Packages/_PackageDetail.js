@@ -15,12 +15,13 @@ import Dialog, {
   DialogTitle
 } from "material-ui/Dialog";
 import styled from "styled-components";
-import TextField from "material-ui/TextField";
 import moment from "moment";
 import Select from 'react-select';
 import find from 'lodash/find'
+import filter from 'lodash/filter'
 import truncate from 'lodash/truncate'
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
+import elasticsearch from 'elasticsearch'
 
 import { Loader } from '../Shared'
 
@@ -36,6 +37,10 @@ import "github-markdown-css/github-markdown.css";
 
 const rst2mdown = require('rst2mdown');
 const Text = require('react-format-text');
+
+const esClient = new elasticsearch.Client({
+  host: process.env.ELASTIC_SEARCH_ENDPOINT
+});
 
 const PackageDetailHeader = styled.div`
   position: relative;
@@ -65,11 +70,10 @@ const TabContainer = props =>
 class PackageDetail extends Component {
   state = {
     index: 0,
+    recommendations: [],
     isAddPackageModalOpen: false,
-    isRecommendationModalOpen: false,
+    areRecommendationsLoading: false,
     isAddPackageLoading: false,
-    recommendationSearch: "",
-    recommendationSelection: {},
     selectedStatus: '',
     selectedBoard: '',
   };
@@ -91,6 +95,10 @@ class PackageDetail extends Component {
       { month: 'July', backlog: 26, trial: 14, production: 51, archive: 9 },
       { month: 'August', backlog: 26, trial: 14, production: 51, archive: 9 },
     ]
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ index: 0 })
   }
 
   _formatKanbanCards = () => {
@@ -174,81 +182,103 @@ class PackageDetail extends Component {
   };
 
   handleMainContentTabChange = (event, index) => {
-    this.setState({ index });
-  };
-
-  handleMainContentChangeIndex = index => {
-    this.setState({ index });
-  };
-
-  // Recommendations Modal
-  _openRecommendationModal = () => {
-    if (!this.props.currentUser) {
-      return alert('Please login to add recommendations')
+    if (index === 2) {
+      this._handleRecommendationsSearch()
     }
-
-    this.setState({ isRecommendationModalOpen: true });
+    this.setState({ index });
   };
 
-  // Recommendations Modal
-  _closeRecommendationModal = () => {
-    this.setState({ isRecommendationModalOpen: false });
-  };
+  _formatTagsForQuery = () => {
+    const { language, tags } = this.props.data.package;
+    const filtered = filter(tags, (t) => t !== language)
+    return filtered.join(' ')
+  }
 
-  _handleRecommendationSearch = pkg => {
-    this.setState({ recommendationSearch: pkg });
-  };
+  _handleRecommendationsSearch = () => {
+    const { language, tags } = this.props.data.package;
+    if (!language || !tags.length) return
 
-  _handleAddRecommendation = () => {
-    // TODO: check if recommendation already exists
-    const variables = {
-      recommendations: [
-        ...this.props.data.package.recommendations,
-        this.state.recommendationSelection
-      ]
-    };
+    this.setState({ areRecommendationsLoading: true });
+    const formattedTags = this._formatTagsForQuery();
 
-    console.log("adding recommendation");
-
-    this.props.updatePackageRecommendations({ variables })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(err => {
-        console.error("error creating package", err.message);
-      });
+    esClient.search({
+      index: 'pkg-radar-dev',
+      body: {
+        "query": {
+          "bool": {
+            "must": {
+              "match": {
+                "language": language.toLowerCase() // primary language of current package
+              }
+            },
+            "filter": [
+              {
+                "query_string": {
+                  "default_operator": "OR",
+                  "query": formattedTags // list of tags sans language
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+        ]
+      }
+    }).then(body => {
+      const hits = body.hits.hits
+      // console.log('hits', hits)
+      if (hits.length) {
+        this.setState({ recommendations: hits, areRecommendationsLoading: false })
+      } else {
+        this.setState({ areRecommendationsLoading: false })
+      }
+    }, error => {
+      this.setState({ areRecommendationsLoading: false })
+      console.trace(error.message);
+    })
   };
 
   _renderRecommendations = () => {
-    const { data } = this.props;
-    return data.package.recommendations.map(
-      ({ name, avatar, stars, description }) => {
+    const { areRecommendationsLoading, recommendations } = this.state;
+    
+    if (areRecommendationsLoading) return
+
+    if (!recommendations.length) {
+      return (
+        <Grid item xs={12}>
+          <h3 style={{ position: 'absolute' }}>No Recommendations</h3>
+        </Grid>
+      )
+    }
+    
+    return recommendations.map((item, i) => {
+        const pkg = item._source
         return (
-          <Grid item xs={4} key={name}>
+          <Grid item xs={12} md={6} xl={4} key={i}>
             <Card
               style={{
                 marginBottom: "15px",
-                boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
               }}
             >
               <CardHeader
                 avatar={
                   <img
-                    alt={`${name}-logo`}
+                    alt={`${pkg.package_name}-logo`}
                     style={{ height: "40px" }}
-                    src={avatar}
+                    src={pkg.owner_avatar}
                   />
                 }
-                title={name}
-                subheader={`Stars: ${stars}`}
+                title={pkg.package_name}
+                subheader={`Stars: ${Humanize.formatNumber(pkg.stars)}`}
               />
-              <CardContent style={{ padding: "0 16px" }}>
+              <CardContent style={{ padding: "0 16px", minHeight: '40px' }}>
                 <Typography type="body1" component="p">
-                  {description}
+                  {pkg.description}
                 </Typography>
               </CardContent>
               <CardActions>
-                <Link to={`/package/${name}`} className="no-underline">
+                <Link to={`/${pkg.owner_name}/${pkg.package_name}`} className="no-underline">
                   <Button dense>View Package</Button>
                 </Link>
               </CardActions>
@@ -605,7 +635,7 @@ class PackageDetail extends Component {
             </Grid>
             <SwipeableViews
               index={this.state.index}
-              onChangeIndex={this.handleMainContentChangeIndex}
+              onChangeIndex={this.handleMainContentTabChange}
             >
               <TabContainer>
                 {
@@ -661,27 +691,7 @@ class PackageDetail extends Component {
               {/* Recommendations */}
               <TabContainer>
                 <Grid container>
-                  {
-                    data.package.recommendations &&
-                    this._renderRecommendations()
-                  }
-
-                  {/* Add Recommendation */}
-                  <Grid item xs={4}>
-                    <Grid
-                      container
-                      align="center"
-                      justify="center"
-                      style={{ height: "100%" }}
-                    >
-                      <Grid item>
-                        <Button raised onClick={() => this._openRecommendationModal()}>
-                          Add Recommendation
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  {/* /Add Recommendation */}
+                  {this._renderRecommendations()}
                 </Grid>
               </TabContainer>
 
@@ -779,36 +789,6 @@ class PackageDetail extends Component {
               </DialogActions>
             </Dialog>
         }
-        
-        {/* Recommendation */}
-        <Dialog
-          style={{ width: "100%" }}
-          open={this.state.isRecommendationModalOpen}
-          onRequestClose={this._closeRecommendationModal}
-        >
-          <DialogTitle>Add New Package</DialogTitle>
-          <DialogContent style={{ width: "500px" }}>
-            <TextField
-              autoFocus
-              style={{ width: "100%" }}
-              value={this.state.recommendationSearch}
-              placeholder="Search for Package"
-              onChange={e => this._handleRecommendationSearch(e.target.value)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button className="mr3" onClick={this._closeRecommendationModal}>
-              Cancel
-            </Button>
-            <Button
-              raised
-              color="primary"
-              onClick={this._handleAddRecommendation}
-            >
-              Submit
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
     );
   }

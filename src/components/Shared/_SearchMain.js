@@ -87,7 +87,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                 {
                   suggestion._source.tags &&
                   suggestion._source.tags.map((tag, i) => {
-                    if (i < 4) {
+                    if (i < 5) {
                       const matches = match(tag, query);
                       const parts = parse(tag, matches);
 

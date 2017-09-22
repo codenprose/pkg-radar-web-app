@@ -9,7 +9,8 @@ import KanbanCard from "./_KanbanCard";
 const KanbanListContainer = styled.div`
   padding: 10px;
   background-color: #ECEFF1;
-  height: 95vh;
+  height: 90vh;
+  margin-bottom: 40px;
   overflow: auto;
   border-radius: 3px;
 `

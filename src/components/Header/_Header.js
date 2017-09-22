@@ -12,13 +12,12 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
-import { Add } from 'material-ui-icons'
+import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
-import SearchIcon from 'material-ui-icons/Search'
 
 import { SearchMain } from '../Shared'
 
@@ -118,11 +117,22 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 7, isSearchVisible = false
+    let userSectionWidth = 9;
+    let isSearchVisible = false;
+    let headerBgColor = '#F7F7F7';
+    let headerFontColor = 'black';
+    let appBarBoxShadow = 'none';
+    let loginBtnBgColor = 'primary';
+    let avatarBorder = '1px solid black';
 
     if (location.pathname !== '/') {
-      isSearchVisible = true
-      userSectionWidth = 2
+      isSearchVisible = true;
+      userSectionWidth = 2;
+      headerBgColor = '#1B2327';
+      headerFontColor = 'white';
+      appBarBoxShadow = '';
+      loginBtnBgColor = 'default';
+      avatarBorder = '1px solid white';
     }
 
     return (
@@ -130,7 +140,10 @@ class Header extends Component {
         <AppBar
           id="Header"
           position="static"
-          color='primary'
+          style={{ 
+            background: headerBgColor,
+            boxShadow: appBarBoxShadow 
+          }}
         >
           <Toolbar
             style={{
@@ -145,7 +158,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={5}  style={{ height: '100%' }}>
+              <Grid item xs={3}  style={{ height: '100%' }}>
                 <Grid container align='center'>
                   <Typography
                     type="title"
@@ -161,12 +174,12 @@ class Header extends Component {
                     <Link
                       to="/"
                       className="no-underline"
-                      style={{ color: 'white' }}
+                      style={{ color: headerFontColor }}
                     >
                       {title}
                     </Link>
                   </Typography>
-                  <Link
+                  {/* <Link
                     to="/languages"
                     className="no-underline"
                     style={{
@@ -177,20 +190,20 @@ class Header extends Component {
                     }}
                   >
                     TOP LANGUAGES
-                  </Link>
+                  </Link> */}
                   <Link
                     to="/@dkh215"
                     className="no-underline"
                     style={{
-                      color: 'white',
+                      color: headerFontColor,
                       fontSize: '12px',
                       padding: '0 10px',
                       marginTop: '5px'
                     }}
                   >
-                    SAMPLE RADAR
+                    DEMO PROFILE
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/discovery"
                     className="no-underline"
                     style={{
@@ -201,13 +214,13 @@ class Header extends Component {
                     }}
                   >
                     DISCOVERY
-                  </Link>
+                  </Link> */}
                 </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={5}
+                  xs={7}
                   style={{
                     borderRadius: '2px',
                     height: '42px',
@@ -217,13 +230,15 @@ class Header extends Component {
                   }}
                 >
                   <div style={{ height: '100%' }}>
-                    <SearchIcon
+                    <Icon
                       style={{
                         position: 'absolute',
                         margin: '0 10px 0 15px',
                         top: '21px'
                       }}
-                    />
+                    >
+                      search
+                    </Icon>
                     <SearchMain
                       id='SearchMain--header'
                       placeholder='Search'
@@ -235,15 +250,9 @@ class Header extends Component {
                 <div className="tr">
                   {!isUserLoading && !user &&
                     <div>
-                      {/* <Button
-                        onClick={githubAuth}
-                        style={{ marginRight: '10px', color: 'white' }}
-                      >
-                        Log In
-                      </Button> */}
                       <Button
                         raised
-                        color="default"
+                        color={loginBtnBgColor}
                         style={{ marginTop: '5px'}}
                         onClick={githubAuth}
                       >
@@ -257,7 +266,9 @@ class Header extends Component {
                         onClick={this._handleModalOpen}
                         className="v-mid"
                       >
-                        <Add style={{ color: 'white' }} />
+                        <Icon style={{ color: headerFontColor }}>
+                          add
+                        </Icon>
                       </IconButton>
                       <Avatar
                         src={user.avatar}
@@ -266,7 +277,7 @@ class Header extends Component {
                           display: 'inline-block',
                           verticalAlign: 'middle',
                           cursor: 'pointer',
-                          border: '1px solid white',
+                          border: avatarBorder,
                           borderRadius: '0'
                         }}
                         onClick={this._handleUserMenuClick}
@@ -287,7 +298,7 @@ class Header extends Component {
                             Profile
                           </Link>
                         </MenuItem>
-                        <MenuItem onClick={this._handleUserMenuClose}>
+                        {/* <MenuItem onClick={this._handleUserMenuClose}>
                           <Link
                             to={`/settings`}
                             className="no-underline fw4"
@@ -295,7 +306,7 @@ class Header extends Component {
                           >
                             Settings
                           </Link>
-                        </MenuItem>
+                        </MenuItem> */}
                         <MenuItem onClick={() => this._logout()}>
                           Logout
                         </MenuItem>
