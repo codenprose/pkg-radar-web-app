@@ -12,8 +12,8 @@ import { App } from './components/App'
 import './index.css'
 
 const networkInterface = createNetworkInterface({
-  // uri: process.env.GRAPHQL_ENDPOINT,
-  uri: 'http://localhost:8000/graphql'
+  uri: process.env.GRAPHQL_ENDPOINT,
+  // uri: 'http://localhost:8000/graphql'
 })
 
 networkInterface.use([{
