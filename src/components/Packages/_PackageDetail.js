@@ -204,26 +204,18 @@ class PackageDetail extends Component {
     esClient.search({
       index: process.env.ELASTIC_SEARCH_INDEX,
       body: {
+        "from" : 0, "size" : 30,
         "query": {
-          "bool": {
-            "must": {
-              "match": {
-                "language": language.toLowerCase() // primary language of current package
-              }
-            },
-            "filter": [
-              {
-                "query_string": {
-                  "default_operator": "OR",
-                  "query": formattedTags // list of tags sans language
-                }
-              }
-            ]
+          "multi_match": {
+            "query": formattedTags,
+            "fields": ["tags", "description"]
           }
-        },
-        "sort": [
-          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
-        ]
+        }, 
+        "post_filter": {
+          "term": {
+            "language": language.toLowerCase()
+          }
+        }
       }
     }).then(body => {
       const hits = body.hits.hits
