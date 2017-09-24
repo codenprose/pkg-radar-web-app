@@ -63,7 +63,14 @@ const PackageDetailHeader = styled.div`
 `;
 
 const TabContainer = props =>
-  <div style={{ position: "relative", marginTop: "20px" }}>
+  <div 
+    style={{ 
+      position: "relative", 
+      marginTop: "20px",
+      overflowX: 'hidden', 
+      overflowY: 'hidden'
+    }}
+  >
     {props.children}
   </div>;
 
@@ -91,9 +98,9 @@ class PackageDetail extends Component {
       { month: 'March', backlog: 52, trial: 22, production: 21, archive: 5 },
       { month: 'April', backlog: 55, trial: 15, production: 25, archive: 5 },
       { month: 'May', backlog: 42, trial: 17, production: 33, archive: 8 },
-      { month: 'June', backlog: 26, trial: 14, production: 51, archive: 9 },
-      { month: 'July', backlog: 26, trial: 14, production: 51, archive: 9 },
-      { month: 'August', backlog: 26, trial: 14, production: 51, archive: 9 },
+      { month: 'June', backlog: 16, trial: 14, production: 61, archive: 9 },
+      { month: 'July', backlog: 9, trial: 7, production: 75, archive: 9 },
+      { month: 'August', backlog: 3, trial: 2, production: 86, archive: 9 },
     ]
   }
 
@@ -208,12 +215,13 @@ class PackageDetail extends Component {
         "query": {
           "multi_match": {
             "query": formattedTags,
-            "fields": ["tags", "description"]
+            "fields": ["tags", "description"],
+            "operator": "OR"
           }
         }, 
         "post_filter": {
           "term": {
-            "language": language.toLowerCase()
+            "tags": language.toLowerCase()
           }
         }
       }
@@ -682,7 +690,7 @@ class PackageDetail extends Component {
 
               {/* Recommendations */}
               <TabContainer>
-                <Grid container>
+                <Grid container style={{ padding: '0 10px' }}>
                   {this._renderRecommendations()}
                 </Grid>
               </TabContainer>
