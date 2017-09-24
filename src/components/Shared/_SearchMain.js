@@ -236,6 +236,8 @@ class SearchMain extends Component {
     client.search({
       index: process.env.ELASTIC_SEARCH_INDEX,
       body: {
+        from : 0, 
+        size : 40,
         query: {
           query_string: {
             fields : ["package_name^2", "owner_name", "tags", "username", "name", "description"],
