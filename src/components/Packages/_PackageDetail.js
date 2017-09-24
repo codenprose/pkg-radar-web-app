@@ -216,7 +216,8 @@ class PackageDetail extends Component {
           "multi_match": {
             "query": formattedTags,
             "fields": ["tags", "description"],
-            "operator": "OR"
+            "operator": "OR",
+            "type": "most_fields"
           }
         }, 
         "post_filter": {
