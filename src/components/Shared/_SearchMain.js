@@ -238,8 +238,8 @@ class SearchMain extends Component {
       body: {
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags.keyword", "username", "name"],
-            default_operator: 'AND',
+            fields : ["package_name^2", "owner_name", "tags", "username", "name", "description"],
+            default_operator: 'OR',
             query: `${inputValue}*`
           },
         },
