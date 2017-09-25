@@ -722,7 +722,7 @@ class PackageDetail extends Component {
                         <YAxis label={{ value: 'Percentage of Users', angle: -90, dx: -20 }} />
                         <CartesianGrid strokeDasharray="3 3"/>
                         <Tooltip/>
-                        <Legend verticalAlign='bottom' wrapperStyle={{ bottom: '-10px' }} />
+                        <Legend verticalAlign='bottom' />
                         <Line type="monotone" dataKey="backlog" stroke="#2196F3" activeDot={{r: 6}}/>
                         <Line type="monotone" dataKey="trial" stroke="lightseagreen" activeDot={{r: 6}} />
                         <Line type="monotone" dataKey="production" stroke="#4CAF50" activeDot={{r: 6}} />
