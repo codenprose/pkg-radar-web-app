@@ -11,7 +11,7 @@ const SearchResultsTable = ({ data }) => {
   }
 
   return (
-      <Paper style={{ overflow: 'auto' }}>
+      <Paper style={{ overflow: 'auto', marginBottom: '20px' }}>
         <Table>
           <TableHead>
             <TableRow>

@@ -240,7 +240,7 @@ class SearchMain extends Component {
         size : 40,
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags", "username", "name", "description"],
+            fields : ["package_name^2", "owner_name", "tags", "username", "name", "description", "language"],
             default_operator: 'AND',
             query: `${inputValue}*`
           },

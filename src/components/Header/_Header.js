@@ -123,7 +123,7 @@ class Header extends Component {
     let headerFontColor = 'black';
     let appBarBoxShadow = 'none';
     let loginBtnBgColor = 'primary';
-    let avatarBorder = '1px solid black';
+    let avatarBorder = '2px solid black';
 
     if (location.pathname !== '/') {
       isSearchVisible = true;
