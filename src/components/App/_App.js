@@ -44,6 +44,12 @@ class App extends Component {
     isLoading: false
   };
 
+  componentWillMount() {
+    this.props.history.listen((location) => {
+      console.log(location.pathname)
+    })
+  }
+
   githubAuth = () => {
     const clientId = '1050d5bcb642ab0beb2e'
     window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`
