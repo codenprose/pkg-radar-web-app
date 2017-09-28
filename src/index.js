@@ -5,7 +5,6 @@ import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
 // import injectTapEventPlugin from 'react-tap-event-plugin
 import registerServiceWorker from './utils/registerServiceWorker'
-import 'autotrack';
 
 import { App } from './components/App'
 // import { ScrollToTop } from './components/Shared'
@@ -44,11 +43,19 @@ ReactDOM.render((
   </ApolloProvider>
 ), document.getElementById('root'))
 
-window.ga('gtm1.require', 'urlChangeTracker');
-window.ga('gtm1.require', 'cleanUrlTracker');
-window.ga('gtm1.require', 'outboundLinkTracker');
-window.ga('gtm1.require', 'impressionTracker');
-window.ga('gtm1.require', 'pageVisibilityTracker');
-window.ga('gtm1.require', 'maxScrollTracker');
+window.addEventListener('load', () => {
+  import('./lib/autotrack.custom.js')
+    .then(() => {
+      const { ga } = window;
+  
+      ga('gtm1.require', 'eventTracker');
+      ga('gtm1.require', 'urlChangeTracker');
+      ga('gtm1.require', 'cleanUrlTracker');
+      ga('gtm1.require', 'outboundLinkTracker');
+      ga('gtm1.require', 'impressionTracker');
+      ga('gtm1.require', 'pageVisibilityTracker');
+      ga('gtm1.require', 'maxScrollTracker');
+    })
+})
 
 registerServiceWorker()
