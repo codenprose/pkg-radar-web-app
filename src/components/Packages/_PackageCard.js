@@ -24,7 +24,7 @@ class PackageCard extends Component {
         // boxShadow: "5px 5px 25px 0px rgba(46,61,73,0.2)"
       },
       header: {
-        paddingBottom: '10px'
+        paddingBottom: '0'
       },
       content: {
         padding: '10px 16px 0'
