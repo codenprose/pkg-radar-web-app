@@ -9,6 +9,11 @@ import { PackageCard } from '../Packages'
 import { SearchMain } from '../Shared'
 import { Footer } from '../Footer'
 
+import reactImgSrc from '../../images/facebook.png';
+import djangoImgSrc from '../../images/django.png';
+import kerasImgSrc from '../../images/keras.png';
+import electronImgSrc from '../../images/electron.png';
+
 class Home extends Component {
   static defaultProps = {
     title: '<pkg> radar'
@@ -26,15 +31,15 @@ class Home extends Component {
         id='Home'
         style={{ height: '100%' }}
       >
-        <Grid 
-          item 
-          xs={6} 
+        <Grid
+          item
+          xs={6}
           style={{ maxWidth: '585px', marginBottom: '10px' }}
         >
-          <h2 
-            style={{ 
-              textAlign: 'center', 
-              fontSize: '60px', 
+          <h2
+            style={{
+              textAlign: 'center',
+              fontSize: '60px',
               color: '#263238',
               marginBottom: '20px',
             }}
@@ -44,11 +49,11 @@ class Home extends Component {
           <Paper elevation={4} style={{ padding: '10px 0' }}>
             <SearchMain />
           </Paper>
-          <p 
-            style={{ 
+          <p
+            style={{
               position: 'relative',
               zIndex: -2,
-              textAlign: 'center', 
+              textAlign: 'center',
               fontWeight: '300'
             }}
           >
@@ -59,7 +64,7 @@ class Home extends Component {
           <Grid container>
             <Grid item xs={3}>
               <PackageCard
-                avatar='https://avatars0.githubusercontent.com/u/69631'
+                avatar={reactImgSrc}
                 color='#f1e05a'
                 issues={4601}
                 language='JavaScript'
@@ -70,7 +75,7 @@ class Home extends Component {
             </Grid>
             <Grid item xs={3}>
               <PackageCard
-                avatar='https://avatars2.githubusercontent.com/u/27804?v=4'
+                avatar={djangoImgSrc}
                 color='#3572A5'
                 issues={0}
                 language='Python'
@@ -81,7 +86,7 @@ class Home extends Component {
             </Grid>
             <Grid item xs={3}>
               <PackageCard
-                avatar='https://avatars3.githubusercontent.com/u/710255'
+                avatar={kerasImgSrc}
                 color='#3572A5'
                 issues={5439}
                 language='Python'
@@ -92,7 +97,7 @@ class Home extends Component {
             </Grid>
             <Grid item xs={3}>
               <PackageCard
-                avatar='https://avatars1.githubusercontent.com/u/13409222'
+                avatar={electronImgSrc}
                 color='#f1e05a'
                 issues={6786}
                 language='JavaScript'
