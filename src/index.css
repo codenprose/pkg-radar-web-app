@@ -37,8 +37,8 @@ main {
 }
 
 /* Search Components */
-#SearchMain ul[role='listbox'], 
-#SearchPackages ul[role='listbox'], 
+#SearchMain ul[role='listbox'],
+#SearchPackages ul[role='listbox'],
 #SearchMain--header  ul[role='listbox'] {
     max-height: 340px;
     overflow-y: auto;
@@ -62,6 +62,7 @@ img {
   image-rendering: -webkit-optimize-contrast;
 }
 
+/* Twitter */
 .twitter-follow-button {
   background-color: #1e99e6;
   border-radius: 3px;
@@ -70,4 +71,25 @@ img {
   font-size: 14px;
   letter-spacing: 0;
   padding: 5px 6px 5px 7px;
+}
+
+/* React Rotating Text */
+#pr-search-examples {
+  font-size: 18px;
+}
+
+.react-rotating-text-cursor {
+  animation: blinking-cursor 0.8s cubic-bezier(0.68, 0.01, 0.01, 0.99) 0s infinite;
+}
+
+@keyframes blinking-cursor {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
