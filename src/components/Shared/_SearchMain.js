@@ -46,17 +46,17 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
     return (
       <MenuItem
         selected={isHighlighted}
-        style={{ height: 'auto' }}
+        style={{ height: 'auto', padding: '10px 16px' }}
         component="div"
       >
         <div>
           <img
             src={suggestion._source.owner_avatar}
             style={{
-              height: '40px',
+              height: '25px',
               marginRight: '10px',
-              width: '40px',
-              verticalAlign: 'text-bottom'
+              width: '25px',
+              verticalAlign: 'bottom'
             }}
             alt="search-result"
           />
