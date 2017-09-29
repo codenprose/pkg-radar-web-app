@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import queryString from 'query-string'
-import elasticsearch from 'elasticsearch'
 
 import SearchResultsTable from './_SearchResultsTable'
 import { Loader } from '../Shared'
-
-const client = new elasticsearch.Client({
-  host: process.env.ELASTIC_SEARCH_ENDPOINT
-});
 
 class SearchResults extends Component {
   state = {
@@ -27,14 +22,15 @@ class SearchResults extends Component {
     this._handleSearch(params.q)
   }
 
-  _handleSearch = (query) => {
+  _handleSearch = async (query) => {
     this.setState({ isLoading: true })
 
     query = query.toLowerCase();
-    client.search({
-      index: process.env.ELASTIC_SEARCH_INDEX,
-      body: {
-        from : 0, 
+
+    try {
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
+      const body = {
+        from : 0,
         size : 40,
         query: {
           query_string: {
@@ -47,18 +43,26 @@ class SearchResults extends Component {
           {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
        ]
       }
-    }).then(body => {
-      const hits = body.hits.hits
-      // console.log('hits', hits)
+
+      const options = {
+        method: 'POST',
+        'Content-Type': 'application/json',
+        body: JSON.stringify(body)
+      }
+
+      const response = await fetch(endpoint, options);
+      const json = await response.json();
+
+      const hits = json.hits.hits
       if (hits.length) {
         this.setState({ results: hits, isLoading: false })
       } else {
         this.setState({ results: [], isLoading: false })
       }
-    }, error => {
+    } catch (e) {
+      console.error(e);
       this.setState({ isLoading: false })
-      console.trace(error.message);
-    })
+    }
   };
 
   render() {

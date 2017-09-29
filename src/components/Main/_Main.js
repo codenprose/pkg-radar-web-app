@@ -17,16 +17,16 @@ class Main extends Component {
         <Switch>
           <Route exact path="/" render={(props) => <Home {...props} />} />
           <Route exact path="/@:username" render={
-            (props) => <UserProfile {...props} currentUser={user} isCurrentUserLoading={isUserLoading} />} 
+            (props) => <UserProfile {...props} currentUser={user} isCurrentUserLoading={isUserLoading} />}
           />
           <Route exact path="/@:username/connections" render={
               (props) => <UserConnections {...props} currentUser={user} />
-            } 
+            }
           />
           <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
           <Route exact path="/:owner/:package" render={
               (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
-            } 
+            }
           />
           <Route exact path="/search" component={SearchResults} />
           <Route exact path="/languages" component={Languages} />

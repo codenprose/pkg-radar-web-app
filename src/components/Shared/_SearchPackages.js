@@ -5,15 +5,10 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { withStyles } from 'material-ui/styles';
 import { withRouter } from 'react-router-dom';
-import elasticsearch from 'elasticsearch'
 
 import Paper from 'material-ui/Paper';
 import Input from 'material-ui/Input/Input';
 import { MenuItem } from 'material-ui/Menu';
-
-const client = new elasticsearch.Client({
-  host: process.env.ELASTIC_SEARCH_ENDPOINT
-});
 
 function renderInput(inputProps) {
   const { classes, home, value, ref, ...other } = inputProps;
@@ -115,32 +110,44 @@ class SearchPackages extends Component {
     suggestions: [],
   };
 
-  handleSuggestionsFetchRequested = ({ value }) => {
-    const inputValue = value.trim().toLowerCase();
-    client.search({
-      index: process.env.ELASTIC_SEARCH_INDEX,
-      type: 'packages',
-      body: {
+  handleSuggestionsFetchRequested = async ({ value }) => {
+    try {
+      const inputValue = value.trim().toLowerCase();
+
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/packages/_search`;
+      const body = {
+        from : 0,
+        size : 40,
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags.keyword", "username", "name"],
+            fields : ["package_name^2", "owner_name", "tags", "description", "language"],
+            default_operator: 'AND',
             query: `${inputValue}*`
           },
         },
-        sort : [
+        sort: [
           {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
        ]
-      }
-    }).then(body => {
-      const hits = body.hits.hits
+      };
+
+      const options = {
+        method: 'POST',
+        'Content-Type': 'application/json',
+        body: JSON.stringify(body)
+      };
+
+      const response = await fetch(endpoint, options);
+      const json = await response.json();
+
+      const hits = json.hits.hits;
       if (hits.length) {
         this.setState({ suggestions: hits })
       } else {
         this.setState({ suggestions: [] })
       }
-    }, error => {
-      console.trace(error.message);
-    })
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   handleSuggestionsClearRequested = () => {

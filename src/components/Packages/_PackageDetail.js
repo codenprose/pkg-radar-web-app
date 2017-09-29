@@ -21,7 +21,6 @@ import find from 'lodash/find'
 import filter from 'lodash/filter'
 import truncate from 'lodash/truncate'
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
-import elasticsearch from 'elasticsearch'
 
 import { Loader } from '../Shared'
 
@@ -37,10 +36,6 @@ import "github-markdown-css/github-markdown.css";
 
 const rst2mdown = require('rst2mdown');
 const Text = require('react-format-text');
-
-const esClient = new elasticsearch.Client({
-  host: process.env.ELASTIC_SEARCH_ENDPOINT
-});
 
 const PackageDetailHeader = styled.div`
   position: relative;
@@ -63,11 +58,11 @@ const PackageDetailHeader = styled.div`
 `;
 
 const TabContainer = props =>
-  <div 
-    style={{ 
-      position: "relative", 
+  <div
+    style={{
+      position: "relative",
       marginTop: "20px",
-      overflowX: 'hidden', 
+      overflowX: 'hidden',
       overflowY: 'hidden'
     }}
   >
@@ -136,8 +131,8 @@ class PackageDetail extends Component {
           status: selectedStatus,
           username: currentUser.username
         },
-        refetchQueries: [{ 
-          query: USER_KANBAN_PACKAGES, 
+        refetchQueries: [{
+          query: USER_KANBAN_PACKAGES,
           variables: { username: currentUser.username }
         }]
       });
@@ -146,15 +141,15 @@ class PackageDetail extends Component {
       console.log('updating cards')
       const token = localStorage.getItem('pkgRadarToken')
       const kanbanCards = this._formatKanbanCards()
-      const card = { 
-        board: selectedBoard, 
+      const card = {
+        board: selectedBoard,
         ownerName: data.package.ownerName,
         packageName: data.package.packageName,
       }
 
       await this.props.updateKanbanCards({
-        variables: { 
-          username: currentUser.username, 
+        variables: {
+          username: currentUser.username,
           kanbanCards: [...kanbanCards, card]
         },
         refetchQueries: [{
@@ -163,15 +158,15 @@ class PackageDetail extends Component {
         }]
       });
       console.log('updated cards')
-      this.setState({ 
-        isAddPackageLoading: false, 
-        isAddPackageModalOpen: false 
+      this.setState({
+        isAddPackageLoading: false,
+        isAddPackageModalOpen: false
       })
     } catch (e) {
       console.error(e.message);
-      this.setState({ 
-        isAddPackageLoading: false, 
-        isAddPackageModalOpen: false 
+      this.setState({
+        isAddPackageLoading: false,
+        isAddPackageModalOpen: false
       })
     }
   };
@@ -201,48 +196,55 @@ class PackageDetail extends Component {
     return filtered.join(' ')
   }
 
-  _handleRecommendationsSearch = () => {
-    const { language, tags } = this.props.data.package;
-    if (!language || !tags.length) return
+  _handleRecommendationsSearch = async () => {
+    try {
+      const { language, tags } = this.props.data.package;
+      if (!language || !tags.length) return
 
-    this.setState({ areRecommendationsLoading: true });
-    const formattedTags = this._formatTagsForQuery();
+      this.setState({ areRecommendationsLoading: true });
+      const formattedTags = this._formatTagsForQuery();
 
-    esClient.search({
-      index: process.env.ELASTIC_SEARCH_INDEX,
-      body: {
-        "from" : 0, "size" : 30,
-        "query": {
-          "multi_match": {
-            "query": formattedTags,
-            "fields": ["tags", "description"],
-            "operator": "OR",
-            "type": "most_fields"
-          }
-        }, 
-        "post_filter": {
-          "term": {
-            "tags": language.toLowerCase()
-          }
-        }
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/packages/_search`;
+      const body = {
+        from : 0,
+        size : 40,
+        query: {
+          query_string: {
+            fields : ["package_name^2", "owner_name", "tags", "description", "language"],
+            default_operator: 'AND',
+            query: `${formattedTags}*`
+          },
+        },
+        sort: [
+          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+       ]
+      };
+
+      const options = {
+        method: 'POST',
+        'Content-Type': 'application/json',
+        body: JSON.stringify(body)
       }
-    }).then(body => {
-      const hits = body.hits.hits
+
+      const response = await fetch(endpoint, options);
+      const json = await response.json();
+
+      const hits = json.hits.hits
       // console.log('hits', hits)
       if (hits.length) {
         this.setState({ recommendations: hits, areRecommendationsLoading: false })
       } else {
         this.setState({ areRecommendationsLoading: false })
       }
-    }, error => {
+    } catch (e) {
+      console.error(e);
       this.setState({ areRecommendationsLoading: false })
-      console.trace(error.message);
-    })
+    }
   };
 
   _renderRecommendations = () => {
     const { areRecommendationsLoading, recommendations } = this.state;
-    
+
     if (areRecommendationsLoading) return
 
     if (!recommendations.length) {
@@ -252,7 +254,7 @@ class PackageDetail extends Component {
         </Grid>
       )
     }
-    
+
     return recommendations.map((item, i) => {
         const pkg = item._source
         return (
@@ -315,7 +317,7 @@ class PackageDetail extends Component {
   _checkIfPackageIsSaved = () => {
     const { currentUser, data } = this.props
     if (!currentUser) return false
-    
+
     const saved = find(currentUser.kanbanCards, (card) => {
       if (card && data.package) {
         return card.ownerName === data.package.ownerName &&
@@ -331,8 +333,8 @@ class PackageDetail extends Component {
     if (data.package.tags.length) {
       return data.package.tags.map((tag, i) => {
         return (
-          <Link 
-            to={`/search?q=${tag}`} 
+          <Link
+            to={`/search?q=${tag}`}
             key={i}
             className='pointer:hover white no-underline'
             style={{ margin: '0 10px 10px 0' }}
@@ -489,14 +491,14 @@ class PackageDetail extends Component {
                   data.package.contributors.top100.map(contributor => {
                     return (
                       <a
-                        key={contributor.username} 
-                        href={contributor.url} 
+                        key={contributor.username}
+                        href={contributor.url}
                         style={{ marginRight: '10px' }}
                       >
-                        <img 
+                        <img
                           alt='contributor'
-                          style={{ width: '32px' }} 
-                          src={contributor.avatar} 
+                          style={{ width: '32px' }}
+                          src={contributor.avatar}
                         />
                       </a>
                     )
@@ -505,7 +507,7 @@ class PackageDetail extends Component {
               </CardContent>
               <CardActions>
                 <a
-                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`} 
+                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`}
                   className="no-underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -555,8 +557,8 @@ class PackageDetail extends Component {
                     <Grid item>
                       <img
                         alt={`${data.package.packageName}-logo`}
-                        style={{ 
-                          height: "50px", 
+                        style={{
+                          height: "50px",
                           marginRight: '20px',
                           borderRadius: '50%'
                         }}
@@ -564,8 +566,8 @@ class PackageDetail extends Component {
                       />
                     </Grid>
                     <Grid item>
-                      <Typography 
-                        type="headline" 
+                      <Typography
+                        type="headline"
                         gutterBottom
                         style={{ color: 'white', display: 'inline-block' }}
                       >
@@ -619,11 +621,11 @@ class PackageDetail extends Component {
                 </Tabs>
               </Grid>
               <Grid item xs={2}>
-                <Button 
+                <Button
                   raised
                   disabled={isPackageSaved}
                   onClick={this._openPackageModal}
-                  style={{ 
+                  style={{
                     color: addPackageBtnColor,
                     backgroundColor: addPackageBtnBgColor,
                     marginRight: "10px",
@@ -698,8 +700,8 @@ class PackageDetail extends Component {
 
               <TabContainer>
                 <div style={{ position: 'relative', width: '100%', height: '450px' }}>
-                  <h4 
-                    style={{ 
+                  <h4
+                    style={{
                       position: 'absolute',
                       zIndex: 1,
                       right: '60px',
@@ -714,7 +716,7 @@ class PackageDetail extends Component {
                   {
                     this.state.index === 3 &&
                     <ResponsiveContainer>
-                      <LineChart 
+                      <LineChart
                         data={this.props.packageHistory}
                         margin={{top: 5, right: 30, left: 20, bottom: 5}}
                       >
@@ -744,9 +746,9 @@ class PackageDetail extends Component {
               onRequestClose={this._closePackageModal}
             >
               <DialogTitle>Add Package</DialogTitle>
-              <DialogContent 
-                style={{ 
-                  width: "550px", 
+              <DialogContent
+                style={{
+                  width: "550px",
                   marginBottom: "30px",
                   overflowY: 'inherit'
                 }}
@@ -775,7 +777,7 @@ class PackageDetail extends Component {
                   raised
                   color="primary"
                   disabled={
-                    !this.state.selectedStatus || 
+                    !this.state.selectedStatus ||
                       !this.state.selectedBoard ||
                         this.state.isAddPackageLoading
                   }

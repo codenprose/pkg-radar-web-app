@@ -12,8 +12,7 @@ import { App } from './components/App'
 import './index.css'
 
 const networkInterface = createNetworkInterface({
-  uri: process.env.GRAPHQL_ENDPOINT,
-  // uri: 'http://localhost:8000/graphql'
+  uri: process.env.GRAPHQL_ENDPOINT
 })
 
 networkInterface.use([{
@@ -47,7 +46,7 @@ window.addEventListener('load', () => {
   import('./lib/autotrack.custom.js')
     .then(() => {
       const { ga } = window;
-  
+
       ga('gtm1.require', 'eventTracker');
       ga('gtm1.require', 'urlChangeTracker');
       ga('gtm1.require', 'cleanUrlTracker');

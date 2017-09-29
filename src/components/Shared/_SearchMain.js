@@ -7,12 +7,7 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { withStyles } from 'material-ui/styles';
 import { withRouter } from 'react-router-dom';
-import elasticsearch from 'elasticsearch'
 import Humanize from "humanize-plus";
-
-const client = new elasticsearch.Client({
-  host: process.env.ELASTIC_SEARCH_ENDPOINT
-});
 
 function renderInput(inputProps) {
   const { classes, home, value, ref, ...other } = inputProps;
@@ -77,39 +72,6 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             })}
             <i className="fa fa-star ml3 mr1" aria-hidden="true" />
             <span className='mr2'>{Humanize.formatNumber(suggestion._source.stars)}</span>
-
-            {/* <i className="fa fa-exclamation-circle fa-fw mr1" aria-hidden="true" />
-            <span>{Humanize.formatNumber(suggestion._source.issues)}</span> */}
-
-            <div style={{ lineHeight: '16px' }}>
-              <span>tags: </span>
-              <ul className='list dib pa0'>
-                {
-                  suggestion._source.tags &&
-                  suggestion._source.tags.map((tag, i) => {
-                    if (i < 4) {
-                      const matches = match(tag, query);
-                      const parts = parse(tag, matches);
-
-                      return (
-                        <li key={tag} className='dib mr2'>
-                          {parts.map((part, index) => {
-                            return part.highlight
-                              ? <span key={index} style={{ color: '#2196F3' }}>
-                                  {part.text}
-                                </span>
-                              : <span key={index}>
-                                  {part.text}
-                                </span>;
-                          })}
-                        </li>
-                      )
-                    }
-                    return <span key={i} style={{ display: 'none' }}></span>
-                  })
-                }
-              </ul>
-            </div>
           </div>
         </div>
       </MenuItem>
@@ -229,14 +191,13 @@ class SearchMain extends Component {
     suggestions: [],
   };
 
-  handleSuggestionsFetchRequested = ({ value }) => {
-    // if (!value || value.length <= 2) return
+  handleSuggestionsFetchRequested = async ({ value }) => {
+    try {
+      const inputValue = value.trim().toLowerCase();
 
-    const inputValue = value.trim().toLowerCase();
-    client.search({
-      index: process.env.ELASTIC_SEARCH_INDEX,
-      body: {
-        from : 0, 
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
+      const body = {
+        from : 0,
         size : 40,
         query: {
           query_string: {
@@ -248,18 +209,26 @@ class SearchMain extends Component {
         sort: [
           {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
        ]
+      };
+
+      const options = {
+        method: 'POST',
+        'Content-Type': 'application/json',
+        body: JSON.stringify(body)
       }
-    }).then(body => {
-      const hits = body.hits.hits
-      // console.log('hits', hits)
+
+      const response = await fetch(endpoint, options);
+      const json = await response.json();
+
+      const hits = json.hits.hits;
       if (hits.length) {
         this.setState({ suggestions: [{ inputValue }, ...hits] })
       } else {
         this.setState({ suggestions: [{ inputValue }] })
       }
-    }, error => {
-      console.trace(error.message);
-    })
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   handleSuggestionsClearRequested = () => {

@@ -44,12 +44,6 @@ class App extends Component {
     isLoading: false
   };
 
-  componentWillMount() {
-    this.props.history.listen((location) => {
-      console.log(location.pathname)
-    })
-  }
-
   githubAuth = () => {
     const clientId = '1050d5bcb642ab0beb2e'
     window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`
@@ -59,8 +53,8 @@ class App extends Component {
     const { data, location } = this.props;
     const isUserAuthenticating = location.pathname.includes('github')
     let currentUser = '', isUserLoading = false
-    
-    if (data) { 
+
+    if (data) {
       currentUser =  data.currentUser
       isUserLoading = data.loading
     }
@@ -76,9 +70,9 @@ class App extends Component {
                 isUserLoading={isUserLoading}
                 githubAuth={this.githubAuth}
               />
-              <Main 
+              <Main
                 isUserLoading={isUserLoading}
-                user={currentUser} 
+                user={currentUser}
               />
             </div>
           }
