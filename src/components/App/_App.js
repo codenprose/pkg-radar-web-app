@@ -5,6 +5,7 @@ import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import { blueGrey } from 'material-ui/colors'
 import { Route } from 'react-router-dom'
+import Intercom from 'react-intercom';
 
 import { Header } from '../Header'
 import { Main } from '../Main'
@@ -83,6 +84,15 @@ class App extends Component {
             </div>
           }
           <Route exact path="/github/auth" component={GithubAuth} />
+          {
+            currentUser &&
+            <Intercom 
+              appId='f0v81ck6'
+              user_id={currentUser.id}
+              email={currentUser.email}
+              name={currentUser.name}
+            />
+          }
         </div>
       </MuiThemeProvider>
     );

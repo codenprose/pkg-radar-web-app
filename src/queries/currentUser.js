@@ -17,6 +17,7 @@ export default gql`
         packageName
       }
       name
+      email
       totalPackages
       totalSubscriptions
       username
