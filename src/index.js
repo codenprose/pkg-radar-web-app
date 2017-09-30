@@ -43,6 +43,12 @@ ReactDOM.render((
 ), document.getElementById('root'))
 
 window.addEventListener('load', () => {
+  // Intercom
+  window.Intercom("boot", {
+    app_id: "f0v81ck6"
+  });
+
+  // Google Analytics
   import('./lib/autotrack.custom.js')
     .then(() => {
       const { ga } = window;

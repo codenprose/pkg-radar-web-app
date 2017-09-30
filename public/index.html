@@ -28,6 +28,43 @@
     })(window,document,'script','dataLayer','GTM-5HVTSXJ');</script>
     <!-- End Google Tag Manager -->
 
+    <!-- Intercom -->
+    <script>
+      (function () {
+        var w = window;
+        var ic = w.Intercom;
+        if (typeof ic === "function") {
+          ic('reattach_activator');
+          ic('update', intercomSettings);
+        } else {
+          var d = document;
+          var i = function () {
+            i.c(arguments)
+          };
+          i.q = [];
+          i.c = function (args) {
+            i.q.push(args)
+          };
+          w.Intercom = i;
+
+          function l() {
+            var s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = 'https://widget.intercom.io/widget/f0v81ck6';
+            var x = d.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+          }
+          if (w.attachEvent) {
+            w.attachEvent('onload', l);
+          } else {
+            w.addEventListener('load', l, false);
+          }
+        }
+      })()
+    </script>
+    <!-- End Intercom -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.8.1/css/tachyons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
@@ -41,10 +78,12 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5HVTSXJ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    
     <div id="root"></div>
     <!--
       This HTML file is a template.

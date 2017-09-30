@@ -25,10 +25,7 @@ class Footer extends Component {
     return (
       <footer style={styles.containerOuter}>
         <div style={styles.containerInner}>
-          <div style={{ display: 'inline-block', textAlign: 'left', width: '50%' }}>
-            <ReactRotatingText id='pr-search-examples' items={this.state.searchExamples} />
-          </div>
-          <div style={{ display: 'inline-block', textAlign: 'right', width: '50%' }}>
+          <div style={{ display: 'inline-block', marginRight: '20px' }}>
             <Typography
               type="subheading"
               style={{
@@ -48,6 +45,10 @@ class Footer extends Component {
               @danielkhunter
             </a>
           </div>
+          <ReactRotatingText 
+            id='pr-search-examples' 
+            items={this.state.searchExamples}
+          />
           {/* <Link className='no-underline black mr4' to='/'>About</Link>
           <Link className='no-underline black mr4' to='/'>Boards</Link> */}
         </div>
