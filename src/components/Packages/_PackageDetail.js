@@ -18,7 +18,6 @@ import styled from "styled-components";
 import moment from "moment";
 import Select from 'react-select';
 import find from 'lodash/find'
-import filter from 'lodash/filter'
 import truncate from 'lodash/truncate'
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
 import swal from 'sweetalert2';
@@ -192,15 +191,14 @@ class PackageDetail extends Component {
   };
 
   _formatTagsForQuery = () => {
-    const { language, tags } = this.props.data.package;
-    const filtered = filter(tags, (t) => t !== language)
-    return filtered.join(' ')
+    const { tags } = this.props.data.package;
+    return tags.join(' ')
   }
 
   _handleRecommendationsSearch = async () => {
     try {
-      const { language, tags } = this.props.data.package;
-      if (!language || !tags.length) return
+      const { tags } = this.props.data.package;
+      if (!tags.length) return
 
       this.setState({ areRecommendationsLoading: true });
       const formattedTags = this._formatTagsForQuery();
@@ -211,14 +209,14 @@ class PackageDetail extends Component {
         size : 40,
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags^2", "language"],
-            default_operator: 'AND',
-            query: `${formattedTags}*`
+            fields : ["package_name^2", "owner_name", "tags", "language^2"],
+            default_operator: 'OR',
+            query: `${formattedTags}`
           },
         },
-        sort: [
-          {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
-       ]
+      //   sort: [
+      //     {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+      //  ]
       };
 
       const options = {
