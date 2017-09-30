@@ -5,7 +5,6 @@ import { graphql, compose } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import { blueGrey } from 'material-ui/colors'
 import { Route } from 'react-router-dom'
-import Intercom from 'react-intercom';
 
 import { Header } from '../Header'
 import { Main } from '../Main'
@@ -45,54 +44,46 @@ class App extends Component {
     isLoading: false
   };
 
-  componentWillMount() {
-   this.props.history.listen(() => {
-     window.Intercom("update");
-   })
-  }
-
   githubAuth = () => {
-    const clientId = '1050d5bcb642ab0beb2e'
-    window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`
-  }
+    const clientId = '1050d5bcb642ab0beb2e';
+    window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`;
+  };
 
   render() {
     const { data, location } = this.props;
-    const isUserAuthenticating = location.pathname.includes('github')
-    let currentUser = '', isUserLoading = false
+    const isUserAuthenticating = location.pathname.includes('github');
+    let currentUser = '',
+      isUserLoading = false;
 
     if (data) {
-      currentUser =  data.currentUser
-      isUserLoading = data.loading
+      currentUser = data.currentUser;
+      isUserLoading = data.loading;
+    }
+
+    if (!currentUser) {
+      window.Intercom('update');
+    } else {
+      console.log('hello user')
+      window.Intercom('update', {
+        name: currentUser.name,
+        email: currentUser.email
+      });
     }
 
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          {
-            !isUserAuthenticating &&
+          {!isUserAuthenticating && (
             <div>
               <Header
                 user={currentUser}
                 isUserLoading={isUserLoading}
                 githubAuth={this.githubAuth}
               />
-              <Main
-                isUserLoading={isUserLoading}
-                user={currentUser}
-              />
+              <Main isUserLoading={isUserLoading} user={currentUser} />
             </div>
-          }
+          )}
           <Route exact path="/github/auth" component={GithubAuth} />
-          {
-            currentUser &&
-            <Intercom 
-              appId='f0v81ck6'
-              user_id={currentUser.id}
-              email={currentUser.email}
-              name={currentUser.name}
-            />
-          }
         </div>
       </MuiThemeProvider>
     );
