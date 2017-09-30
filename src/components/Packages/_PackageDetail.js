@@ -205,13 +205,13 @@ class PackageDetail extends Component {
       this.setState({ areRecommendationsLoading: true });
       const formattedTags = this._formatTagsForQuery();
 
-      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/packages/_search`;
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
       const body = {
         from : 0,
         size : 40,
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags", "description", "language"],
+            fields : ["package_name^2", "owner_name", "tags^2", "language"],
             default_operator: 'AND',
             query: `${formattedTags}*`
           },
