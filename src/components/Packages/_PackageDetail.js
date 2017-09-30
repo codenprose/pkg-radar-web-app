@@ -21,6 +21,7 @@ import find from 'lodash/find'
 import filter from 'lodash/filter'
 import truncate from 'lodash/truncate'
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
+import swal from 'sweetalert2';
 
 import { Loader } from '../Shared'
 
@@ -294,7 +295,10 @@ class PackageDetail extends Component {
 
   _openPackageModal = () => {
     if (!this.props.currentUser) {
-      return alert('Please login to save packages')
+      return swal({
+        text: 'Please Login',
+        type: 'info'
+      })
     }
     this.setState({ isAddPackageModalOpen: true });
   };

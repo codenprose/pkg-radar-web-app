@@ -10,6 +10,7 @@ import { App } from './components/App'
 // import { ScrollToTop } from './components/Shared'
 
 import './index.css'
+import 'sweetalert2/dist/sweetalert2.css'
 
 const networkInterface = createNetworkInterface({
   uri: process.env.GRAPHQL_ENDPOINT

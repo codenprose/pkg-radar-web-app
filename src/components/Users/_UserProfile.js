@@ -3,6 +3,7 @@ import { graphql, compose } from "react-apollo";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
+import swal from 'sweetalert2';
 
 import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
@@ -112,7 +113,12 @@ class UserProfile extends Component {
 
   _createUserConnection = async () => {
     const { currentUser, user } = this.props
-    if (!currentUser) return alert('Please login first')
+    if (!currentUser) {
+      return swal({
+        text: 'Please Login',
+        type: 'info'
+      })
+    }
     
     const token = localStorage.getItem('pkgRadarToken')
     console.log('adding connection')

@@ -18,6 +18,8 @@ import TextField from 'material-ui/TextField'
 import { withRouter } from 'react-router-dom'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
+import ReactTooltip from 'react-tooltip'
+import swal from 'sweetalert2';
 
 import { SearchMain } from '../Shared'
 
@@ -63,6 +65,12 @@ class Header extends Component {
   }
 
   _handleModalOpen = () => {
+    if (!this.props.user) {
+      return swal({
+        text: 'Please Login',
+        type: 'info'
+      })
+    }
     this.setState({ isCreatePackageModalOpen: true })
   }
 
@@ -254,6 +262,16 @@ class Header extends Component {
                 <div className="tr">
                   {!isUserLoading && !user &&
                     <div>
+                      <IconButton
+                        onClick={this._handleModalOpen}
+                        className="v-mid"
+                        data-tip='Add Package'
+                      >
+                        <Icon style={{ color: headerFontColor }}>
+                          add
+                        </Icon>
+                      </IconButton>
+                      <ReactTooltip place='bottom' />
                       <Button
                         raised
                         color={loginBtnBgColor}
@@ -269,11 +287,13 @@ class Header extends Component {
                       <IconButton
                         onClick={this._handleModalOpen}
                         className="v-mid"
+                        data-tip='Add Package'
                       >
                         <Icon style={{ color: headerFontColor }}>
                           add
                         </Icon>
                       </IconButton>
+                      <ReactTooltip place='bottom' />
                       <Avatar
                         src={user.avatar}
                         alt="User Image"
