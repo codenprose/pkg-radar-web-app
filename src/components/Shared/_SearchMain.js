@@ -39,6 +39,21 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
     )
   }
 
+  if (suggestion.notFound) {
+    return (
+      <MenuItem
+        style={{ height: 'auto' }}
+        component="div"
+      >
+        <div>
+          <span style={{ fontSize: '16px' }}>
+            {suggestion.notFound}
+          </span>
+        </div>
+      </MenuItem>
+    )
+  }
+
   if (suggestion._type === 'packages') {
     const matches = match(suggestion._source.package_name, query);
     const parts = parse(suggestion._source.package_name, matches);
@@ -149,8 +164,11 @@ const getSuggestionValue = suggestion => {
     return suggestion._source.package_name
   } else if (suggestion._type === 'users') {
     return suggestion._source.username
+  } else if (suggestion.inputValue) {
+    return suggestion.inputValue
+  } else {
+    return suggestion.notFound
   }
-  return suggestion.inputValue
 }
 
 const styles = theme => ({
@@ -224,7 +242,8 @@ class SearchMain extends Component {
       if (hits.length) {
         this.setState({ suggestions: [{ inputValue }, ...hits] })
       } else {
-        this.setState({ suggestions: [{ inputValue }] })
+        const notFound = "Can't find a pkg? My bad... Login to add what we left out."
+        this.setState({ suggestions: [{ inputValue }, { notFound }] })
       }
     } catch (e) {
       console.error(e);
@@ -244,9 +263,11 @@ class SearchMain extends Component {
     } else if (response.suggestion._type === 'users') {
       const { username } = response.suggestion._source
       this.props.history.push(`/@${username}`)
-    } else {
+    } else if (response.suggestion.inputValue) {
       const query = response.suggestion.inputValue.replace(/\s/g, '+')
       this.props.history.push(`/search?q=${query}`)
+    } else {
+      return
     }
   }
 
