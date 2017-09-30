@@ -114,7 +114,7 @@ class SearchPackages extends Component {
     try {
       const inputValue = value.trim().toLowerCase();
 
-      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/packages/_search`;
+      const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
       const body = {
         from : 0,
         size : 40,
