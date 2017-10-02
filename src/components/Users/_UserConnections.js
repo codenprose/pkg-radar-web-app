@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql, compose } from "react-apollo"
 import { Link } from "react-router-dom"
+import findIndex from 'lodash/findIndex'
 
 import Button from "material-ui/Button"
 import Grid from "material-ui/Grid"
@@ -21,7 +22,10 @@ class UserConnections extends Component {
       let btnDisabled = false
       let btnText = 'Connect'
 
-      if (currentUser && connection.username === currentUser.username) {
+      if (currentUser && (connection.username === currentUser.username)) {
+        btnDisabled = true
+        btnText = 'Connected'
+      } else if (currentUser && (findIndex(currentUser.connections, u => u.username === connection.username) >= 0)) {
         btnDisabled = true
         btnText = 'Connected'
       }
