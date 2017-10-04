@@ -25,7 +25,15 @@ class Footer extends Component {
     return (
       <footer style={styles.containerOuter}>
         <div style={styles.containerInner}>
-          <div style={{ display: 'inline-block', marginRight: '20px' }}>
+          <div style={{ display: 'inline-block', width: '50%' }}>
+            <ReactRotatingText 
+              id='pr-search-examples' 
+              items={this.state.searchExamples}
+            />
+          </div>
+          {/* <Link className='no-underline black mr4' to='/'>About</Link>
+          <Link className='no-underline black mr4' to='/'>Boards</Link> */}
+          <div style={{ display: 'inline-block', width: '50%', textAlign: 'right' }}>
             <Typography
               type="subheading"
               style={{
@@ -45,12 +53,6 @@ class Footer extends Component {
               @danielkhunter
             </a>
           </div>
-          <ReactRotatingText 
-            id='pr-search-examples' 
-            items={this.state.searchExamples}
-          />
-          {/* <Link className='no-underline black mr4' to='/'>About</Link>
-          <Link className='no-underline black mr4' to='/'>Boards</Link> */}
         </div>
       </footer>
     )

@@ -45,9 +45,9 @@ ReactDOM.render((
 
 window.addEventListener('load', () => {
   // Intercom
-  window.Intercom("boot", {
-    app_id: "f0v81ck6"
-  });
+  // window.Intercom("boot", {
+  //   app_id: "f0v81ck6"
+  // });
 
   // Google Analytics
   import('./lib/autotrack.custom.js')

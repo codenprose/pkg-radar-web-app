@@ -52,16 +52,16 @@ class App extends Component {
       isUserLoading = data.loading;
     }
 
-    if (!currentUser && !isUserLoading) {
-      window.Intercom('update');
-    } 
+    // if (!currentUser && !isUserLoading) {
+    //   window.Intercom('update');
+    // } 
     
-    if (currentUser) {
-      window.Intercom('update', {
-        name: currentUser.name,
-        email: currentUser.email
-      });
-    }
+    // if (currentUser) {
+    //   window.Intercom('update', {
+    //     name: currentUser.name,
+    //     email: currentUser.email
+    //   });
+    // }
 
     return (
       <MuiThemeProvider theme={theme}>

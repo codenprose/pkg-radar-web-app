@@ -135,7 +135,7 @@ class Header extends Component {
 
     if (location.pathname !== '/') {
       isSearchVisible = true;
-      userSectionWidth = 2;
+      userSectionWidth = 3;
       headerBgColor = '#1B2327';
       headerFontColor = 'white';
       appBarBoxShadow = '';
@@ -232,7 +232,7 @@ class Header extends Component {
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={7}
+                  xs={6}
                   style={{
                     borderRadius: '2px',
                     height: '42px',
