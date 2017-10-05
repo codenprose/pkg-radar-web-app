@@ -57,7 +57,7 @@ class Home extends Component {
               fontWeight: '300'
             }}
           >
-            Search and Discover. Evaluate and Save.
+            Find dependencies faster and organize your favorite open source projects.
           </p>
         </Grid>
         <Grid item xs={12}>
