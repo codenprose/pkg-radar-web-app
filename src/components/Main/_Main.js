@@ -8,6 +8,8 @@ import { SearchResults } from '../SearchResults'
 import { Languages } from '../Languages'
 import { Discovery } from '../Discovery'
 
+import { Packages } from '../Admin'
+
 class Main extends Component {
   render() {
     const { user, isUserLoading } = this.props
@@ -24,13 +26,14 @@ class Main extends Component {
             }
           />
           <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
+          <Route exact path="/search" component={SearchResults} />
+          <Route exact path="/languages" component={Languages} />
+          <Route exact path="/discovery" component={Discovery} />
+          <Route exact path="/admin/packages" component={Packages} />
           <Route exact path="/:owner/:package" render={
               (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
             }
           />
-          <Route exact path="/search" component={SearchResults} />
-          <Route exact path="/languages" component={Languages} />
-          <Route exact path="/discovery" component={Discovery} />
         </Switch>
       </main>
     )
