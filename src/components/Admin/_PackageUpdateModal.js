@@ -8,7 +8,7 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField';
 
-class UpdatePackageModal extends Component {
+class PackageUpdateModal extends Component {
   state = {
     isUpdatePackageLoading: false,
     isModalOpen: this.props.isModalOpen,
@@ -90,4 +90,4 @@ class UpdatePackageModal extends Component {
   }
 }
 
-export default UpdatePackageModal;
+export default PackageUpdateModal;

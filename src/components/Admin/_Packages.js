@@ -6,7 +6,7 @@ import Button from "material-ui/Button";
 import Humanize from "humanize-plus";
 
 import { Loader } from '../Shared'
-import UpdatePackageModal from './_UpdatePackageModal';
+import PackageUpdateModal from './_PackageUpdateModal';
 
 class Packages extends Component {
   state = {
@@ -130,7 +130,7 @@ class Packages extends Component {
         </Paper>
         {
           currentPackage &&
-          <UpdatePackageModal 
+          <PackageUpdateModal 
             isModalOpen={this.state.isModalOpen}
             currentPackage={currentPackage}
           />
