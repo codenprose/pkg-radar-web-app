@@ -9,6 +9,7 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField';
+// import { SnackbarContent } from 'material-ui/Snackbar';
 
 import UPDATE_PACKAGE from '../../mutations/updatePackage'
 
@@ -48,25 +49,20 @@ class PackageUpdateModal extends Component {
         }
       })
 
-      console.log('updated package')
+      console.log('updated package');
+      console.log(response);
+
       this.setState({ 
         isModalOpen: false, 
         isUpdatePackageLoading: false 
       });
-
-      const updatedPkg = response.updatedPackage.package;
-      const { packageName } = updatedPkg
-      return swal({
-        text: `Updated Tags for ${packageName}`,
-        type: 'success'
-      })
     } catch(e) {
       this.setState({ 
         isModalOpen: false,
         isUpdatePackageLoading: false 
       });
       console.error(e);
-      return swal({
+      swal({
         text: `Error Updating Tags`,
         type: 'error'
       })
