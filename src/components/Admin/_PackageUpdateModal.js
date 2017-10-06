@@ -42,13 +42,18 @@ class PackageUpdateModal extends Component {
       }
       const response = await this.props.updatePackage({
         variables: { 
-          owner: currentPackage.ownerName, 
-          name: currentPackage.packageName, 
+          owner: currentPackage.owner_name, 
+          name: currentPackage.package_name, 
           data: JSON.stringify(data) 
         }
       })
 
       console.log('updated package')
+      this.setState({ 
+        isModalOpen: false, 
+        isUpdatePackageLoading: false 
+      });
+
       const updatedPkg = response.updatedPackage.package;
       const { packageName } = updatedPkg
       return swal({
@@ -56,7 +61,10 @@ class PackageUpdateModal extends Component {
         type: 'success'
       })
     } catch(e) {
-      this.setState({ isUpdatePackageLoading: false });
+      this.setState({ 
+        isModalOpen: false,
+        isUpdatePackageLoading: false 
+      });
       console.error(e);
       return swal({
         text: `Error Updating Tags`,
@@ -119,6 +127,7 @@ class PackageUpdateModal extends Component {
             raised
             color="primary"
             onClick={this._handleUpdatePackage}
+            disabled={this.state.isUpdatePackageLoading}
           >
             {this.state.isUpdatePackageLoading &&
               <i className="fa fa-spinner fa-spin mr1" />}
