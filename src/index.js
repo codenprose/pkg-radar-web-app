@@ -7,7 +7,7 @@ import { ApolloProvider } from 'react-apollo'
 import registerServiceWorker from './utils/registerServiceWorker'
 
 import { App } from './components/App'
-// import { ScrollToTop } from './components/Shared'
+import { ScrollToTop } from './components/Shared'
 
 import './index.css'
 import 'sweetalert2/dist/sweetalert2.css'
@@ -38,7 +38,9 @@ export const client = new ApolloClient({
 ReactDOM.render((
   <ApolloProvider client={client}>
     <BrowserRouter>
-      <App />
+      <ScrollToTop>
+        <App />
+      </ScrollToTop>
     </BrowserRouter>
   </ApolloProvider>
 ), document.getElementById('root'))

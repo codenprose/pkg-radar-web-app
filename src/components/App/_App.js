@@ -38,11 +38,11 @@ const theme = createMuiTheme({
 
 class App extends Component {
   githubAuth = () => {
-    const clientId = '1050d5bcb642ab0beb2e';
+    const clientId = process.env.GITHUB_CLIENT_ID;
     window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}`;
   };
 
-  render() {
+  _renderContent() {
     const { data, location } = this.props;
     const isUserAuthenticating = location.pathname.includes('github');
     let currentUser = '', isUserLoading = false;
@@ -52,6 +52,21 @@ class App extends Component {
       isUserLoading = data.loading;
     }
 
+    if (!isUserAuthenticating) {
+      return (
+        <div>
+          <Header
+            user={currentUser}
+            isUserLoading={isUserLoading}
+            githubAuth={this.githubAuth}
+          />
+          <Main isUserLoading={isUserLoading} user={currentUser} />
+        </div>
+      )
+    }
+  }
+
+  _updateIntercom() {
     // if (!currentUser && !isUserLoading) {
     //   window.Intercom('update');
     // } 
@@ -62,20 +77,13 @@ class App extends Component {
     //     email: currentUser.email
     //   });
     // }
+  }
 
+  render() {
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          {!isUserAuthenticating && (
-            <div>
-              <Header
-                user={currentUser}
-                isUserLoading={isUserLoading}
-                githubAuth={this.githubAuth}
-              />
-              <Main isUserLoading={isUserLoading} user={currentUser} />
-            </div>
-          )}
+          {this._renderContent()}
           <Route exact path="/github/auth" component={GithubAuth} />
         </div>
       </MuiThemeProvider>

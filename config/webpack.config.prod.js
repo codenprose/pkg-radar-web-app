@@ -253,7 +253,8 @@ module.exports = {
         PUBLIC_URL: JSON.stringify(''),
         GRAPHQL_ENDPOINT: JSON.stringify(process.env.GRAPHQL_ENDPOINT),
         ELASTIC_SEARCH_ENDPOINT: JSON.stringify(process.env.ELASTIC_SEARCH_ENDPOINT),
-        ELASTIC_SEARCH_INDEX: JSON.stringify(process.env.ELASTIC_SEARCH_INDEX)
+        ELASTIC_SEARCH_INDEX: JSON.stringify(process.env.ELASTIC_SEARCH_INDEX),
+        GITHUB_CLIENT_ID: JSON.stringify(process.env.GITHUB_CLIENT_ID)
       }
     }),
     // Minify the code.
