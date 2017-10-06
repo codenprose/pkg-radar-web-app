@@ -7,7 +7,6 @@
   base    = "."
   publish = "build"
   command = "npm run build"
-  GITHUB_CLIENT_ID = "1050d5bcb642ab0beb2e"
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
@@ -15,6 +14,7 @@
   GRAPHQL_ENDPOINT = "https://jgycwnw9jf.execute-api.us-east-1.amazonaws.com/prod/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
   ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
+  GITHUB_CLIENT_ID = "1050d5bcb642ab0beb2e"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
@@ -22,6 +22,7 @@
   GRAPHQL_ENDPOINT = "https://jgycwnw9jf.execute-api.us-east-1.amazonaws.com/prod/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
   ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
+  GITHUB_CLIENT_ID = "1050d5bcb642ab0beb2e"
 
 # Branch Deploy context: All deploys that are not in
 # an active Deploy Preview will inherit these settings.
@@ -29,6 +30,7 @@
   GRAPHQL_ENDPOINT = "https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
   ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
+  GITHUB_CLIENT_ID = "1050d5bcb642ab0beb2e"
   
 
 # Specific branch context: Deploys from this branch
@@ -38,3 +40,4 @@
   GRAPHQL_ENDPOINT = "https://kgaj2ml293.execute-api.us-east-1.amazonaws.com/dev/graphql"
   ELASTIC_SEARCH_ENDPOINT = "https://search-pkg-radar-prod-5zmur6rydaff4ppn7s5zbmyvbu.us-east-1.es.amazonaws.com"
   ELASTIC_SEARCH_INDEX = "pkg-radar-prod"
+  GITHUB_CLIENT_ID = "1050d5bcb642ab0beb2e"

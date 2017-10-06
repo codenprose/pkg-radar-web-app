@@ -9,6 +9,7 @@ import { Languages } from '../Languages'
 import { Discovery } from '../Discovery'
 
 import { Packages } from '../Admin'
+import { Login, PrivateRoute } from '../Auth'
 
 class Main extends Component {
   render() {
@@ -29,11 +30,12 @@ class Main extends Component {
           <Route exact path="/search" component={SearchResults} />
           <Route exact path="/languages" component={Languages} />
           <Route exact path="/discovery" component={Discovery} />
-          <Route exact path="/admin/packages" component={Packages} />
+          <PrivateRoute exact path="/admin/packages" component={Packages} />
           <Route exact path="/:owner/:package" render={
               (props) => <PackageDetail currentUser={user} isUserLoading={isUserLoading} {...props} />
             }
           />
+          <Route exact path="/login" component={Login} />
         </Switch>
       </main>
     )
