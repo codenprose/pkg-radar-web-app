@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { graphql, compose } from 'react-apollo'
+import swal from 'sweetalert2';
 
 import Button from "material-ui/Button";
 import Dialog, {
@@ -7,6 +9,8 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField';
+
+import UPDATE_PACKAGE from '../../mutations/updatePackage'
 
 class PackageUpdateModal extends Component {
   state = {
@@ -17,7 +21,10 @@ class PackageUpdateModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ isModalOpen: nextProps.isModalOpen })
+    this.setState({ 
+      isModalOpen: nextProps.isModalOpen, 
+      currentPackage: nextProps.currentPackage 
+    })
   }
 
   _handleModalClose = () => {
@@ -25,14 +32,46 @@ class PackageUpdateModal extends Component {
   }
 
   _handleUpdatePackage = async () => {
+    this.setState({ isUpdatePackageLoading: true });
+    console.log('updating package...')
+
     try {
-      // const { currentTag, currentTags } = this.state;
-      // let tags = [...currentTags, currentTag];
-      this.setState({ isUpdatePackageLoading: true });
+      const { currentPackage } = this.state;
+      const data = {
+        tags: currentPackage.tags
+      }
+      const response = await this.props.updatePackage({
+        variables: { 
+          owner: currentPackage.ownerName, 
+          name: currentPackage.packageName, 
+          data: JSON.stringify(data) 
+        }
+      })
+
+      console.log('updated package')
+      const updatedPkg = response.updatedPackage.package;
+      const { packageName } = updatedPkg
+      return swal({
+        text: `Updated Tags for ${packageName}`,
+        type: 'success'
+      })
     } catch(e) {
-      console.error(e);
       this.setState({ isUpdatePackageLoading: false });
+      console.error(e);
+      return swal({
+        text: `Error Updating Tags for ${packageName}`,
+        type: 'error'
+      })
     }
+  }
+
+  _handleAddCurrentTag = () => {
+    const { currentPackage, currentTag } = this.state;
+    const updatedPackage = {
+      ...currentPackage,
+      tags: [...currentPackage.tags, currentTag]
+    }
+    this.setState({ currentPackage: updatedPackage, currentTag: '' })
   }
 
   render() {
@@ -63,6 +102,7 @@ class PackageUpdateModal extends Component {
             />
             <Button
               className="mr3 dib"
+              onClick={this._handleAddCurrentTag}
             >
               Add Tag
             </Button>
@@ -90,4 +130,6 @@ class PackageUpdateModal extends Component {
   }
 }
 
-export default PackageUpdateModal;
+export default compose(
+  graphql(UPDATE_PACKAGE, { name: 'updatePackage' }),
+)(PackageUpdateModal)
