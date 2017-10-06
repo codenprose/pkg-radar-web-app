@@ -59,7 +59,7 @@ class PackageUpdateModal extends Component {
       this.setState({ isUpdatePackageLoading: false });
       console.error(e);
       return swal({
-        text: `Error Updating Tags for ${packageName}`,
+        text: `Error Updating Tags`,
         type: 'error'
       })
     }
