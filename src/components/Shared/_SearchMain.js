@@ -242,7 +242,7 @@ class SearchMain extends Component {
       if (hits.length) {
         this.setState({ suggestions: [{ inputValue }, ...hits] })
       } else {
-        const notFound = "Can't find a pkg? My bad... Login to add what we left out."
+        const notFound = "Can't find a pkg? Login to add what we left out."
         this.setState({ suggestions: [{ inputValue }, { notFound }] })
       }
     } catch (e) {
