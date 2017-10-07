@@ -460,28 +460,31 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Last Commit */}
-            <Card style={styles.card}>
-              <CardContent style={{ paddingBottom: 0 }}>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
-                  Last Commit
-                </Typography>
-                <Typography type="body1">
-                  {moment(data.package.lastCommit.author.date).format(
-                    "MMMM Do, YYYY"
-                  )}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link
-                  to={data.package.lastCommit.commitUrl}
-                  target="_blank"
-                  className="no-underline"
-                  rel="noopener noreferrer"
-                >
-                  <Button dense>View Commit</Button>
-                </Link>
-              </CardActions>
-            </Card>
+            {
+              data.package.lastCommit.author &&
+              <Card style={styles.card}>
+                <CardContent style={{ paddingBottom: 0 }}>
+                  <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                    Last Commit
+                  </Typography>
+                  <Typography type="body1">
+                    {moment(data.package.lastCommit.author.date).format(
+                      "MMMM Do, YYYY"
+                    )}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Link
+                    to={data.package.lastCommit.commitUrl}
+                    target="_blank"
+                    className="no-underline"
+                    rel="noopener noreferrer"
+                  >
+                    <Button dense>View Commit</Button>
+                  </Link>
+                </CardActions>
+              </Card>
+            }
 
             {/* Contributors */}
             <Card style={styles.card}>

@@ -40,7 +40,7 @@ main {
 #SearchMain ul[role='listbox'],
 #SearchPackages ul[role='listbox'],
 #SearchMain--header  ul[role='listbox'] {
-    max-height: 340px;
+    max-height: 300px;
     overflow-y: auto;
 }
 
