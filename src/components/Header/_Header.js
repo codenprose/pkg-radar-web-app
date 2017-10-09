@@ -293,11 +293,17 @@ class Header extends Component {
                 xs={12}
                 md={5}
                 hidden={{ lgUp: true }}
+                style={{
+                  margin: '20px 0 10px',
+                  textAlign: 'center'
+                }}
               >
                 <IconButton 
                   style={{ 
-                    color: drawerBtnColor,
-                    verticalAlign: 'sub'
+                    position: 'absolute',
+                    top: '10px',
+                    left: 0,
+                    color: drawerBtnColor
                   }}
                   onClick={this._toggleDrawer}
                 >
