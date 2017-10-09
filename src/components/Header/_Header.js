@@ -11,6 +11,7 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import withWidth from 'material-ui/utils/withWidth';
+import Hidden from 'material-ui/Hidden';
 import Drawer from 'material-ui/Drawer';
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
@@ -59,7 +60,12 @@ class Header extends Component {
     isCreatePackageURLValid: false,
     createPackageURL: '',
     isUserMenuOpen: false,
-    isCreatePackageLoading: false
+    isCreatePackageLoading: false,
+    isDrawerOpen: false
+  }
+
+  _toggleDrawer = () => {
+    this.setState({ isDrawerOpen: !this.state.isDrawerOpen })
   }
 
   _handleUserMenuClick = event => {
@@ -74,6 +80,9 @@ class Header extends Component {
   }
 
   _login = () => {
+    if (this.state.isDrawerOpen) {
+      this._toggleDrawer()
+    }
     this.props.githubAuth()
   }
 
@@ -145,8 +154,93 @@ class Header extends Component {
     }
   }
 
+  _renderUserSection = (avatarBorder, headerFontColor, loginBtnBgColor, alignment) => {
+    const { isUserLoading, user } = this.props;
+
+    if (isUserLoading || !user) {
+      return (
+        <div className={alignment}>
+          <div>
+            <Hidden mdDown>
+              <IconButton
+                onClick={this._handleModalOpen}
+                className="v-mid"
+                data-tip='Add Package'
+              >
+                <Icon style={{ color: headerFontColor }}>
+                  add
+                </Icon>
+              </IconButton>
+            </Hidden>
+            <ReactTooltip place='bottom' />
+            <Button
+              raised
+              color={loginBtnBgColor}
+              style={{ marginTop: '5px'}}
+              onClick={this._login}
+            >
+              <i className="fa fa-lg fa-github mr2" />
+              Login / Sign Up
+            </Button>
+          </div>
+        </div>
+      )
+    } else if (!isUserLoading && user) {
+      return (
+        <div className={alignment}>
+          <div>
+            <Hidden mdDown>
+              <IconButton
+                onClick={this._handleModalOpen}
+                className="v-mid"
+                data-tip='Add Package'
+              >
+                <Icon style={{ color: headerFontColor }}>
+                  add
+                </Icon>
+              </IconButton>
+            </Hidden>
+            <ReactTooltip place='bottom' />
+            <Avatar
+              src={user.avatar}
+              alt="User Image"
+              style={{
+                display: 'inline-block',
+                verticalAlign: 'middle',
+                cursor: 'pointer',
+                border: avatarBorder,
+                borderRadius: '0'
+              }}
+              onClick={this._handleUserMenuClick}
+            />
+            <Menu
+              id="simple-menu"
+              anchorEl={this.state.userMenuAnchorEl}
+              open={this.state.isUserMenuOpen}
+              onRequestClose={this._handleUserMenuClose}
+              style={{ marginTop: '40px', width: '150px' }}
+            >
+              <MenuItem onClick={this._handleUserMenuClose}>
+                <Link
+                  to={`/@${user.username}`}
+                  className="no-underline fw4"
+                  style={{ color: 'rgba(0, 0, 0, 0.87)' }}
+                >
+                  Profile
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={() => this._logout()}>
+                Logout
+              </MenuItem>
+            </Menu>
+          </div>
+        </div>
+      )
+    }
+  }
+
   render() {
-    const { githubAuth, history, title, user, isUserLoading, location } = this.props
+    const { history, title, location } = this.props
     // console.log('header props', this.props)
 
     let userSectionWidth = 7;
@@ -157,6 +251,7 @@ class Header extends Component {
     let loginBtnBgColor = 'primary';
     let avatarBorder = '2px solid black';
     let drawerBtnColor = 'black';
+    let titleSectionWidth = 5;
 
     if (location.pathname !== '/') {
       isSearchVisible = true;
@@ -167,6 +262,7 @@ class Header extends Component {
       loginBtnBgColor = 'default';
       avatarBorder = '1px solid white';
       drawerBtnColor = 'white';
+      titleSectionWidth = 4;
     }
 
     return (
@@ -203,6 +299,7 @@ class Header extends Component {
                     color: drawerBtnColor,
                     verticalAlign: 'sub'
                   }}
+                  onClick={this._toggleDrawer}
                 >
                   <Icon>menu</Icon>
                 </IconButton>
@@ -215,7 +312,7 @@ class Header extends Component {
               <Grid 
                 item 
                 md={5}
-                lg={4}
+                lg={titleSectionWidth}
                 hidden={{ mdDown: true }}
               >
                 <Grid 
@@ -273,88 +370,43 @@ class Header extends Component {
                 hidden={{ mdDown: true }}
                 style={{ height: '100%' }}
               >
-                <div className="tr">
-                  {!isUserLoading && !user &&
-                    <div>
-                      <IconButton
-                        onClick={this._handleModalOpen}
-                        className="v-mid"
-                        data-tip='Add Package'
-                      >
-                        <Icon style={{ color: headerFontColor }}>
-                          add
-                        </Icon>
-                      </IconButton>
-                      <ReactTooltip place='bottom' />
-                      <Button
-                        raised
-                        color={loginBtnBgColor}
-                        style={{ marginTop: '5px'}}
-                        onClick={githubAuth}
-                      >
-                        <i className="fa fa-lg fa-github mr2" />
-                        Login / Sign Up
-                      </Button>
-                    </div>}
-                  {!isUserLoading && user &&
-                    <div>
-                      <IconButton
-                        onClick={this._handleModalOpen}
-                        className="v-mid"
-                        data-tip='Add Package'
-                      >
-                        <Icon style={{ color: headerFontColor }}>
-                          add
-                        </Icon>
-                      </IconButton>
-                      <ReactTooltip place='bottom' />
-                      <Avatar
-                        src={user.avatar}
-                        alt="User Image"
-                        style={{
-                          display: 'inline-block',
-                          verticalAlign: 'middle',
-                          cursor: 'pointer',
-                          border: avatarBorder,
-                          borderRadius: '0'
-                        }}
-                        onClick={this._handleUserMenuClick}
-                      />
-                      <Menu
-                        id="simple-menu"
-                        anchorEl={this.state.userMenuAnchorEl}
-                        open={this.state.isUserMenuOpen}
-                        onRequestClose={this._handleUserMenuClose}
-                        style={{ marginTop: '40px', width: '150px' }}
-                      >
-                        <MenuItem onClick={this._handleUserMenuClose}>
-                          <Link
-                            to={`/@${user.username}`}
-                            className="no-underline fw4"
-                            style={{ color: 'rgba(0, 0, 0, 0.87)' }}
-                          >
-                            Profile
-                          </Link>
-                        </MenuItem>
-                        {/* <MenuItem onClick={this._handleUserMenuClose}>
-                          <Link
-                            to={`/settings`}
-                            className="no-underline fw4"
-                            style={{ color: 'rgba(0, 0, 0, 0.87)' }}
-                          >
-                            Settings
-                          </Link>
-                        </MenuItem> */}
-                        <MenuItem onClick={() => this._logout()}>
-                          Logout
-                        </MenuItem>
-                      </Menu>
-                    </div>}
-                </div>
+                {this._renderUserSection(avatarBorder, headerFontColor, loginBtnBgColor, 'tr')}
               </Grid>
             </Grid>
           </Toolbar>
         </AppBar>
+
+        <Drawer 
+          open={this.state.isDrawerOpen} 
+          onRequestClose={this._toggleDrawer}
+        >
+          <div style={{ width: '225px', padding: '20px' }}>
+            <Link
+              to="/@dkh215"
+              className="no-underline db"
+              style={{
+                color: 'black',
+                fontSize: '14px',
+                marginBottom: '20px'
+              }}
+              onClick={this._toggleDrawer}
+            >
+              VIEW DEMO PROFILE
+            </Link>
+            {this._renderUserSection(avatarBorder, headerFontColor, loginBtnBgColor, 'tl')}
+            <div style={{ marginTop: '40px' }}>
+              Made by: &nbsp;
+              <a
+                href="https://twitter.com/danielkhunter"
+                className="twitter-follow-button no-underline"
+                target='_blank'
+                rel="noopener noreferrer"
+              >
+                @danielkhunter
+              </a>
+            </div>
+          </div>
+        </Drawer>
 
         <Dialog
           open={this.state.isCreatePackageModalOpen}
