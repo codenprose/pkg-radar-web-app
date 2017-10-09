@@ -30,6 +30,13 @@ main {
   background: white;
 }
 
+@media screen and (max-width: 960px) {
+  .markdown-body {
+    padding: 0;
+    background: none;
+  }
+}
+
 /* Header Component */
 #Header input::placeholder {
   color: white;

@@ -1,38 +1,45 @@
-import React, { Component } from "react";
-import { graphql, compose } from "react-apollo";
-import Grid from "material-ui/Grid";
-import Typography from "material-ui/Typography";
-import Card, { CardHeader, CardContent, CardActions } from "material-ui/Card";
-import { Link } from "react-router-dom";
-import Tabs, { Tab } from "material-ui/Tabs";
-import Button from "material-ui/Button";
-import SwipeableViews from "react-swipeable-views";
-import Humanize from "humanize-plus";
-import marked from "marked";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "material-ui/Dialog";
-import styled from "styled-components";
-import moment from "moment";
+import React, { Component } from 'react';
+import { graphql, compose } from 'react-apollo';
+import Grid from 'material-ui/Grid';
+import Typography from 'material-ui/Typography';
+import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card';
+import { Link } from 'react-router-dom';
+import Tabs, { Tab } from 'material-ui/Tabs';
+import Button from 'material-ui/Button';
+import SwipeableViews from 'react-swipeable-views';
+import Humanize from 'humanize-plus';
+import marked from 'marked';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
+import styled from 'styled-components';
+import moment from 'moment';
 import Select from 'react-select';
-import find from 'lodash/find'
-import truncate from 'lodash/truncate'
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
+import find from 'lodash/find';
+import truncate from 'lodash/truncate';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 import swal from 'sweetalert2';
+import withWidth from 'material-ui/utils/withWidth';
+import Hidden from 'material-ui/Hidden';
 
-import { Loader } from '../Shared'
+import { Loader } from '../Shared';
 
-import CURRENT_USER from '../../queries/currentUser'
-import GET_PACKAGE from '../../queries/package'
-import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages'
+import CURRENT_USER from '../../queries/currentUser';
+import GET_PACKAGE from '../../queries/package';
+import USER_KANBAN_PACKAGES from '../../queries/userKanbanPackages';
 import UPDATE_KANBAN_CARDS from '../../mutations/updateKanbanCards';
-import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage'
+import CREATE_USER_KANBAN_PACKAGE from '../../mutations/createUserKanbanPackage';
 
-import radarBgImg from "../../images/nathan_anderson_radar.jpg"
+import radarBgImg from '../../images/nathan_anderson_radar.jpg';
 
-import "github-markdown-css/github-markdown.css";
+import 'github-markdown-css/github-markdown.css';
 
 const rst2mdown = require('rst2mdown');
 const Text = require('react-format-text');
@@ -40,7 +47,7 @@ const Text = require('react-format-text');
 const PackageDetailHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: 250px;
+  height: ${props => props.height}px;
   width: 100%;
   margin-bottom: 20px;
   background: url("${radarBgImg}") no-repeat center;
@@ -57,17 +64,18 @@ const PackageDetailHeader = styled.div`
   }
 `;
 
-const TabContainer = props =>
+const TabContainer = props => (
   <div
     style={{
-      position: "relative",
-      marginTop: "20px",
+      position: 'relative',
+      marginTop: '20px',
       overflowX: 'hidden',
       overflowY: 'hidden'
     }}
   >
     {props.children}
-  </div>;
+  </div>
+);
 
 class PackageDetail extends Component {
   state = {
@@ -77,7 +85,7 @@ class PackageDetail extends Component {
     areRecommendationsLoading: false,
     isAddPackageLoading: false,
     selectedStatus: '',
-    selectedBoard: '',
+    selectedBoard: ''
   };
 
   static defaultProps = {
@@ -95,34 +103,34 @@ class PackageDetail extends Component {
       { month: 'May', backlog: 42, trial: 17, production: 33, archive: 8 },
       { month: 'June', backlog: 16, trial: 14, production: 61, archive: 9 },
       { month: 'July', backlog: 9, trial: 7, production: 75, archive: 9 },
-      { month: 'August', backlog: 3, trial: 2, production: 86, archive: 9 },
+      { month: 'August', backlog: 3, trial: 2, production: 86, archive: 9 }
     ]
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ index: 0 })
+    this.setState({ index: 0 });
   }
 
   _formatKanbanCards = () => {
-    const kanbanCards = this.props.currentUser.kanbanCards
-    let cards = []
+    const kanbanCards = this.props.currentUser.kanbanCards;
+    let cards = [];
 
     for (let item in kanbanCards) {
-      const card = kanbanCards[item]
-      const { board, ownerName, packageName } = card
-      cards.push({ board, ownerName, packageName })
+      const card = kanbanCards[item];
+      const { board, ownerName, packageName } = card;
+      cards.push({ board, ownerName, packageName });
     }
-    return cards
-  }
+    return cards;
+  };
 
   _handleAddPackage = async () => {
-    const { currentUser, data } = this.props
-    const { selectedStatus, selectedBoard} = this.state
+    const { currentUser, data } = this.props;
+    const { selectedStatus, selectedBoard } = this.state;
 
-    this.setState({ isAddPackageLoading: true })
+    this.setState({ isAddPackageLoading: true });
 
     try {
-      console.log('adding package')
+      console.log('adding package');
       await this.props.createUserKanbanPackage({
         variables: {
           ownerName: data.package.ownerName,
@@ -131,43 +139,47 @@ class PackageDetail extends Component {
           status: selectedStatus,
           username: currentUser.username
         },
-        refetchQueries: [{
-          query: USER_KANBAN_PACKAGES,
-          variables: { username: currentUser.username }
-        }]
+        refetchQueries: [
+          {
+            query: USER_KANBAN_PACKAGES,
+            variables: { username: currentUser.username }
+          }
+        ]
       });
-      console.log('added package')
+      console.log('added package');
 
-      console.log('updating cards')
-      const token = localStorage.getItem('pkgRadarToken')
-      const kanbanCards = this._formatKanbanCards()
+      console.log('updating cards');
+      const token = localStorage.getItem('pkgRadarToken');
+      const kanbanCards = this._formatKanbanCards();
       const card = {
         board: selectedBoard,
         ownerName: data.package.ownerName,
-        packageName: data.package.packageName,
-      }
+        packageName: data.package.packageName
+      };
 
       await this.props.updateKanbanCards({
         variables: {
           username: currentUser.username,
           kanbanCards: [...kanbanCards, card]
         },
-        refetchQueries: [{
-          query: CURRENT_USER,
-          variables: { username: currentUser.username, token }
-        }]
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: currentUser.username, token }
+          }
+        ]
       });
-      console.log('updated cards')
+      console.log('updated cards');
       this.setState({
         isAddPackageLoading: false,
         isAddPackageModalOpen: false
-      })
+      });
     } catch (e) {
       console.error(e.message);
       this.setState({
         isAddPackageLoading: false,
         isAddPackageModalOpen: false
-      })
+      });
     }
   };
 
@@ -185,110 +197,109 @@ class PackageDetail extends Component {
 
   handleMainContentTabChange = (event, index) => {
     if (index === 2) {
-      this._handleRecommendationsSearch()
+      this._handleRecommendationsSearch();
     }
     this.setState({ index });
   };
 
   _formatTagsForQuery = () => {
     const { tags } = this.props.data.package;
-    return tags.join(' ')
-  }
+    return tags.join(' ');
+  };
 
   _handleRecommendationsSearch = async () => {
     try {
       const { tags } = this.props.data.package;
-      if (!tags.length) return
+      if (!tags.length) return;
 
       this.setState({ areRecommendationsLoading: true });
       const formattedTags = this._formatTagsForQuery();
 
       const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
       const body = {
-        from : 0,
-        size : 40,
+        from: 0,
+        size: 40,
         query: {
           query_string: {
-            fields : ["package_name^2", "owner_name", "tags", "language^2"],
+            fields: ['package_name^2', 'owner_name', 'tags', 'language^2'],
             default_operator: 'OR',
             query: `${formattedTags}`
-          },
-        },
-      //   sort: [
-      //     {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
-      //  ]
+          }
+        }
+        //   sort: [
+        //     {"stars" : {"order" : "desc", "unmapped_type" : "long"}}
+        //  ]
       };
 
       const options = {
         method: 'POST',
         'Content-Type': 'application/json',
         body: JSON.stringify(body)
-      }
+      };
 
       const response = await fetch(endpoint, options);
       const json = await response.json();
 
-      const hits = json.hits.hits
+      const hits = json.hits.hits;
       // console.log('hits', hits)
       if (hits.length) {
-        this.setState({ recommendations: hits, areRecommendationsLoading: false })
+        this.setState({ recommendations: hits, areRecommendationsLoading: false });
       } else {
-        this.setState({ areRecommendationsLoading: false })
+        this.setState({ areRecommendationsLoading: false });
       }
     } catch (e) {
       console.error(e);
-      this.setState({ areRecommendationsLoading: false })
+      this.setState({ areRecommendationsLoading: false });
     }
   };
 
   _renderRecommendations = () => {
     const { areRecommendationsLoading, recommendations } = this.state;
 
-    if (areRecommendationsLoading) return
+    if (areRecommendationsLoading) return;
 
     if (!recommendations.length) {
       return (
         <Grid item xs={12}>
           <h3 style={{ position: 'absolute' }}>No Recommendations</h3>
         </Grid>
-      )
+      );
     }
 
     return recommendations.map((item, i) => {
-        const pkg = item._source
-        return (
-          <Grid item xs={12} md={6} xl={4} key={i}>
-            <Card
-              style={{
-                marginBottom: "15px",
-              }}
-            >
-              <CardHeader
-                avatar={
-                  <img
-                    alt={`${pkg.package_name}-logo`}
-                    style={{ height: "40px" }}
-                    src={pkg.owner_avatar}
-                  />
-                }
-                title={pkg.package_name}
-                subheader={`Stars: ${Humanize.formatNumber(pkg.stars)}`}
-              />
-              <CardContent style={{ padding: "0 16px", minHeight: '40px' }}>
-                <Typography type="body1" component="p">
-                  {pkg.description}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link to={`/${pkg.owner_name}/${pkg.package_name}`} className="no-underline">
-                  <Button dense>View Package</Button>
-                </Link>
-              </CardActions>
-            </Card>
-          </Grid>
-        );
-      }
-    );
+      const pkg = item._source;
+      return (
+        <Grid item xs={12} md={6} xl={4} key={i}>
+          <Card
+            style={{
+              marginBottom: '15px'
+            }}
+          >
+            <CardHeader
+              avatar={
+                <img
+                  alt={`${pkg.package_name}-logo`}
+                  style={{ height: '40px' }}
+                  src={pkg.owner_avatar}
+                />
+              }
+              title={pkg.package_name}
+              subheader={`Stars: ${Humanize.formatNumber(pkg.stars)}`}
+            />
+            <CardContent style={{ padding: '0 16px', minHeight: '40px' }}>
+              <Typography type="body1" component="p">
+                {pkg.description}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Link to={`/${pkg.owner_name}/${pkg.package_name}`} className="no-underline">
+                <Button dense>View Package</Button>
+              </Link>
+            </CardActions>
+          </Card>
+        </Grid>
+      );
+    });
   };
 
   _openPackageModal = () => {
@@ -296,7 +307,7 @@ class PackageDetail extends Component {
       return swal({
         text: 'Please Login',
         type: 'info'
-      })
+      });
     }
     this.setState({ isAddPackageModalOpen: true });
   };
@@ -317,90 +328,144 @@ class PackageDetail extends Component {
   };
 
   _checkIfPackageIsSaved = () => {
-    const { currentUser, data } = this.props
-    if (!currentUser) return false
+    const { currentUser, data } = this.props;
+    if (!currentUser) return false;
 
-    const saved = find(currentUser.kanbanCards, (card) => {
+    const saved = find(currentUser.kanbanCards, card => {
       if (card && data.package) {
-        return card.ownerName === data.package.ownerName &&
-          card.packageName === data.package.packageName
+        return (
+          card.ownerName === data.package.ownerName && card.packageName === data.package.packageName
+        );
       }
-      return false
-    })
-    return typeof(saved) === 'object'
-  }
+      return false;
+    });
+    return typeof saved === 'object';
+  };
 
   _renderTags = () => {
-    const { data } = this.props
+    const { data } = this.props;
     if (data.package.tags.length) {
       return data.package.tags.map((tag, i) => {
         return (
           <Link
             to={`/search?q=${tag}`}
             key={i}
-            className='pointer:hover white no-underline'
+            className="pointer:hover white no-underline"
             style={{ margin: '0 10px 10px 0' }}
           >
             {tag}
           </Link>
-        )
-      })
+        );
+      });
     }
-  }
+  };
 
   render() {
     const { currentUser, data, isUserLoading } = this.props;
-    if (data.loading || isUserLoading || !data.package) return <Loader />
+    if (data.loading || isUserLoading || !data.package) return <Loader />;
     // console.log('props', this.props)
     // console.log('current user', currentUser)
 
-    let isPackageSaved = this._checkIfPackageIsSaved()
-    let addPackageBtnText = 'Save'
-    let addPackageBtnColor = 'white'
-    let addPackageBtnBgColor = '#1B2327'
+    let isPackageSaved = this._checkIfPackageIsSaved();
+    let addPackageBtnText = 'Save';
+    let addPackageBtnColor = 'white';
+    let addPackageBtnBgColor = '#1B2327';
 
     if (isPackageSaved) {
-      addPackageBtnText = 'Saved'
-      addPackageBtnColor = 'white'
-      addPackageBtnBgColor = '#4CAF50'
+      addPackageBtnText = 'Saved';
+      addPackageBtnColor = 'white';
+      addPackageBtnBgColor = '#4CAF50';
     }
 
-    let readmeHtml = "<div>No Data Available</div>";
-    let changelogHtml = "<div>No Data Available</div>";
+    let readmeHtml = '<div>No Data Available</div>';
+    let changelogHtml = '<div>No Data Available</div>';
 
     if (data.package.lastRelease) {
       changelogHtml = marked(data.package.lastRelease.description);
     }
 
-    if (data.package.readme.text && data.package.readme.extension === "md") {
+    if (data.package.readme.text && data.package.readme.extension === 'md') {
       readmeHtml = marked(data.package.readme.text);
-    } else if (data.package.readme.text && data.package.readme.extension === "rst") {
-      const md = rst2mdown(data.package.readme.text)
-      readmeHtml = marked(md)
+    } else if (data.package.readme.text && data.package.readme.extension === 'rst') {
+      const md = rst2mdown(data.package.readme.text);
+      readmeHtml = marked(md);
     } else {
       readmeHtml = marked(data.package.readme.text);
     }
 
     const styles = {
       card: {
-        marginBottom: "15px"
+        marginBottom: '15px'
       }
     };
 
     return (
       <div>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={3}>
+            <Hidden mdUp>
+              <PackageDetailHeader height={150}>
+                <Grid
+                  container
+                  direction="row"
+                  align="center"
+                  style={{ height: '100%', padding: '0 20px', margin: 0 }}
+                >
+                  <Grid item xs={12} style={{ paddingBottom: 0 }}>
+                    <Grid container>
+                      <Grid item>
+                        <img
+                          alt={`${data.package.packageName}-logo`}
+                          style={{ height: '50px', marginRight: '20px', borderRadius: '50%' }}
+                          src={data.package.ownerAvatar}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography
+                          type="headline"
+                          gutterBottom
+                          style={{ color: 'white', display: 'inline-block' }}
+                        >
+                          {data.package.ownerName} / {data.package.packageName}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <div className="mb3">
+                      <a
+                        href={data.package.websiteUrl}
+                        className="pointer:hover white no-underline mr3"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fa fa-globe mr2" aria-hidden="true" />
+                        Website
+                      </a>
+                      <a
+                        href={data.package.repoUrl}
+                        className="pointer:hover white no-underline mr2"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fa fa-github mr2" aria-hidden="true" />
+                        Repo
+                      </a>
+                    </div>
+                  </Grid>
+                </Grid>
+              </PackageDetailHeader>
+            </Hidden>
 
             {/* Package Stats */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                <Typography style={{ marginBottom: '20px ' }} type="title" component="h3">
                   Stats
                 </Typography>
                 <Grid container>
                   <Grid item xs={12} xl={6}>
-                    <ul className='list pl0 dib mt0 mb0'>
+                    <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
                           <i className="fa fa-star fa-fw mr1" aria-hidden="true" />
@@ -428,7 +493,7 @@ class PackageDetail extends Component {
                     </ul>
                   </Grid>
                   <Grid item xs={12} xl={6}>
-                    <ul className='list pl0 dib mt0 mb0'>
+                    <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
                           <i className="fa fa-users fa-fw mr1" aria-hidden="true" />
@@ -460,17 +525,14 @@ class PackageDetail extends Component {
             </Card>
 
             {/* Last Commit */}
-            {
-              data.package.lastCommit.author &&
+            {data.package.lastCommit.author && (
               <Card style={styles.card}>
                 <CardContent style={{ paddingBottom: 0 }}>
-                  <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                  <Typography style={{ marginBottom: '20px ' }} type="title" component="h3">
                     Last Commit
                   </Typography>
                   <Typography type="body1">
-                    {moment(data.package.lastCommit.author.date).format(
-                      "MMMM Do, YYYY"
-                    )}
+                    {moment(data.package.lastCommit.author.date).format('MMMM Do, YYYY')}
                   </Typography>
                 </CardContent>
                 <CardActions>
@@ -484,35 +546,30 @@ class PackageDetail extends Component {
                   </Link>
                 </CardActions>
               </Card>
-            }
+            )}
 
             {/* Contributors */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                <Typography style={{ marginBottom: '20px ' }} type="title" component="h3">
                   Contributors
                 </Typography>
-                {
-                  data.package.contributors.top100.map(contributor => {
-                    return (
-                      <a
-                        key={contributor.username}
-                        href={contributor.url}
-                        style={{ marginRight: '10px' }}
-                      >
-                        <img
-                          alt='contributor'
-                          style={{ width: '32px' }}
-                          src={contributor.avatar}
-                        />
-                      </a>
-                    )
-                  })
-                }
+                {data.package.contributors.top100.map(contributor => {
+                  return (
+                    <a
+                      key={contributor.username}
+                      href={contributor.url}
+                      style={{ marginRight: '10px' }}
+                    >
+                      <img alt="contributor" style={{ width: '32px' }} src={contributor.avatar} />
+                    </a>
+                  );
+                })}
               </CardContent>
               <CardActions>
                 <a
-                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/graphs/contributors`}
+                  href={`https://github.com/${data.package.ownerName}/${data.package
+                    .packageName}/graphs/contributors`}
                   className="no-underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -525,20 +582,17 @@ class PackageDetail extends Component {
             {/* License */}
             <Card style={styles.card}>
               <CardContent>
-                <Typography style={{ marginBottom: '20px '}} type="title" component="h3">
+                <Typography style={{ marginBottom: '20px ' }} type="title" component="h3">
                   License
                 </Typography>
                 <Typography type="body1">
-                  {
-                    data.package.license ?
-                      data.package.license :
-                        'No License Provided'
-                  }
+                  {data.package.license ? data.package.license : 'No License Provided'}
                 </Typography>
               </CardContent>
               <CardActions>
                 <a
-                  href={`https://github.com/${data.package.ownerName}/${data.package.packageName}/blob/master/LICENSE`}
+                  href={`https://github.com/${data.package.ownerName}/${data.package
+                    .packageName}/blob/master/LICENSE`}
                   className="no-underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -549,67 +603,65 @@ class PackageDetail extends Component {
             </Card>
           </Grid>
 
-          <Grid item xs={9} style={{ paddingLeft: '20px' }}>
-            <PackageDetailHeader>
-              <Grid
-                container
-                direction="row"
-                align="center"
-                style={{ height: "100%", padding: "0 20px", margin: 0 }}
-              >
-                <Grid item xs={12} style={{ paddingBottom: 0 }}>
-                  <Grid container>
-                    <Grid item>
-                      <img
-                        alt={`${data.package.packageName}-logo`}
-                        style={{
-                          height: "50px",
-                          marginRight: '20px',
-                          borderRadius: '50%'
-                        }}
-                        src={data.package.ownerAvatar}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Typography
-                        type="headline"
-                        gutterBottom
-                        style={{ color: 'white', display: 'inline-block' }}
-                      >
-                      {data.package.ownerName} / {data.package.packageName}
-                      <div style={{ fontSize: '16px' }}>
-                        {truncate(data.package.description, { length: 102 })}
-                      </div>
-                      </Typography>
+          <Grid item xs={12} md={9} style={{ paddingLeft: '20px' }}>
+            <Hidden smDown>
+              <PackageDetailHeader height={250}>
+                <Grid
+                  container
+                  direction="row"
+                  align="center"
+                  style={{ height: '100%', padding: '0 20px', margin: 0 }}
+                >
+                  <Grid item xs={12} style={{ paddingBottom: 0 }}>
+                    <Grid container>
+                      <Grid item>
+                        <img
+                          alt={`${data.package.packageName}-logo`}
+                          style={{ height: '50px', marginRight: '20px', borderRadius: '50%' }}
+                          src={data.package.ownerAvatar}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography
+                          type="headline"
+                          gutterBottom
+                          style={{ color: 'white', display: 'inline-block' }}
+                        >
+                          {data.package.ownerName} / {data.package.packageName}
+                          <div style={{ fontSize: '16px' }}>
+                            {truncate(data.package.description, { length: 102 })}
+                          </div>
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
+                  <Grid item xs={12}>
+                    <div className="mb3">
+                      <a
+                        href={data.package.websiteUrl}
+                        className="pointer:hover white no-underline mr3"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fa fa-globe mr2" aria-hidden="true" />
+                        Website
+                      </a>
+                      <a
+                        href={data.package.repoUrl}
+                        className="pointer:hover white no-underline mr2"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="fa fa-github mr2" aria-hidden="true" />
+                        Repo
+                      </a>
+                    </div>
+                    <i className="fa fa-tags mr2 white" aria-hidden="true" />
+                    {this._renderTags()}
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <div className='mb3'>
-                    <a
-                      href={data.package.websiteUrl}
-                      className='pointer:hover white no-underline mr3'
-                      target='_blank'
-                      rel="noopener noreferrer"
-                    >
-                      <i className="fa fa-globe mr2" aria-hidden="true" />
-                      Website
-                    </a>
-                    <a
-                      href={data.package.repoUrl}
-                      className='pointer:hover white no-underline mr2'
-                      target='_blank'
-                      rel="noopener noreferrer"
-                    >
-                      <i className="fa fa-github mr2" aria-hidden="true" />
-                      Repo
-                    </a>
-                  </div>
-                  <i className="fa fa-tags mr2 white" aria-hidden="true" />
-                  {this._renderTags()}
-                </Grid>
-              </Grid>
-            </PackageDetailHeader>
+              </PackageDetailHeader>
+            </Hidden>
             <Grid container>
               <Grid style={{ paddingTop: 0 }} item xs={10}>
                 <Tabs
@@ -618,6 +670,8 @@ class PackageDetail extends Component {
                   indicatorColor="primary"
                   textColor="primary"
                   fullWidth
+                  scrollable
+                  scrollButtons="on"
                 >
                   <Tab label="Readme" />
                   <Tab label="Latest Release" />
@@ -625,7 +679,7 @@ class PackageDetail extends Component {
                   <Tab label="Radar" />
                 </Tabs>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={2} hidden={{ smDown: true }}>
                 <Button
                   raised
                   disabled={isPackageSaved}
@@ -633,7 +687,7 @@ class PackageDetail extends Component {
                   style={{
                     color: addPackageBtnColor,
                     backgroundColor: addPackageBtnBgColor,
-                    marginRight: "10px",
+                    marginRight: '10px',
                     float: 'right'
                   }}
                 >
@@ -646,50 +700,27 @@ class PackageDetail extends Component {
               onChangeIndex={this.handleMainContentTabChange}
             >
               <TabContainer>
-                {
-                  (
-                    data.package.readme.extension === "md" ||
-                    data.package.readme.extension === "rst"
-                  ) &&
-                  <div
-                    className="markdown-body"
-                    dangerouslySetInnerHTML={{ __html: readmeHtml }}
-                  />
-                }
-                {
-                  data.package.readme.extension === "txt" &&
+                {(data.package.readme.extension === 'md' ||
+                  data.package.readme.extension === 'rst') && (
+                  <div className="markdown-body" dangerouslySetInnerHTML={{ __html: readmeHtml }} />
+                )}
+                {data.package.readme.extension === 'txt' && (
                   <div className="markdown-body">
                     <Text>{data.package.readme}</Text>
                   </div>
-                }
-                {
-                  !data.package.readme.extension &&
-                  <div
-                    className="markdown-body"
-                    dangerouslySetInnerHTML={{ __html: readmeHtml }}
-                  />
-                }
+                )}
+                {!data.package.readme.extension && (
+                  <div className="markdown-body" dangerouslySetInnerHTML={{ __html: readmeHtml }} />
+                )}
               </TabContainer>
               <TabContainer>
-                {data.package.lastRelease &&
-                  <div className='markdown-body' style={{ paddingBottom: 0 }}>
-                    <Typography
-                      style={{ marginBottom: "10px" }}
-                      type="display1"
-                      component="h2"
-                    >
+                {data.package.lastRelease && (
+                  <div className="markdown-body" style={{ paddingBottom: 0 }}>
+                    <Typography style={{ marginBottom: '10px' }} type="display1" component="h2">
                       {data.package.lastRelease.name}
                     </Typography>
-                    <Typography
-                      type="body1"
-                      component="p"
-                    >
-                      Published:{" "}
-                      {moment(data.package.lastRelease.publishedAt).format(
-                        "MMMM Do, YYYY"
-                      )}
-                    </Typography>
-                  </div>}
+                  </div>
+                )}
                 <div
                   className="markdown-body"
                   dangerouslySetInnerHTML={{ __html: changelogHtml }}
@@ -718,25 +749,44 @@ class PackageDetail extends Component {
                   >
                     Coming Soon
                   </h4>
-                  {
-                    this.state.index === 3 &&
+                  {this.state.index === 3 && (
                     <ResponsiveContainer>
                       <LineChart
                         data={this.props.packageHistory}
-                        margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                       >
-                        <XAxis dataKey="month"/>
+                        <XAxis dataKey="month" />
                         <YAxis label={{ value: 'Percentage of Users', angle: -90, dx: -20 }} />
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <Tooltip/>
-                        <Legend verticalAlign='bottom' />
-                        <Line type="monotone" dataKey="backlog" stroke="#2196F3" activeDot={{r: 6}}/>
-                        <Line type="monotone" dataKey="trial" stroke="lightseagreen" activeDot={{r: 6}} />
-                        <Line type="monotone" dataKey="production" stroke="#4CAF50" activeDot={{r: 6}} />
-                        <Line type="monotone" dataKey="archive" stroke="#F44336" activeDot={{r: 6}} />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" />
+                        <Line
+                          type="monotone"
+                          dataKey="backlog"
+                          stroke="#2196F3"
+                          activeDot={{ r: 6 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="trial"
+                          stroke="lightseagreen"
+                          activeDot={{ r: 6 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="production"
+                          stroke="#4CAF50"
+                          activeDot={{ r: 6 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="archive"
+                          stroke="#F44336"
+                          activeDot={{ r: 6 }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
-                  }
+                  )}
                 </div>
               </TabContainer>
             </SwipeableViews>
@@ -744,59 +794,48 @@ class PackageDetail extends Component {
         </Grid>
 
         {/* Add Package */}
-        {
-          currentUser &&
-            <Dialog
-              open={this.state.isAddPackageModalOpen}
-              onRequestClose={this._closePackageModal}
-            >
-              <DialogTitle>Add Package</DialogTitle>
-              <DialogContent
-                style={{
-                  width: "550px",
-                  marginBottom: "30px",
-                  overflowY: 'inherit'
-                }}
+        {currentUser && (
+          <Dialog open={this.state.isAddPackageModalOpen} onRequestClose={this._closePackageModal}>
+            <DialogTitle>Add Package</DialogTitle>
+            <DialogContent style={{ width: '550px', marginBottom: '30px', overflowY: 'inherit' }}>
+              <Select
+                options={this._formatBoardSelectItems()}
+                placeholder="Select Board"
+                value={this.state.selectedBoard}
+                onChange={this._handleBoardSelection}
+                autofocus
+                style={{ marginBottom: '20px' }}
+              />
+              <Select
+                options={this.props.kanbanStatusOptions}
+                placeholder="Select Status"
+                value={this.state.selectedStatus}
+                onChange={this._handleStatusSelection}
+                style={{ marginBottom: '20px' }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button className="mr3" onClick={this._closePackageModal}>
+                Cancel
+              </Button>
+              <Button
+                raised
+                color="primary"
+                disabled={
+                  !this.state.selectedStatus ||
+                  !this.state.selectedBoard ||
+                  this.state.isAddPackageLoading
+                }
+                onClick={this._handleAddPackage}
               >
-                <Select
-                  options={this._formatBoardSelectItems()}
-                  placeholder="Select Board"
-                  value={this.state.selectedBoard}
-                  onChange={this._handleBoardSelection}
-                  autofocus
-                  style={{ marginBottom: "20px" }}
-                />
-                <Select
-                  options={this.props.kanbanStatusOptions}
-                  placeholder="Select Status"
-                  value={this.state.selectedStatus}
-                  onChange={this._handleStatusSelection}
-                  style={{ marginBottom: "20px" }}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button className="mr3" onClick={this._closePackageModal}>
-                  Cancel
-                </Button>
-                <Button
-                  raised
-                  color="primary"
-                  disabled={
-                    !this.state.selectedStatus ||
-                      !this.state.selectedBoard ||
-                        this.state.isAddPackageLoading
-                  }
-                  onClick={this._handleAddPackage}
-                >
-                  {
-                    this.state.isAddPackageLoading &&
-                    <i className="fa fa-circle-o-notch fa-spin mr2"></i>
-                  }
-                  Submit
-                </Button>
-              </DialogActions>
-            </Dialog>
-        }
+                {this.state.isAddPackageLoading && (
+                  <i className="fa fa-circle-o-notch fa-spin mr2" />
+                )}
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
       </div>
     );
   }
@@ -815,6 +854,7 @@ const packageOptions = {
 
 export default compose(
   graphql(CREATE_USER_KANBAN_PACKAGE, { name: 'createUserKanbanPackage' }),
-  graphql(UPDATE_KANBAN_CARDS, { name: "updateKanbanCards" }),
+  graphql(UPDATE_KANBAN_CARDS, { name: 'updateKanbanCards' }),
   graphql(GET_PACKAGE, packageOptions),
+  withWidth()
 )(PackageDetail);
