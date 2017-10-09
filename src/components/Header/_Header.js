@@ -10,6 +10,8 @@ import Dialog, {
   DialogContentText,
   DialogTitle
 } from 'material-ui/Dialog'
+import withWidth from 'material-ui/utils/withWidth';
+import Drawer from 'material-ui/Drawer';
 import Typography from 'material-ui/Typography'
 import Grid from 'material-ui/Grid'
 import Icon from 'material-ui/Icon';
@@ -24,6 +26,28 @@ import swal from 'sweetalert2';
 import { SearchMain } from '../Shared'
 
 import CREATE_PACKAGE from '../../mutations/createPackage'
+
+const Title = ({ border, color, title }) => (
+  <Typography
+    type="title"
+    component="h1"
+    style={{
+      fontSize: '24px',
+      display: 'inline-block',
+      paddingRight: '15px',
+      paddingLeft: '10px',
+      borderRight: border
+    }}
+  >
+    <Link
+      to="/"
+      className="no-underline"
+      style={{ color }}
+    >
+      {title}
+    </Link>
+  </Typography>
+)
 
 class Header extends Component {
   static defaultProps = {
@@ -125,13 +149,14 @@ class Header extends Component {
     const { githubAuth, history, title, user, isUserLoading, location } = this.props
     // console.log('header props', this.props)
 
-    let userSectionWidth = 9;
+    let userSectionWidth = 7;
     let isSearchVisible = false;
     let headerBgColor = '#F7F7F7';
     let headerFontColor = 'black';
     let appBarBoxShadow = 'none';
     let loginBtnBgColor = 'primary';
     let avatarBorder = '2px solid black';
+    let drawerBtnColor = 'black';
 
     if (location.pathname !== '/') {
       isSearchVisible = true;
@@ -141,6 +166,7 @@ class Header extends Component {
       appBarBoxShadow = '';
       loginBtnBgColor = 'default';
       avatarBorder = '1px solid white';
+      drawerBtnColor = 'white';
     }
 
     return (
@@ -166,43 +192,42 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
-              <Grid item xs={3}>
+              <Grid 
+                item 
+                xs={12}
+                md={5}
+                hidden={{ lgUp: true }}
+              >
+                <IconButton 
+                  style={{ 
+                    color: drawerBtnColor,
+                    verticalAlign: 'sub'
+                  }}
+                >
+                  <Icon>menu</Icon>
+                </IconButton>
+                <Title
+                  border='none'
+                  color={headerFontColor}
+                  title={title}
+                />
+              </Grid>
+              <Grid 
+                item 
+                md={5}
+                lg={4}
+                hidden={{ mdDown: true }}
+              >
                 <Grid 
                   container 
                   align='center'
                   style={{ height: '100%' }}
                 >
-                  <Typography
-                    type="title"
-                    component="h1"
-                    style={{
-                      fontSize: '24px',
-                      display: 'inline-block',
-                      paddingRight: '15px',
-                      paddingLeft: '10px',
-                      borderRight: '2px solid gray'
-                    }}
-                  >
-                    <Link
-                      to="/"
-                      className="no-underline"
-                      style={{ color: headerFontColor }}
-                    >
-                      {title}
-                    </Link>
-                  </Typography>
-                  {/* <Link
-                    to="/languages"
-                    className="no-underline"
-                    style={{
-                      color: 'white',
-                      fontSize: '12px',
-                      padding: '0 10px 0 15px',
-                      marginTop: '5px'
-                    }}
-                  >
-                    TOP LANGUAGES
-                  </Link> */}
+                  <Title
+                    border='2px solid gray'
+                    color={headerFontColor}
+                    title={title}
+                  />
                   <Link
                     to="/@dkh215"
                     className="no-underline"
@@ -215,38 +240,22 @@ class Header extends Component {
                   >
                     DEMO PROFILE
                   </Link>
-                  {/* <Link
-                    to="/discovery"
-                    className="no-underline"
-                    style={{
-                      color: 'white',
-                      fontSize: '12px',
-                      padding: '0 10px',
-                      marginTop: '5px'
-                    }}
-                  >
-                    DISCOVERY
-                  </Link> */}
                 </Grid>
               </Grid>
               {isSearchVisible &&
                 <Grid
                   item
-                  xs={6}
-                  style={{
-                    borderRadius: '2px',
-                    height: '42px',
-                    backgroundColor: 'rgba(255,255,255,.15)',
-                    color: '#fff',
-                    padding: '0'
-                  }}
+                  xs={12}
+                  md={6}
+                  lg={5}
+                  id='pr-search-main-container'
                 >
                   <div style={{ height: '100%' }}>
                     <Icon
+                      id='pr-search-icon'
                       style={{
                         position: 'absolute',
-                        margin: '0 10px 0 15px',
-                        top: '21px'
+                        margin: '0 10px 0 15px'
                       }}
                     >
                       search
@@ -258,7 +267,12 @@ class Header extends Component {
                     />
                   </div>
                 </Grid>}
-              <Grid item xs={userSectionWidth} style={{ height: '100%' }}>
+              <Grid 
+                item
+                lg={userSectionWidth}
+                hidden={{ mdDown: true }}
+                style={{ height: '100%' }}
+              >
                 <div className="tr">
                   {!isUserLoading && !user &&
                     <div>
@@ -389,4 +403,5 @@ class Header extends Component {
 
 export default compose(
   graphql(CREATE_PACKAGE, { name: 'createPackage' }),
+  withWidth()
 )(withRouter(Header))

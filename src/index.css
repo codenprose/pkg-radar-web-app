@@ -1,5 +1,5 @@
 body {
-  min-width: 1200px;
+  /* min-width: 1200px; */
   height: 100vh;
   font-family: 'roboto';
   background-color: #F7F7F7;
@@ -47,6 +47,25 @@ main {
 #SearchMain--header input {
   margin-left: 40px;
   color: white;
+}
+
+#pr-search-icon {
+  top: 10px;
+}
+
+#pr-search-main-container {
+  position: relative;
+  border-radius: 2px;
+  height: 42px;
+  background-color: rgba(255,255,255,.15);
+  color: #fff;
+  padding: 0;
+}
+
+@media screen and (max-width: 960px) {
+  #pr-search-main-container {
+    margin-bottom: 20px;  
+  }
 }
 
 /* React Select */
