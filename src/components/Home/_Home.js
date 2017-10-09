@@ -113,7 +113,7 @@ class Home extends Component {
             </h2>
           </Hidden>
           <Paper elevation={4} style={{ padding: '10px 0' }}>
-            <SearchMain />
+            <SearchMain autoFocus />
           </Paper>
           <p
             style={{

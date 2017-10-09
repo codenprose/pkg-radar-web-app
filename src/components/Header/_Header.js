@@ -367,6 +367,7 @@ class Header extends Component {
                       id='SearchMain--header'
                       placeholder='Search'
                       history={history} 
+                      autoFocus={false}
                     />
                   </div>
                 </Grid>}

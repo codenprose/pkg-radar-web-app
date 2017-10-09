@@ -278,7 +278,7 @@ class SearchMain extends Component {
   };
 
   render() {
-    const { classes, id, placeholder } = this.props;
+    const { classes, id, placeholder, autoFocus } = this.props;
 
     return (
       <div
@@ -303,7 +303,7 @@ class SearchMain extends Component {
           focusInputOnSuggestionClick={false}
           highlightFirstSuggestion
           inputProps={{
-            autoFocus: true,
+            autoFocus: autoFocus,
             placeholder: placeholder ? placeholder : '',
             classes,
             value: this.state.value,
