@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import findIndex from 'lodash/findIndex'
 import swal from 'sweetalert2';
 
+import withWidth from 'material-ui/utils/withWidth';
+import Hidden from 'material-ui/Hidden';
 import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
 
@@ -22,7 +24,7 @@ import GET_USER from '../../queries/user'
 const ProfileHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: 250px;
+  height: ${props => props.height};
   width: 100%;
   margin-bottom: 20px;
   background: url("${radarBgImg}") no-repeat center;
@@ -40,8 +42,8 @@ const ProfileHeader = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  height: 140px;
-  width: 140px;
+  height: ${props => props.size}px;
+  width: ${props => props.size}px;
   border-radius: 50%;
   vertical-align: middle;
 `;
@@ -225,53 +227,84 @@ class UserProfile extends Component {
 
     return (
       <div>
-        <ProfileHeader>
-          <Grid
-            container
-            direction="row"
-            align="center"
-            style={{ height: "100%", padding: "0 80px", margin: 0 }}
-          >
-            <Grid item xs={6}>
-              <ProfileImage src={user.user.avatar} />
-              <UserInfoContainer>
-                <Name>
-                  {user.user.name}
-                </Name>
-                <UserName>
-                  @{user.user.username}
-                </UserName>
-                <Bio>{user.user.bio}</Bio>
-                <a
-                  className="white no-underline fw3"
-                  to={user.user.website}
-                >
-                  {user.user.website}
-                </a>
-              </UserInfoContainer>
-            </Grid>
-            <Grid item xs={6}>
-              <Grid direction="row" container justify="flex-end">
-                <Grid item className="tc">
-                  <Packages>
-                    <div>{cards.length}</div>
-                    <div>Packages</div>
-                  </Packages>
-                  <Connections>
-                    <div>{user.user.connections.length}</div>
-                    <Link 
-                      className='white no-underline'
-                      to={`/@${user.user.username}/connections`}
-                    >
-                      Connections
-                    </Link>
-                  </Connections>
-                  {this._renderUserConnectionBtn()}
+        <Hidden smUp>
+          <ProfileHeader heigh={150}>
+            <Grid
+              container
+              direction="row"
+              style={{ height: "100%", padding: "20px 10px", margin: 0 }}
+            >
+              <Grid item xs={12}>
+                <ProfileImage src={user.user.avatar} size={100} />
+                <UserInfoContainer>
+                  <Name>
+                    {user.user.name}
+                  </Name>
+                  <UserName>
+                    @{user.user.username}
+                  </UserName>
+                  <Bio>{user.user.bio}</Bio>
+                  <a
+                    className="white no-underline fw3"
+                    to={user.user.website}
+                  >
+                    {user.user.website}
+                  </a>
+                </UserInfoContainer>
+              </Grid>
+              </Grid>
+            </ProfileHeader>
+          </Hidden>
+
+        <Hidden smDown>
+          <ProfileHeader heigh={250}>
+            <Grid
+              container
+              direction="row"
+              align="center"
+              style={{ height: "100%", padding: "0 80px", margin: 0 }}
+            >
+              <Grid item xs={6}>
+                <ProfileImage src={user.user.avatar} />
+                <UserInfoContainer>
+                  <Name>
+                    {user.user.name}
+                  </Name>
+                  <UserName>
+                    @{user.user.username}
+                  </UserName>
+                  <Bio>{user.user.bio}</Bio>
+                  <a
+                    className="white no-underline fw3"
+                    to={user.user.website}
+                  >
+                    {user.user.website}
+                  </a>
+                </UserInfoContainer>
+              </Grid>
+              <Grid item xs={6}>
+                <Grid direction="row" container justify="flex-end">
+                  <Grid item className="tc">
+                    <Packages>
+                      <div>{cards.length}</div>
+                      <div>Packages</div>
+                    </Packages>
+                    <Connections>
+                      <div>{user.user.connections.length}</div>
+                      <Link 
+                        className='white no-underline'
+                        to={`/@${user.user.username}/connections`}
+                      >
+                        Connections
+                      </Link>
+                    </Connections>
+                    {this._renderUserConnectionBtn()}
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-        </ProfileHeader>
+              </Grid>
+            </ProfileHeader>
+          </Hidden>
         
         <KanbanBoardContainer
           cards={cards}
@@ -313,4 +346,5 @@ export default compose(
   graphql(DELETE_USER_CONNECTION, { name: 'deleteUserConnection' }),
   graphql(GET_USER, userOptions),
   graphql(GET_USER_KANBAN_PACKAGES, userKanbanOptions),
+  withWidth()
 )(UserProfile)

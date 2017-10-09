@@ -20,7 +20,7 @@ class KanbanBoard extends Component {
 
     return (
       <Grid container>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <KanbanList
             id="backlog"
             title="Backlog"
@@ -32,7 +32,7 @@ class KanbanBoard extends Component {
             userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <KanbanList
             id="trial"
             title="Trial"
@@ -44,7 +44,7 @@ class KanbanBoard extends Component {
             userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <KanbanList
             id="production"
             title="Production"
@@ -56,7 +56,7 @@ class KanbanBoard extends Component {
             userIsCurrentUser={userIsCurrentUser}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <KanbanList
             id="archive"
             title="Archive"

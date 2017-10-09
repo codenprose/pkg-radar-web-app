@@ -416,13 +416,13 @@ class PackageDetail extends Component {
                       <Grid item>
                         <img
                           alt={`${data.package.packageName}-logo`}
-                          style={{ height: '50px', marginRight: '20px', borderRadius: '50%' }}
+                          style={{ height: '30px', marginRight: '2px', borderRadius: '50%' }}
                           src={data.package.ownerAvatar}
                         />
                       </Grid>
                       <Grid item>
                         <Typography
-                          type="headline"
+                          type="subheading"
                           gutterBottom
                           style={{ color: 'white', display: 'inline-block' }}
                         >
@@ -464,7 +464,7 @@ class PackageDetail extends Component {
                   Stats
                 </Typography>
                 <Grid container>
-                  <Grid item xs={12} xl={6}>
+                  <Grid item xs={6} md={12} xl={6}>
                     <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
@@ -492,7 +492,7 @@ class PackageDetail extends Component {
                       </li>
                     </ul>
                   </Grid>
-                  <Grid item xs={12} xl={6}>
+                  <Grid item xs={6} md={12} xl={6}>
                     <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
