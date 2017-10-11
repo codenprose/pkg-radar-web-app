@@ -361,6 +361,18 @@ class Header extends Component {
                   >
                     TOP
                   </Link>
+                  <Link
+                    to="/@dkh215"
+                    className="no-underline"
+                    style={{
+                      color: headerFontColor,
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      marginTop: '5px'
+                    }}
+                  >
+                    DEMO
+                  </Link>
                 </Grid>
               </Grid>
               {/* End Desktop View */}

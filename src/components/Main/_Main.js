@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import { PackageDetail, Top } from '../Packages'
+import { PackageDetail } from '../Packages'
 import { UserConnections, UserProfile, UserSettings } from '../Users'
 import { Home } from '../Home'
 import { SearchResults } from '../SearchResults'
@@ -30,7 +30,7 @@ class Main extends Component {
           <Route exact path="/@:username/settings" render={(props) => <UserSettings {...props} user={user} />} />
           <Route exact path="/search" component={SearchResults} />
           <Route exact path="/about" component={About} />
-          <Route exact path="/top" component={Top} />
+          <Route exact path="/top" component={SearchResults} />
           <Route exact path="/languages" component={Languages} />
           <Route exact path="/discovery" component={Discovery} />
           <PrivateRoute exact path="/admin/packages" component={Packages} />

@@ -13,13 +13,21 @@ class SearchResults extends Component {
   componentWillMount() {
     const query = this.props.location.search
     const params = queryString.parse(query)
-    this._handleSearch(params.q)
+    if (this.props.location.pathname.includes('top')) {
+      this._handleSearch('*')  
+    } else {
+      this._handleSearch(params.q)
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const query = nextProps.location.search
     const params = queryString.parse(query)
-    this._handleSearch(params.q)
+    if (nextProps.location.pathname.includes('top')) {
+      this._handleSearch('*')  
+    } else {
+      this._handleSearch(params.q)
+    }
   }
 
   _handleSearch = async (query) => {
@@ -31,7 +39,7 @@ class SearchResults extends Component {
       const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
       const body = {
         from : 0,
-        size : 40,
+        size : 100,
         query: {
           query_string: {
             fields : ["package_name^2", "owner_name", "tags", "username", "name", "description", "language"],
