@@ -157,7 +157,6 @@ class Header extends Component {
   _renderUserSection = (avatarBorder, headerFontColor, loginBtnBgColor, alignment) => {
     const { isUserLoading, user } = this.props;
 
-    // TODO: check if user is loading here...
     if (isUserLoading) return <div />
 
     if (!user) {

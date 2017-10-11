@@ -228,7 +228,7 @@ class UserProfile extends Component {
     return (
       <div>
         <Hidden smUp>
-          <ProfileHeader heigh={150}>
+          <ProfileHeader height={150}>
             <Grid
               container
               direction="row"
@@ -257,7 +257,7 @@ class UserProfile extends Component {
           </Hidden>
 
         <Hidden smDown>
-          <ProfileHeader heigh={250}>
+          <ProfileHeader height={250}>
             <Grid
               container
               direction="row"
@@ -265,7 +265,7 @@ class UserProfile extends Component {
               style={{ height: "100%", padding: "0 80px", margin: 0 }}
             >
               <Grid item xs={6}>
-                <ProfileImage src={user.user.avatar} />
+                <ProfileImage src={user.user.avatar} size={125} />
                 <UserInfoContainer>
                   <Name>
                     {user.user.name}
