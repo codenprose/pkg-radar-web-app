@@ -24,7 +24,7 @@ import GET_USER from '../../queries/user'
 const ProfileHeader = styled.div`
   position: relative;
   z-index: 1;
-  height: ${props => props.height};
+  height: ${props => props.height}px;
   width: 100%;
   margin-bottom: 20px;
   background: url("${radarBgImg}") no-repeat center;
