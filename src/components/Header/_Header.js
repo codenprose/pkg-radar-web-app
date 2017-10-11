@@ -290,6 +290,7 @@ class Header extends Component {
               align="center"
               style={{ height: '100%' }}
             >
+            {/* Mobile View */}
               <Grid 
                 item 
                 xs={12}
@@ -317,6 +318,9 @@ class Header extends Component {
                   title={title}
                 />
               </Grid>
+              {/* End Mobile View */}
+
+              {/* Desktop View */}
               <Grid 
                 item 
                 md={5}
@@ -334,7 +338,7 @@ class Header extends Component {
                     title={title}
                   />
                   <Link
-                    to="/@dkh215"
+                    to="/about"
                     className="no-underline"
                     style={{
                       color: headerFontColor,
@@ -343,10 +347,24 @@ class Header extends Component {
                       marginTop: '5px'
                     }}
                   >
-                    DEMO PROFILE
+                    ABOUT
+                  </Link>
+                  <Link
+                    to="/top"
+                    className="no-underline"
+                    style={{
+                      color: headerFontColor,
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      marginTop: '5px'
+                    }}
+                  >
+                    TOP
                   </Link>
                 </Grid>
               </Grid>
+              {/* End Desktop View */}
+
               {isSearchVisible &&
                 <Grid
                   item
@@ -390,8 +408,21 @@ class Header extends Component {
           onRequestClose={this._toggleDrawer}
         >
           <div style={{ width: '225px', padding: '20px' }}>
+            {this._renderUserSection(avatarBorder, headerFontColor, loginBtnBgColor, 'tl')}
             <Link
-              to="/@dkh215"
+              to="/about"
+              className="no-underline db"
+              style={{
+                color: 'black',
+                fontSize: '14px',
+                margin: '20px 0'
+              }}
+              onClick={this._toggleDrawer}
+            >
+              ABOUT
+            </Link>
+            <Link
+              to="/top"
               className="no-underline db"
               style={{
                 color: 'black',
@@ -400,20 +431,8 @@ class Header extends Component {
               }}
               onClick={this._toggleDrawer}
             >
-              VIEW DEMO PROFILE
+              TOP
             </Link>
-            {this._renderUserSection(avatarBorder, headerFontColor, loginBtnBgColor, 'tl')}
-            <div style={{ marginTop: '40px' }}>
-              Made by: &nbsp;
-              <a
-                href="https://twitter.com/danielkhunter"
-                className="twitter-follow-button no-underline"
-                target='_blank'
-                rel="noopener noreferrer"
-              >
-                @danielkhunter
-              </a>
-            </div>
           </div>
         </Drawer>
 
