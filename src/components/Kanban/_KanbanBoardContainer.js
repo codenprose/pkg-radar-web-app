@@ -157,19 +157,13 @@ class KanbanBoardContainer extends Component {
     try {
       console.log('updating card positions')
       let kanbanCards = this._formatKanbanCards()
-      kanbanCards = kanbanCards.filter(card => {
-        return ownerName !== card.ownerName && packageName !== card.packageName
-      })
+      kanbanCards = kanbanCards.filter(card => card.packageId !== pkgId)
 
       await this.props.updateKanbanCards({
         variables: {
           username: user.username,
           kanbanCards
         },
-        refetchQueries: [{
-          query: CURRENT_USER,
-          variables: { username: user.username, token }
-        }]
       });
       console.log('updated card positions')
 
@@ -177,12 +171,18 @@ class KanbanBoardContainer extends Component {
       await this.props.deleteUserKanbanPackage({
         variables: {
           username: user.username,
-          packageId: pkgId
+          packageId: pkgId,
         },
-        refetchQueries: [{
-          query: USER_KANBAN_PACKAGES,
-          variables: { username: user.username }
-        }]
+        refetchQueries: [
+          {
+            query: CURRENT_USER,
+            variables: { username: user.username, token }
+          },
+          {
+            query: USER_KANBAN_PACKAGES,
+            variables: { username: user.username }
+          }
+        ]
       })
       console.log('removed package')
     } catch (e) {
@@ -406,6 +406,7 @@ class KanbanBoardContainer extends Component {
     if (currentBoard !== "All") {
       cards = [...cards].filter(card => card.board === currentBoard)
     }
+    console.log('cards', cards)
 
     return (
       <div style={{ position: 'relative' }}>

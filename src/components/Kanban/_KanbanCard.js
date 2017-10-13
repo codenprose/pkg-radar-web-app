@@ -67,7 +67,8 @@ const KanbanCardContainer = styled.div`margin-bottom: 10px;`;
 
 class KanbanCard extends Component {
   state = {
-    isContentVisible: false
+    isContentVisible: false,
+    removePkg: ''
   };
 
   handleExpandClick = () => {
@@ -134,8 +135,14 @@ class KanbanCard extends Component {
                   userIsCurrentUser &&
                   <Button
                     dense
-                    onClick={() => removeCard(packageId, packageName, currentBoard, status, ownerName)}
+                    disabled={packageId === this.state.removePkg}
+                    onClick={() => { 
+                      this.setState({ isBeingRemoved: true, removePkg: packageId })
+                      removeCard(packageId, packageName, currentBoard, status, ownerName)}
+                    }
                   >
+                    {packageId === this.state.removePkg &&
+                      <i className="fa fa-spinner fa-spin mr1" />}
                     Remove
                   </Button>
                 }
