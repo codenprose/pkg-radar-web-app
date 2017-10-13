@@ -292,14 +292,11 @@ class Header extends Component {
             >
             {/* Mobile View */}
               <Grid 
+                id='pr-mobile-view-title-container'
                 item 
                 xs={12}
                 md={5}
                 hidden={{ lgUp: true }}
-                style={{
-                  margin: '20px 0 10px',
-                  textAlign: 'center'
-                }}
               >
                 <IconButton 
                   style={{ 

@@ -9,7 +9,7 @@ class About extends Component {
     const { title } = this.props;
 
     return (
-      <div style={{ maxWidth: '1040px' }}>
+      <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
         <p style={{ fontSize: '20px', lineHeight: '1.5' }}>
           <strong>{title}</strong> is a search and discovery tool for open source software that allows users to
           organize packages into four meaningful categories: Backlog, Trial, Production, Archive.

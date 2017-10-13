@@ -15,14 +15,14 @@ const SearchResultsTable = ({ data }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell disablePadding style={{ minWidth: '54px' }}></TableCell>
-              <TableCell style={{ paddingRight: '0' }}>Owner</TableCell>
+              <TableCell disablePadding style={{ minWidth: '90px' }}></TableCell>
+              {/* <TableCell style={{ paddingRight: '0' }}>Owner</TableCell> */}
               <TableCell style={{ paddingRight: '0' }}>Package</TableCell>
               <TableCell>Language</TableCell>
-              <TableCell>Description</TableCell>
+              <TableCell style={{ paddingRight: '0' }}>Description</TableCell>
+              <TableCell disablePadding></TableCell>
               <TableCell numeric compact style={{ textAlign: 'left' }}>Stars</TableCell>
               <TableCell numeric compact style={{ textAlign: 'left' }}>Issues</TableCell>
-              <TableCell disablePadding></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -31,20 +31,31 @@ const SearchResultsTable = ({ data }) => {
               return (
                 <TableRow key={i}>
                   <TableCell style={{ minWidth: '54px', padding: '0 0 0 24px' }}>
+                    <span className='fa fa-fw' style={{ marginRight: '15px', fontSize: '14px', verticalAlign: 'super' }}>{i + 1})</span>
                     <img
                       alt={`${pkg.package_name}`}
                       style={{ height: "30px" }}
                       src={pkg.owner_avatar}
                     />
                   </TableCell>
-                  <TableCell style={{ paddingRight: '0' }}>
+                  {/* <TableCell style={{ paddingRight: '0' }}>
                     {pkg.owner_name}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell style={{ paddingRight: '0' }}>
                     {pkg.package_name}
                   </TableCell>
                   <TableCell>{pkg.language}</TableCell>
-                  <TableCell>{pkg.description}</TableCell>
+                  <TableCell style={{ paddingRight: '0' }}>
+                    {Humanize.truncate(pkg.description, 120)}
+                  </TableCell>
+                  <TableCell disablePadding>
+                    <Link 
+                      className='no-underline'
+                      to={`/${pkg.owner_name}/${pkg.package_name}`}
+                    >
+                      <Button>View</Button>
+                    </Link>
+                  </TableCell>
                   <TableCell 
                     numeric 
                     compact
@@ -58,14 +69,6 @@ const SearchResultsTable = ({ data }) => {
                     style={{ textAlign: 'left' }}
                   >
                     {Humanize.formatNumber(pkg.issues)}
-                  </TableCell>
-                  <TableCell disablePadding>
-                    <Link 
-                      className='no-underline'
-                      to={`/${pkg.owner_name}/${pkg.package_name}`}
-                    >
-                      <Button>View</Button>
-                    </Link>
                   </TableCell>
                 </TableRow>
               );

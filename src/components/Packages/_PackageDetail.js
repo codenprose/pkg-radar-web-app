@@ -109,6 +109,16 @@ class PackageDetail extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ index: 0 });
+    const currentPkg = this.props.data.package;
+    const newPkg = nextProps.data.package;
+
+    if (!currentPkg && newPkg) {
+      this._handleRecommendationsSearch(newPkg.tags)
+    } else if (currentPkg && newPkg) {
+      if (currentPkg.packageName !== newPkg.packageName) {
+        this._handleRecommendationsSearch(newPkg.tags)
+      }
+    }
   }
 
   _formatKanbanCards = () => {
@@ -196,24 +206,19 @@ class PackageDetail extends Component {
   };
 
   handleMainContentTabChange = (event, index) => {
-    if (index === 2) {
-      this._handleRecommendationsSearch();
-    }
     this.setState({ index });
   };
 
-  _formatTagsForQuery = () => {
-    const { tags } = this.props.data.package;
+  _formatTagsForQuery = (tags) => {
     return tags.join(' ');
   };
 
-  _handleRecommendationsSearch = async () => {
+  _handleRecommendationsSearch = async (tags) => {
     try {
-      const { tags } = this.props.data.package;
       if (!tags.length) return;
 
       this.setState({ areRecommendationsLoading: true });
-      const formattedTags = this._formatTagsForQuery();
+      const formattedTags = this._formatTagsForQuery(tags);
 
       const endpoint = `${process.env.ELASTIC_SEARCH_ENDPOINT}/_search`;
       const body = {
@@ -464,7 +469,7 @@ class PackageDetail extends Component {
                   Stats
                 </Typography>
                 <Grid container>
-                  <Grid item xs={6} md={12} xl={6}>
+                  <Grid item xs={6} md={12} lg={6}>
                     <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
@@ -492,12 +497,12 @@ class PackageDetail extends Component {
                       </li>
                     </ul>
                   </Grid>
-                  <Grid item xs={6} md={12} xl={6}>
+                  <Grid item xs={6} md={12} lg={6}>
                     <ul className="list pl0 dib mt0 mb0">
                       <li>
                         <Typography type="body1">
                           <i className="fa fa-users fa-fw mr1" aria-hidden="true" />
-                          {Humanize.formatNumber(data.package.contributors.total)} Contributors
+                          {Humanize.formatNumber(data.package.contributors.total)} Contrib.
                         </Typography>
                       </li>
                       <li>
@@ -509,7 +514,7 @@ class PackageDetail extends Component {
                       <li>
                         <Typography type="body1">
                           <i className="fa fa-hand-paper-o fa-fw mr1" aria-hidden="true" />
-                          {Humanize.formatNumber(data.package.pullRequests)} Pull Requests
+                          {Humanize.formatNumber(data.package.pullRequests)} PRs
                         </Typography>
                       </li>
                       <li>
