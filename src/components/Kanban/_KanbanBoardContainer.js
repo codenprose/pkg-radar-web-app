@@ -36,6 +36,8 @@ class KanbanBoardContainer extends Component {
     kanbanBoards: this.props.user.kanbanBoards,
     isAddPackageModalOpen: false,
     isAddBoardModalOpen: false,
+    isAddBoardLoading: false,
+    isAddPackageLoading: false,
     addBoardName: "",
     selectedStatus: "",
     selectedBoard: "",
@@ -85,10 +87,10 @@ class KanbanBoardContainer extends Component {
   };
 
   _handleAddPackage = async () => {
+    this.setState({ isAddPackageLoading: true })
     const { user } = this.props
     const { selectedStatus, selectedBoard, selectedPackage } = this.state
     const { owner_name, package_name } = selectedPackage._source
-
     let isPkgOnBoard = { name: '', board: '' }
 
     this.state.cards.forEach(card => {
@@ -139,9 +141,11 @@ class KanbanBoardContainer extends Component {
         }]
       });
       console.log('updated card positions')
+      this.setState({ isAddPackageLoading: false })
       this._closePackageModal()
     } catch (e) {
       console.error(e.message);
+      this.setState({ isAddPackageLoading: false })
       this._closePackageModal()
     }
   };
@@ -294,6 +298,7 @@ class KanbanBoardContainer extends Component {
 
   _handleAddBoard = async () => {
     console.log(`adding ${this.state.addBoardName} to user boards`);
+    this.setState({ isAddBoardLoading: true })
 
     const { user, updateUserKanbanBoards } = this.props;
     const kanbanBoards = [...user.kanbanBoards, this.state.addBoardName]
@@ -323,16 +328,22 @@ class KanbanBoardContainer extends Component {
         tabIndex,
         currentBoard,
         addBoardName: "",
-        isAddBoardModalOpen: false
+        isAddBoardModalOpen: false,
+        isAddBoardLoading: false
       });
       console.log('updated user kanban boards')
     } catch (e) {
       console.error(e.message);
-      this.setState({ addBoardName: "", isAddBoardModalOpen: false });
+      this.setState({ 
+        addBoardName: "", 
+        isAddBoardModalOpen: false,
+        isAddBoardLoading: false
+      });
     }
   };
 
   _handleRemoveBoard = async () => {
+    this.setState({ isRemoveBoardLoading: true });
     console.log('removing kanban board')
     const { user } = this.props
     const currentBoard = this.state.currentBoard;
@@ -359,11 +370,11 @@ class KanbanBoardContainer extends Component {
           store.writeQuery({ query: CURRENT_USER, data });
         },
       });
-      this.setState({ tabIndex: 0, currentBoard: "All" });
+      this.setState({ tabIndex: 0, currentBoard: "All", isRemoveBoardLoading: false });
       console.log('removed kanban board')
     } catch (e) {
       console.error(e.message);
-      this.setState({ tabIndex: 0, currentBoard: "All" });
+      this.setState({ tabIndex: 0, currentBoard: "All", isRemoveBoardLoading: false });
     }
   };
 
@@ -423,12 +434,15 @@ class KanbanBoardContainer extends Component {
                   <Button
                     raised
                     onClick={this._handleRemoveBoard}
+                    disabled={this.state.isRemoveBoardLoading}
                     style={{
                       background: 'firebrick',
                       color: 'white',
                       marginRight: "10px"
                     }}
                   >
+                    {this.state.isRemoveBoardLoading &&
+                      <i className="fa fa-spinner fa-spin mr1" />}
                     Remove Board
                   </Button>}
                 {userIsCurrentUser &&
@@ -497,9 +511,11 @@ class KanbanBoardContainer extends Component {
               type="submit"
               raised
               color="primary"
-              disabled={!this.state.addBoardName}
+              disabled={!this.state.addBoardName || this.state.isAddBoardLoading}
               onClick={this._handleAddBoard}
             >
+            {this.state.isAddBoardLoading &&
+                <i className="fa fa-spinner fa-spin mr1" />}
               Submit
             </Button>
           </DialogActions>
@@ -549,10 +565,13 @@ class KanbanBoardContainer extends Component {
               disabled={
                 !this.state.selectedStatus ||
                   !this.state.selectedBoard ||
-                    !Object.keys(this.state.selectedPackage).length
+                    !Object.keys(this.state.selectedPackage).length ||
+                      this.state.isAddPackageLoading
               }
               onClick={this._handleAddPackage}
             >
+              {this.state.isAddPackageLoading &&
+                <i className="fa fa-spinner fa-spin mr1" />}
               Submit
             </Button>
           </DialogActions>
