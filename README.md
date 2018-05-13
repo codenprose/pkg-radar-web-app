@@ -1,6 +1,6 @@
 # pkg radar
 
-[DEMO](https://pkgradar.netlify.com)
+![screenshot](https://i.imgur.com/AW5KtlE.jpg)
 
 ## The Stack
 - React
